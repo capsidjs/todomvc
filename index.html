@@ -13,12 +13,12 @@
 
   <body>
 
-    <section id="todo-app" class="todo-app">
+    <section id="todoapp" class="todo-app">
 
       <header id="header">
 
         <h1>todos</h1>
-        <div class="todo-input"></div>
+        <input id="new-todo" class="todo-input" placeholder="What needs to be done?" autofocus />
 
       </header>
 
@@ -31,23 +31,27 @@
 
       </section>
 
-      <section id="footer">
+      <footer id="footer" class="todo-controls">
 
         <span id="todo-count">
           <strong class="todo-counter">0</strong> items left
         </span>
 
-        <ul>
+        <ul id="filters">
           <li>
             <a href="#/">All</a>
+          </li>
+          <li>
             <a href="#/active">Active</a>
+          </li>
+          <li>
             <a href="#/completed">Completed</a>
           </li>
         </ul>
 
-        <button>Clear completed</button>
+        <button id="clear-completed" class="todo-clear-btn">Clear completed</button>
 
-      </section>
+      </footer>
 
     </section>
 
