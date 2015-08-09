@@ -1,9 +1,66 @@
-<div class="todo-combo-box">
+<!doctype html>
+<html lang="en">
 
-  <div class="todo-input"></div>
+  <head>
 
-  <div class="todo-list"></div>
+    <meta charset="utf-8">
+    <title>Mangrove.js • TodoMVC</title>
 
-  <div class="todo-combo-box-footer"></div>
+    <link rel="stylesheet" href="node_modules/todomvc-common/base.css">
+    <link rel="stylesheet" href="node_modules/todomvc-app-css/index.css">
 
-</div>
+  </head>
+
+  <body>
+
+    <section id="todo-app" class="todo-app">
+
+      <header id="header">
+
+        <h1>todos</h1>
+        <div class="todo-input"></div>
+
+      </header>
+
+      <section id="main">
+
+        <input id="toggle-all" type="checkbox" />
+        <label for="toggle-all">Mark all as complete</label>
+
+        <ul id="todo-list" class="todo-list"></ul>
+
+      </section>
+
+      <section id="footer">
+
+        <span id="todo-count">
+          <strong class="todo-counter">0</strong> items left
+        </span>
+
+        <ul>
+          <li>
+            <a href="#/">All</a>
+            <a href="#/active">Active</a>
+            <a href="#/completed">Completed</a>
+          </li>
+        </ul>
+
+        <button>Clear completed</button>
+
+      </section>
+
+    </section>
+
+    <footer id="info">
+      <p>Double-click to edit a todo</p>
+      <p>Written by <a href="https://github.com/kt3k">Yoshiya Hinosawa</a></p>
+      <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
+    </footer>
+
+    <script src="node_modules/todomvc-common/base.js"></script>
+    <script src="node_modules/jquery/dist/jquery.js"></script>
+    <script src="node_modules/mangrovejs/mangrove.js"></script>
+
+  </body>
+
+</html>
