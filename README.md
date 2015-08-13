@@ -1,1 +1,1 @@
-# TodoMVC by mangrove.js v0.1.0
+# TodoMVC of mangrove.js v0.1.0
