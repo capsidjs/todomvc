@@ -4,7 +4,8 @@
   "description": "todomvc by mangrove.js",
   "main": "index.html",
   "scripts": {
-    "test": "mocha spec"
+    "test": "mocha spec",
+    "build": "browserify src/app.js > build/app.js"
   },
   "keywords": [
     "todomvc",
