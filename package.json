@@ -7,6 +7,7 @@
     "test": "mocha spec",
     "build": "browserify src/app.js > build/app.js"
   },
+  "repository": "https://github.com/kt3k/todomvc-mangrove.git",
   "keywords": [
     "todomvc",
     "mangrove",
@@ -19,5 +20,11 @@
     "mangrovejs": "^1.0.0",
     "todomvc-app-css": "^1.0.4",
     "todomvc-common": "^1.0.2"
+  },
+  "devDependencies": {
+    "karma": "^0.13.9",
+    "karma-chrome-launcher": "^0.2.0",
+    "karma-mocha": "^0.2.0",
+    "mocha": "^2.2.5"
   }
 }
