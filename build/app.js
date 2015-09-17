@@ -10353,6 +10353,11 @@ module.exports = {
 
     STORAGE_KEY: {
         TODO_LIST: 'todo-app:todo-list'
+    },
+
+    FILTER: {
+        ACTIVE: '/active',
+        COMPLETED: '/completed'
     }
 
 };
@@ -10495,7 +10500,7 @@ var TodoCollection = $.cc.subclass(function (pt) {
      */
     pt.completed = function () {
 
-        return new this.items.filter(function (todo) { return todo.done; });
+        return new TodoCollection(this.items.filter(function (todo) { return todo.done; }));
 
     };
 
@@ -10506,7 +10511,7 @@ var TodoCollection = $.cc.subclass(function (pt) {
      */
     pt.uncompleted = function () {
 
-        return new this.items.filter(function (todo) { return !todo.done; });
+        return new TodoCollection(this.items.filter(function (todo) { return !todo.done; }));
 
     };
 
@@ -10518,6 +10523,17 @@ var TodoCollection = $.cc.subclass(function (pt) {
     pt.toArray = function () {
 
         return this.items.slice(0);
+
+    };
+
+    /**
+     * Checks if the collection is empty.
+     *
+     * @param {Boolean}
+     */
+    pt.isEmpty = function () {
+
+        return this.items.length === 0;
 
     };
 
@@ -10679,6 +10695,8 @@ module.exports = TodoRepository;
 
 var $ = require('jquery');
 
+var Const = require('../const');
+
 var TodoFactory = require('../domain/todo-factory');
 var TodoRepository = require('../domain/todo-repository');
 
@@ -10698,7 +10716,7 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
 
         this.initEvents();
 
-        this.updateTodoList();
+        this.updateView();
 
     };
 
@@ -10719,6 +10737,12 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
 
         });
 
+        $(window).on('hashchange', function () {
+
+            that.updateView();
+
+        });
+
     };
 
     /**
@@ -10730,18 +10754,63 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
 
         this.todoCollection.push(todo);
 
-        this.save();
+        this.updateView();
 
-        this.updateTodoList();
+        this.save();
 
     };
 
     /**
-     * Updates the todo list by the current state.
+     * Updates the view in the todo app.
      */
-    pt.updateTodoList = function () {
+    pt.updateView = function () {
 
-        this.elem.find('.todo-list').cc.get('todo-list').update(this.todoCollection);
+        this.updateTodoList(this.getDisplayCollection());
+
+    };
+
+    /**
+     * Updates the todo list by the given collection.
+     *
+     * @param {TodoCollection}
+     */
+    pt.updateTodoList = function (todoCollection) {
+
+        this.elem.find('.todo-list').cc.get('todo-list').update(todoCollection);
+
+    };
+
+    pt.getDisplayCollection = function () {
+
+        var filterName = this.getFilterNameFromHash();
+
+        if (filterName === Const.FILTER.ACTIVE) {
+
+            return this.todoCollection.uncompleted();
+
+        }
+
+        if (filterName === Const.FILTER.COMPLETED) {
+
+            return this.todoCollection.completed();
+
+        }
+
+        return this.todoCollection;
+
+    };
+
+    pt.filterIsEnabled = function () {
+
+        var filterName = this.getFilterNameFromHash();
+
+        return filterName === Const.FILTER.ACTIVE || filterName === Const.FILTER.COMPLETED;
+
+    };
+
+    pt.getFilterNameFromHash = function () {
+
+        return window.location.hash.substring(1);
 
     };
 
@@ -10757,13 +10826,40 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
     /**
      * Toggles the todo state of the given id.
      *
-     * @param {String} id
+     * @param {String} id The todo id
      */
     pt.toggle = function (id) {
 
         this.todoCollection.toggleById(id);
 
+        if (this.filterIsEnabled()) {
+
+            this.updateView();
+
+        }
+
         this.save();
+
+    };
+
+    pt.clearCompleted = function () {
+
+        this.todoCollection = this.todoCollection.completed();
+
+        this.updateView();
+
+        this.save()
+
+    };
+
+    /**
+     * Checks if the todo collection is empty
+     *
+     * @return {Boolean}
+     */
+    pt.isEmpty = function () {
+
+        return this.todoCollection.isEmpty();
 
     };
 
@@ -10772,4 +10868,4 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
 
 $.cc.assign('todo-app', TodoApp);
 
-},{"../domain/todo-factory":15,"../domain/todo-repository":16,"jquery":7}]},{},[8]);
+},{"../const":12,"../domain/todo-factory":15,"../domain/todo-repository":16,"jquery":7}]},{},[8]);

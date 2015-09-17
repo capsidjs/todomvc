@@ -10,6 +10,11 @@ module.exports = {
 
     STORAGE_KEY: {
         TODO_LIST: 'todo-app:todo-list'
+    },
+
+    FILTER: {
+        ACTIVE: '/active',
+        COMPLETED: '/completed'
     }
 
 };

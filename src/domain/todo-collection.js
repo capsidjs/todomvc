@@ -106,7 +106,7 @@ var TodoCollection = $.cc.subclass(function (pt) {
      */
     pt.completed = function () {
 
-        return new this.items.filter(function (todo) { return todo.done; });
+        return new TodoCollection(this.items.filter(function (todo) { return todo.done; }));
 
     };
 
@@ -117,7 +117,7 @@ var TodoCollection = $.cc.subclass(function (pt) {
      */
     pt.uncompleted = function () {
 
-        return new this.items.filter(function (todo) { return !todo.done; });
+        return new TodoCollection(this.items.filter(function (todo) { return !todo.done; }));
 
     };
 
@@ -129,6 +129,17 @@ var TodoCollection = $.cc.subclass(function (pt) {
     pt.toArray = function () {
 
         return this.items.slice(0);
+
+    };
+
+    /**
+     * Checks if the collection is empty.
+     *
+     * @param {Boolean}
+     */
+    pt.isEmpty = function () {
+
+        return this.items.length === 0;
 
     };
 
