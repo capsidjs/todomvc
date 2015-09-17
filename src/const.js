@@ -9,7 +9,7 @@ module.exports = {
     },
 
     STORAGE_KEY: {
-        TODO_LIST: 'todo-app:todo-list'
+        TODO_LIST: 'todos-class-component'
     },
 
     FILTER: {
