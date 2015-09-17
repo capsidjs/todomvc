@@ -1,8 +1,10 @@
 
 
 var $ = require('jquery');
+var Const = require('../const');
 
-var TodoCollection = require('./TodoCollection');
+var TodoCollection = require('./todo-collection');
+
 
 
 var TodoRepository = $.cc.subclass(function (pt) {
@@ -15,7 +17,7 @@ var TodoRepository = $.cc.subclass(function (pt) {
      */
     pt.getAll = function () {
 
-        var json = window.localStorage[KEY_TODO_LIST];
+        var json = window.localStorage[Const.STORAGE_KEY.TODO_LIST];
 
         if (!json) {
 
@@ -48,7 +50,7 @@ var TodoRepository = $.cc.subclass(function (pt) {
 
         var json = JSON.stringify(this.collectionToArray(todos));
 
-        window.localStorage[KEY_TODO_LIST] = json;
+        window.localStorage[Const.STORAGE_KEY.TODO_LIST] = json;
 
     };
 
@@ -56,7 +58,7 @@ var TodoRepository = $.cc.subclass(function (pt) {
      * Converts the todo collections into js array of objects.
      *
      * @private
-     * @param {TodoCollection} todo The todo collection
+     * @param {TodoCollection} todos The todo collection
      * @return {Array<Object>}
      */
     pt.collectionToArray = function (todos) {

@@ -10147,10 +10147,11 @@ require('class-component');
 
 require('./component/todo-item');
 require('./component/todo-input');
+require('./component/todo-list');
 require('./service/todo-app');
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./component/todo-input":9,"./component/todo-item":10,"./service/todo-app":12,"class-component":1,"jquery":7}],9:[function(require,module,exports){
+},{"./component/todo-input":9,"./component/todo-item":10,"./component/todo-list":11,"./service/todo-app":17,"class-component":1,"jquery":7}],9:[function(require,module,exports){
 
 
 var $ = require('jquery');
@@ -10197,7 +10198,7 @@ var TodoInput = $.cc.subclass(function (pt) {
 
 $.cc.assign('todo-input', TodoInput);
 
-},{"../const":11,"jquery":7}],10:[function(require,module,exports){
+},{"../const":12,"jquery":7}],10:[function(require,module,exports){
 
 
 var $ = require('jquery');
@@ -10210,16 +10211,79 @@ var TodoItem = $.cc.subclass(function (pt) {
 
         this.elem = elem;
 
+        this.initElems();
+
+    };
+
+    pt.initElems = function () {
+
+        $('<input class="toggle" type="checkbox" />').appendTo(this.elem);
+        $('<label />').appendTo(this.elem);
+        $('<button class="destroy" />').appendTo(this.elem);
+        $('<input class="edit" />').appendTo(this.elem);
+
+    };
+
+    pt.initEvents = function () {
+
+        var that = this;
+
+        this.elem.find('input').on('click', function () {
+
+            that.toggleCompleted();
+
+        });
+
+    };
+
+    /**
+     * Updates the todo body by todo model
+     *
+     * @param {Todo} todo The todo
+     */
+    pt.update = function (todo) {
+
+        this.elem.attr('id', todo.id);
+        this.elem.find('label').text(todo.body);
+        this.elem.find('.edit').val(todo.body);
+
+        this.completed = todo.done;
+        this.updateCompleted();
+
+    };
+
+    pt.toggleCompleted = function () {
+
+        this.completed = !this.completed;
+        this.updateCompleted();
+
+        this.elem.trigger('todo-toggle');
+
+    };
+
+    pt.updateCompleted = function () {
+
+        if (this.completed) {
+
+            this.complete();
+
+        } else {
+
+            this.uncomplete();
+        }
+
     };
 
     pt.complete = function () {
 
+        this.elem.find('.toggle').attr('checked', 'checked');
         this.elem.addClass('completed');
 
     };
 
     pt.uncomplete = function () {
 
+        this.elem.find('.toggle').attr('checked', null);
         this.elem.removeClass('completed');
 
     };
@@ -10243,6 +10307,40 @@ $.cc.assign('todo-item', TodoItem);
 
 },{"jquery":7}],11:[function(require,module,exports){
 
+var $ = require('jquery');
+
+var TodoList = $.cc.subclass(function (pt) {
+    'use strict';
+
+    pt.constructor = function (elem) {
+
+        this.elem = elem;
+
+    };
+
+    /**
+     * Updates the todo items by the given todo model list.
+     *
+     * @param {TodoCollection} todoList The tood list
+     */
+    pt.update = function (todoList) {
+
+        this.elem.empty();
+
+        todoList.forEach(function (todo) {
+
+            $('<li />').appendTo(this.elem).cc.init('todo-item').update(todo);
+
+        }, this);
+
+    };
+
+});
+
+$.cc.assign('todo-list', TodoList);
+
+},{"jquery":7}],12:[function(require,module,exports){
+
 
 
 module.exports = {
@@ -10250,12 +10348,316 @@ module.exports = {
     KEYCODE: {
         ENTER: 13,
         ESCAPE: 27
+    },
+
+    STORAGE_KEY: {
+        TODO_LIST: 'todo-app:todo-list'
     }
 
 };
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 
+
+var $ = require('jquery');
+
+
+/**
+ * Todo class is the model of single todo item.
+ */
+var Todo = $.cc.subclass(function (pt) {
+    'use strict';
+
+    /**
+     * @param {String} id The todo's id
+     * @param {String} body The todo's body
+     * @param {Boolean} done The flag indicates if it's done or not
+     */
+    pt.constructor = function (id, body, done) {
+
+        this.id = id;
+        this.body = body;
+        this.done = done;
+
+    };
+
+});
+
+module.exports = Todo;
+
+},{"jquery":7}],14:[function(require,module,exports){
+
+
+
+var $ = require('jquery');
+
+var TodoCollection = $.cc.subclass(function (pt) {
+    'use strict';
+
+    /**
+     * @param {Todo[]} todos The todo items
+     */
+    pt.constructor = function (todos) {
+
+        todos = todos || [];
+
+        this.items = todos;
+
+    };
+
+    /**
+     * Iterates calling of func in the given context.
+     *
+     * @param {Function} func The iteration function
+     * @param {Object} ctx The context
+     */
+    pt.forEach = function (func, ctx) {
+
+        this.items.forEach(func, ctx);
+
+    };
+
+    /**
+     * Pushes (appends) the given todo at the end of the list
+     *
+     * @param {Todo} todo The todo
+     */
+    pt.push = function (todo) {
+
+        this.items.push(todo);
+
+    };
+
+    /**
+     * Unshifts (prepends) the given todo to the list.
+     *
+     * @param {Todo} todo The todo
+     */
+    pt.unshift = function (todo) {
+
+        this.items.unshift(todo);
+
+    };
+
+    /**
+     * @param {Todo} todo The todo to remvoe
+     */
+    pt.remove = function (todo) {
+
+        if (!this.has(todo)) {
+
+            throw new Error('The colletion does not have the todo: ' + todo.toString());
+
+        }
+
+        this.items.splice(this.items.indexOf(todo), 1);
+
+    };
+
+    /**
+     * Checks if the given todo is included by the list
+     *
+     * @param {Todo} todo The todo
+     */
+    pt.has = function (todo) {
+
+        return this.items.indexOf(tood) !== -1;
+
+    };
+
+    /**
+     * Returns a todo subcollection of completed items.
+     *
+     * @return {TodoCollection}
+     */
+    pt.completed = function () {
+
+        return new this.items.filter(function (todo) { return todo.done; });
+
+    };
+
+    /**
+     * Returns a todo subcollection of uncompleted items.
+     *
+     * @return {TodoCollection}
+     */
+    pt.uncompleted = function () {
+
+        return new this.items.filter(function (todo) { return !todo.done; });
+
+    };
+
+    /**
+     * Gets the array of todos
+     *
+     * @return {Todo[]}
+     */
+    pt.toArray = function () {
+
+        return this.items.slice(0);
+
+    };
+
+});
+
+
+module.exports = TodoCollection;
+
+},{"jquery":7}],15:[function(require,module,exports){
+
+
+var $ = require('jquery');
+
+var Todo = require('./Todo');
+
+
+/**
+ * TodoFactory is the factory for todo.
+ *
+ * @class
+ */
+var TodoFactory = $.cc.subclass(function (pt) {
+    'use strict';
+
+    /**
+     * Creates a todo model from the given todo body.
+     *
+     * @param {String} todoBody The todo body
+     * @return {Todo}
+     */
+    pt.createByBody = function (todoBody) {
+
+        return this.createFromObject({
+            id: this.generateId(),
+            body: todoBody,
+            done: false
+        });
+
+    };
+
+    /**
+     * Creates Todo model from the object
+     *
+     * @param {Object} obj The source object
+     * @return {Todo}
+     */
+    pt.createFromObject = function (obj) {
+
+        return new Todo(obj.id, obj.body, obj.done);
+
+    };
+
+    pt.generateId = function () {
+
+        return '' + Math.floor(Math.random() * 1000000000);
+
+    };
+
+});
+
+module.exports = TodoFactory;
+
+},{"./Todo":13,"jquery":7}],16:[function(require,module,exports){
+
+
+var $ = require('jquery');
+var Const = require('../const');
+
+var TodoCollection = require('./todo-collection');
+
+
+
+var TodoRepository = $.cc.subclass(function (pt) {
+    'use strict';
+
+    /**
+     * Gets all the todo items.
+     *
+     * @return {TodoList}
+     */
+    pt.getAll = function () {
+
+        var json = window.localStorage[Const.STORAGE_KEY.TODO_LIST];
+
+        if (!json) {
+
+            return new TodoCollection([]);
+
+        }
+
+        var array;
+
+        try {
+
+            array = JSON.parse(json);
+
+        } catch (e) {
+
+            array = []
+
+        }
+
+        return new TodoCollection(array);
+
+    };
+
+    /**
+     * Saves all the todo items.
+     *
+     * @param {domain.TodoCollection} todos
+     */
+    pt.saveAll = function (todos) {
+
+        var json = JSON.stringify(this.collectionToArray(todos));
+
+        window.localStorage[Const.STORAGE_KEY.TODO_LIST] = json;
+
+    };
+
+    /**
+     * Converts the todo collections into js array of objects.
+     *
+     * @private
+     * @param {TodoCollection} todos The todo collection
+     * @return {Array<Object>}
+     */
+    pt.collectionToArray = function (todos) {
+
+        return todos.toArray().map(function (todo) {
+
+            return this.toObject(todo);
+
+        }, this);
+
+    };
+
+    /**
+     * Converts the todo item into js object.
+     *
+     * @private
+     * @param {Todo} todo The todo item
+     * @return {Object}
+     */
+    pt.toObject = function (todo) {
+
+        return {
+            id: todo.id,
+            body: todo.body,
+            done: todo.done
+        };
+
+    };
+
+});
+
+module.exports = TodoRepository;
+
+},{"../const":12,"./todo-collection":14,"jquery":7}],17:[function(require,module,exports){
+
+var $ = require('jquery');
+
+var TodoFactory = require('../domain/todo-factory');
+var TodoRepository = require('../domain/todo-repository');
 
 
 
@@ -10266,22 +10668,59 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
 
         this.elem = elem;
 
-        this.elem.on('todo-new-item', function (e, item) {
+        this.todoFactory = new TodoFactory();
+        this.todoRepository = new TodoRepository();
 
-            console.log(item);
+        this.todoCollection = this.todoRepository.getAll();
+
+        this.initEvents();
+
+    };
+
+
+    pt.initEvents = function () {
+
+        var that = this;
+
+        this.elem.on('todo-new-item', function (e, item) {
 
             console.log('todo-new-item: ' + item);
 
+            that.addTodo(item);
+
         });
+
+    };
+
+    /**
+     * @param {String} todoBody The todo body
+     */
+    pt.addTodo = function (todoBody) {
+
+        var todo = this.todoFactory.createByBody(todoBody);
+
+        console.log(todo);
+
+        this.todoCollection.push(todo);
+
+        this.todoRepository.saveAll(this.todoCollection);
+
+        this.updateTodoList();
+
+    };
+
+    /**
+     * Updates the todo list by the current state.
+     */
+    pt.updateTodoList = function () {
+
+        this.elem.find('.todo-list').cc.get('todo-list').update(this.todoCollection);
 
     };
 
 });
 
 
-
-
-
 $.cc.assign('todo-app', TodoApp);
 
-},{}]},{},[8]);
+},{"../domain/todo-factory":15,"../domain/todo-repository":16,"jquery":7}]},{},[8]);

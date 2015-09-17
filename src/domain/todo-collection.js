@@ -99,6 +99,17 @@ var TodoCollection = $.cc.subclass(function (pt) {
 
     };
 
+    /**
+     * Gets the array of todos
+     *
+     * @return {Todo[]}
+     */
+    pt.toArray = function () {
+
+        return this.items.slice(0);
+
+    };
+
 });
 
 

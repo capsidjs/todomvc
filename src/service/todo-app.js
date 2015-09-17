@@ -1,4 +1,8 @@
 
+var $ = require('jquery');
+
+var TodoFactory = require('../domain/todo-factory');
+var TodoRepository = require('../domain/todo-repository');
 
 
 
@@ -8,6 +12,11 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
     pt.constructor = function (elem) {
 
         this.elem = elem;
+
+        this.todoFactory = new TodoFactory();
+        this.todoRepository = new TodoRepository();
+
+        this.todoCollection = this.todoRepository.getAll();
 
         this.initEvents();
 
@@ -28,11 +37,18 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
 
     };
 
+    /**
+     * @param {String} todoBody The todo body
+     */
     pt.addTodo = function (todoBody) {
 
-        var todo = todoFactory.createByBody(todoBody);
+        var todo = this.todoFactory.createByBody(todoBody);
 
-        this.todoList.push(todo);
+        console.log(todo);
+
+        this.todoCollection.push(todo);
+
+        this.todoRepository.saveAll(this.todoCollection);
 
         this.updateTodoList();
 
@@ -43,7 +59,7 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
      */
     pt.updateTodoList = function () {
 
-        this.elem.find('.todo-list').cc.get('todo-list').update(todoList);
+        this.elem.find('.todo-list').cc.get('todo-list').update(this.todoCollection);
 
     };
 
