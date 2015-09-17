@@ -10142,13 +10142,62 @@ return jQuery;
 
 
 
-global.jQuery = require('jquery');
+global.$ = global.jQuery = require('jquery');
 require('class-component');
 
 require('./component/todo-item');
+require('./component/todo-input');
+require('./service/todo-app');
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./component/todo-item":9,"class-component":1,"jquery":7}],9:[function(require,module,exports){
+},{"./component/todo-input":9,"./component/todo-item":10,"./service/todo-app":12,"class-component":1,"jquery":7}],9:[function(require,module,exports){
+
+
+var $ = require('jquery');
+var Const = require('../const');
+
+
+
+var TodoInput = $.cc.subclass(function (pt) {
+
+    pt.constructor = function (elem) {
+
+        this.elem = elem;
+
+        var that = this;
+
+
+        this.elem.on('keypress', function (e) {
+
+            console.log
+
+            that.onKeypress(e);
+
+        });
+
+    };
+
+    pt.onKeypress = function (e) {
+
+        if (e.which !== Const.KEYCODE.ENTER || !this.elem.val().trim()) {
+
+            return;
+
+        }
+
+        var todoBody = this.elem.val();
+        this.elem.val('');
+
+        this.elem.trigger('todo-new-item', todoBody);
+
+    };
+
+});
+
+
+$.cc.assign('todo-input', TodoInput);
+
+},{"../const":11,"jquery":7}],10:[function(require,module,exports){
 
 
 var $ = require('jquery');
@@ -10192,4 +10241,47 @@ var TodoItem = $.cc.subclass(function (pt) {
 
 $.cc.assign('todo-item', TodoItem);
 
-},{"jquery":7}]},{},[8]);
+},{"jquery":7}],11:[function(require,module,exports){
+
+
+
+module.exports = {
+
+    KEYCODE: {
+        ENTER: 13,
+        ESCAPE: 27
+    }
+
+};
+
+},{}],12:[function(require,module,exports){
+
+
+
+
+var TodoApp = $.cc.subclass(function (pt, parent) {
+    'use strict'
+
+    pt.constructor = function (elem) {
+
+        this.elem = elem;
+
+        this.elem.on('todo-new-item', function (e, item) {
+
+            console.log(item);
+
+            console.log('todo-new-item: ' + item);
+
+        });
+
+    };
+
+});
+
+
+
+
+
+$.cc.assign('todo-app', TodoApp);
+
+},{}]},{},[8]);
