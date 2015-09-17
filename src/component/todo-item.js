@@ -11,6 +11,7 @@ var TodoItem = $.cc.subclass(function (pt) {
         this.elem = elem;
 
         this.initElems();
+        this.initEvents();
 
     };
 
@@ -27,7 +28,7 @@ var TodoItem = $.cc.subclass(function (pt) {
 
         var that = this;
 
-        this.elem.find('input').on('click', function () {
+        this.elem.find('.toggle').on('click', function () {
 
             that.toggleCompleted();
 
