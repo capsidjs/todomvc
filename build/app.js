@@ -10151,6 +10151,8 @@ require('./component/todo-item');
 },{"./component/todo-item":9,"class-component":1,"jquery":7}],9:[function(require,module,exports){
 
 
+var $ = require('jquery');
+
 
 var TodoItem = $.cc.subclass(function (pt) {
     'use strict';
@@ -10190,4 +10192,4 @@ var TodoItem = $.cc.subclass(function (pt) {
 
 $.cc.assign('todo-item', TodoItem);
 
-},{}]},{},[8]);
+},{"jquery":7}]},{},[8]);
