@@ -52,9 +52,9 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
 
         this.todoCollection.push(todo);
 
-        this.save();
-
         this.updateTodoList();
+
+        this.save();
 
     };
 
@@ -79,13 +79,23 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
     /**
      * Toggles the todo state of the given id.
      *
-     * @param {String} id
+     * @param {String} id The todo id
      */
     pt.toggle = function (id) {
 
         this.todoCollection.toggleById(id);
 
         this.save();
+
+    };
+
+    pt.clearCompleted = function () {
+
+        this.todoCollection = this.todoCollection.completed();
+
+        this.updateTodoList();
+
+        this.save()
 
     };
 
