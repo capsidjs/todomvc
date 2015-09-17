@@ -1,14 +1,27 @@
 
 
+var $ = require('jquery');
 
-domain.Todo = subclass(function (pt) {
+
+/**
+ * Todo class is the model of single todo item.
+ */
+var Todo = $.cc.subclass(function (pt) {
     'use strict';
 
-    pt.constructor = function (name, done) {
+    /**
+     * @param {String} id The todo's id
+     * @param {String} body The todo's body
+     * @param {Boolean} done The flag indicates if it's done or not
+     */
+    pt.constructor = function (id, body, done) {
 
-        this.name = name;
+        this.id = id;
+        this.body = body;
         this.done = done;
 
     };
 
 });
+
+module.exports = Todo;

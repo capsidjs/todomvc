@@ -1,13 +1,17 @@
 
 
+var $ = require('jquery');
 
-domain.TodoRepository = subclass(function (pt) {
+var TodoCollection = require('./TodoCollection');
+
+
+var TodoRepository = $.cc.subclass(function (pt) {
     'use strict';
 
     /**
      * Gets all the todo items.
      *
-     * @return {domain.TodoCollection}
+     * @return {TodoList}
      */
     pt.getAll = function () {
 
@@ -15,7 +19,7 @@ domain.TodoRepository = subclass(function (pt) {
 
         if (!json) {
 
-            return new domain.TodoCollection([]);
+            return new TodoCollection([]);
 
         }
 
@@ -31,7 +35,7 @@ domain.TodoRepository = subclass(function (pt) {
 
         }
 
-        return new domain.TodoCollection(array);
+        return new TodoCollection(array);
 
     };
 
@@ -69,16 +73,19 @@ domain.TodoRepository = subclass(function (pt) {
      * Converts the todo item into js object.
      *
      * @private
-     * @param {domain.Todo} todo The todo item
+     * @param {Todo} todo The todo item
      * @return {Object}
      */
     pt.toObject = function (todo) {
 
         return {
-            name: todo.name,
+            id: todo.id,
+            body: todo.body,
             done: todo.done
         };
 
     };
 
 });
+
+module.exports = TodoRepository;
