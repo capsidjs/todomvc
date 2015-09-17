@@ -15,6 +15,28 @@ var TodoCollection = $.cc.subclass(function (pt) {
 
         this.items = todos;
 
+        this.map = {};
+
+        this.items.forEach(function (todo) {
+
+            this.map[todo.id] = todo;
+
+        }, this);
+
+    };
+
+    pt.getById = function (id) {
+
+        return this.map[id];
+
+    };
+
+    pt.toggleById = function (id) {
+
+        var todo = this.getById(id);
+
+        todo.done = !todo.done;
+
     };
 
     /**

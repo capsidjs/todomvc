@@ -57,7 +57,7 @@ var TodoItem = $.cc.subclass(function (pt) {
         this.completed = !this.completed;
         this.updateCompleted();
 
-        this.elem.trigger('todo-toggle');
+        this.elem.trigger('todo-item-toggle', this.elem.attr('id'));
 
     };
 

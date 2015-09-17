@@ -20,6 +20,8 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
 
         this.initEvents();
 
+        this.updateTodoList();
+
     };
 
 
@@ -27,11 +29,15 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
 
         var that = this;
 
-        this.elem.on('todo-new-item', function (e, item) {
+        this.elem.on('todo-new-item', function (e, todoBody) {
 
-            console.log('todo-new-item: ' + item);
+            that.addTodo(todoBody);
 
-            that.addTodo(item);
+        });
+
+        this.elem.on('todo-item-toggle', function (e, id) {
+
+            that.toggle(id);
 
         });
 
@@ -44,11 +50,9 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
 
         var todo = this.todoFactory.createByBody(todoBody);
 
-        console.log(todo);
-
         this.todoCollection.push(todo);
 
-        this.todoRepository.saveAll(this.todoCollection);
+        this.save();
 
         this.updateTodoList();
 
@@ -60,6 +64,28 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
     pt.updateTodoList = function () {
 
         this.elem.find('.todo-list').cc.get('todo-list').update(this.todoCollection);
+
+    };
+
+    /**
+     * Saves the current todo collection state.
+     */
+    pt.save = function () {
+
+        this.todoRepository.saveAll(this.todoCollection);
+
+    };
+
+    /**
+     * Toggles the todo state of the given id.
+     *
+     * @param {String} id
+     */
+    pt.toggle = function (id) {
+
+        this.todoCollection.toggleById(id);
+
+        this.save();
 
     };
 
