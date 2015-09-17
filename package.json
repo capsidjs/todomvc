@@ -1,5 +1,5 @@
 {
-  "name": "todomvc-mangrove",
+  "name": "todomvc-class-component",
   "version": "1.0.0",
   "description": "todomvc by mangrove.js",
   "main": "index.html",
@@ -10,14 +10,13 @@
   "repository": "https://github.com/kt3k/todomvc-mangrove.git",
   "keywords": [
     "todomvc",
-    "mangrove",
-    "mangrovejs"
+    "class-component"
   ],
   "author": "Yoshiya Hinosawa <stibium121@gmail.com> (https://twitter.com/kt3k)",
   "license": "MIT",
   "dependencies": {
     "jquery": "^2.1.4",
-    "mangrovejs": "^1.0.0",
+    "class-component": "^5.2.0",
     "todomvc-app-css": "^1.0.4",
     "todomvc-common": "^1.0.2"
   },
