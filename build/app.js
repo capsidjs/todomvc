@@ -10484,6 +10484,8 @@ var TodoCollection = $.cc.subclass(function (pt) {
 
         this.items.push(todo);
 
+        this.map[todo.id] = todo;
+
     };
 
     /**
@@ -10785,8 +10787,6 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
         });
 
         this.elem.on('todo-clear-completed', function () {
-
-            console.log('event got');
 
             that.clearCompleted();
 

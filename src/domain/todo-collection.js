@@ -60,6 +60,8 @@ var TodoCollection = $.cc.subclass(function (pt) {
 
         this.items.push(todo);
 
+        this.map[todo.id] = todo;
+
     };
 
     /**
