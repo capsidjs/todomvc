@@ -34,6 +34,12 @@ var TodoItem = $.cc.subclass(function (pt) {
 
         });
 
+        this.elem.find('.destroy').on('click', function () {
+
+            that.destroy();
+
+        });
+
     };
 
     /**
@@ -54,10 +60,18 @@ var TodoItem = $.cc.subclass(function (pt) {
 
     pt.toggleCompleted = function () {
 
+        this.elem.trigger('todo-item-toggle', this.elem.attr('id'));
+
         this.completed = !this.completed;
         this.updateCompleted();
 
-        this.elem.trigger('todo-item-toggle', this.elem.attr('id'));
+    };
+
+    pt.destroy = function () {
+
+        this.elem.parent().trigger('todo-item-destroy', this.elem.attr('id'));
+
+        this.elem.remove();
 
     };
 

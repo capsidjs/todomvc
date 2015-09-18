@@ -89,13 +89,24 @@ var TodoCollection = $.cc.subclass(function (pt) {
     };
 
     /**
+     * Removes the item by the id.
+     *
+     * @param {String} id The todo id
+     */
+    pt.removeById = function (id) {
+
+        this.remove(this.getById(id));
+
+    };
+
+    /**
      * Checks if the given todo is included by the list
      *
      * @param {Todo} todo The todo
      */
     pt.has = function (todo) {
 
-        return this.items.indexOf(tood) !== -1;
+        return this.items.indexOf(todo) !== -1;
 
     };
 

@@ -43,6 +43,12 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
 
         });
 
+        this.elem.on('todo-item-destroy', function (e, id) {
+
+            that.remove(id);
+
+        });
+
         $(window).on('hashchange', function () {
 
             that.updateView();
@@ -143,6 +149,21 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
             this.updateView();
 
         }
+
+        this.save();
+
+    };
+
+    /**
+     * Removes the todo of the given id.
+     *
+     * @param {String} id The todo id
+     */
+    pt.remove = function (id) {
+
+        this.todoCollection.removeById(id);
+
+        this.updateView();
 
         this.save();
 

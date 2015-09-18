@@ -10235,6 +10235,12 @@ var TodoItem = $.cc.subclass(function (pt) {
 
         });
 
+        this.elem.find('.destroy').on('click', function () {
+
+            that.destroy();
+
+        });
+
     };
 
     /**
@@ -10255,10 +10261,18 @@ var TodoItem = $.cc.subclass(function (pt) {
 
     pt.toggleCompleted = function () {
 
+        this.elem.trigger('todo-item-toggle', this.elem.attr('id'));
+
         this.completed = !this.completed;
         this.updateCompleted();
 
-        this.elem.trigger('todo-item-toggle', this.elem.attr('id'));
+    };
+
+    pt.destroy = function () {
+
+        this.elem.parent().trigger('todo-item-destroy', this.elem.attr('id'));
+
+        this.elem.remove();
 
     };
 
@@ -10483,13 +10497,24 @@ var TodoCollection = $.cc.subclass(function (pt) {
     };
 
     /**
+     * Removes the item by the id.
+     *
+     * @param {String} id The todo id
+     */
+    pt.removeById = function (id) {
+
+        this.remove(this.getById(id));
+
+    };
+
+    /**
      * Checks if the given todo is included by the list
      *
      * @param {Todo} todo The todo
      */
     pt.has = function (todo) {
 
-        return this.items.indexOf(tood) !== -1;
+        return this.items.indexOf(todo) !== -1;
 
     };
 
@@ -10737,6 +10762,12 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
 
         });
 
+        this.elem.on('todo-item-destroy', function (e, id) {
+
+            that.remove(id);
+
+        });
+
         $(window).on('hashchange', function () {
 
             that.updateView();
@@ -10837,6 +10868,21 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
             this.updateView();
 
         }
+
+        this.save();
+
+    };
+
+    /**
+     * Removes the todo of the given id.
+     *
+     * @param {String} id The todo id
+     */
+    pt.remove = function (id) {
+
+        this.todoCollection.removeById(id);
+
+        this.updateView();
 
         this.save();
 
