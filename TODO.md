@@ -1,6 +1,5 @@
 # TODO
-- Remove
-- Clear Completed
+- [bug] unable to toggle
 - Filter buttons feedback
 - Item counter
 - todo-footer (show-hide behaviour)
@@ -9,3 +8,5 @@
 - write tests
 
 # DONE
+- Remove
+- Clear Completed
