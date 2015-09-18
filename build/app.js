@@ -10148,10 +10148,26 @@ require('class-component');
 require('./component/todo-item');
 require('./component/todo-input');
 require('./component/todo-list');
+require('./component/todo-clear-btn');
 require('./service/todo-app');
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./component/todo-input":9,"./component/todo-item":10,"./component/todo-list":11,"./service/todo-app":17,"class-component":1,"jquery":7}],9:[function(require,module,exports){
+},{"./component/todo-clear-btn":9,"./component/todo-input":10,"./component/todo-item":11,"./component/todo-list":12,"./service/todo-app":18,"class-component":1,"jquery":7}],9:[function(require,module,exports){
+
+
+var $ = require('jquery');
+
+$.cc.register('todo-clear-btn', function (elem) {
+
+    elem.on('click', function () {
+
+        elem.trigger('todo-clear-completed');
+
+    });
+
+});
+
+},{"jquery":7}],10:[function(require,module,exports){
 
 
 var $ = require('jquery');
@@ -10198,7 +10214,7 @@ var TodoInput = $.cc.subclass(function (pt) {
 
 $.cc.assign('todo-input', TodoInput);
 
-},{"../const":12,"jquery":7}],10:[function(require,module,exports){
+},{"../const":13,"jquery":7}],11:[function(require,module,exports){
 
 
 var $ = require('jquery');
@@ -10320,7 +10336,7 @@ var TodoItem = $.cc.subclass(function (pt) {
 
 $.cc.assign('todo-item', TodoItem);
 
-},{"jquery":7}],11:[function(require,module,exports){
+},{"jquery":7}],12:[function(require,module,exports){
 
 var $ = require('jquery');
 
@@ -10354,7 +10370,7 @@ var TodoList = $.cc.subclass(function (pt) {
 
 $.cc.assign('todo-list', TodoList);
 
-},{"jquery":7}],12:[function(require,module,exports){
+},{"jquery":7}],13:[function(require,module,exports){
 
 
 
@@ -10376,7 +10392,7 @@ module.exports = {
 
 };
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 
 
 var $ = require('jquery');
@@ -10405,7 +10421,7 @@ var Todo = $.cc.subclass(function (pt) {
 
 module.exports = Todo;
 
-},{"jquery":7}],14:[function(require,module,exports){
+},{"jquery":7}],15:[function(require,module,exports){
 
 
 
@@ -10567,7 +10583,7 @@ var TodoCollection = $.cc.subclass(function (pt) {
 
 module.exports = TodoCollection;
 
-},{"jquery":7}],15:[function(require,module,exports){
+},{"jquery":7}],16:[function(require,module,exports){
 
 
 var $ = require('jquery');
@@ -10621,7 +10637,7 @@ var TodoFactory = $.cc.subclass(function (pt) {
 
 module.exports = TodoFactory;
 
-},{"./Todo":13,"jquery":7}],16:[function(require,module,exports){
+},{"./Todo":14,"jquery":7}],17:[function(require,module,exports){
 
 
 var $ = require('jquery');
@@ -10716,7 +10732,7 @@ var TodoRepository = $.cc.subclass(function (pt) {
 
 module.exports = TodoRepository;
 
-},{"../const":12,"./todo-collection":14,"jquery":7}],17:[function(require,module,exports){
+},{"../const":13,"./todo-collection":15,"jquery":7}],18:[function(require,module,exports){
 
 var $ = require('jquery');
 
@@ -10768,6 +10784,14 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
 
         });
 
+        this.elem.on('todo-clear-completed', function () {
+
+            console.log('event got');
+
+            that.clearCompleted();
+
+        });
+
         $(window).on('hashchange', function () {
 
             that.updateView();
@@ -10793,6 +10817,8 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
 
     /**
      * Updates the view in the todo app.
+     *
+     * @private
      */
     pt.updateView = function () {
 
@@ -10888,9 +10914,12 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
 
     };
 
+    /**
+     * Clears the completed todos.
+     */
     pt.clearCompleted = function () {
 
-        this.todoCollection = this.todoCollection.completed();
+        this.todoCollection = this.todoCollection.uncompleted();
 
         this.updateView();
 
@@ -10914,4 +10943,4 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
 
 $.cc.assign('todo-app', TodoApp);
 
-},{"../const":12,"../domain/todo-factory":15,"../domain/todo-repository":16,"jquery":7}]},{},[8]);
+},{"../const":13,"../domain/todo-factory":16,"../domain/todo-repository":17,"jquery":7}]},{},[8]);

@@ -49,6 +49,12 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
 
         });
 
+        this.elem.on('todo-clear-completed', function () {
+
+            that.clearCompleted();
+
+        });
+
         $(window).on('hashchange', function () {
 
             that.updateView();
@@ -74,6 +80,8 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
 
     /**
      * Updates the view in the todo app.
+     *
+     * @private
      */
     pt.updateView = function () {
 
@@ -169,9 +177,12 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
 
     };
 
+    /**
+     * Clears the completed todos.
+     */
     pt.clearCompleted = function () {
 
-        this.todoCollection = this.todoCollection.completed();
+        this.todoCollection = this.todoCollection.uncompleted();
 
         this.updateView();
 
