@@ -49,6 +49,12 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
 
         });
 
+        this.elem.on('todo-item-edited', function (e, id, title) {
+
+            that.editItem(id, title);
+
+        });
+
         this.elem.on('todo-clear-completed', function () {
 
             that.clearCompleted();
@@ -182,6 +188,20 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
         this.todoCollection.removeById(id);
 
         this.updateView();
+
+        this.save();
+
+    };
+
+    pt.editItem = function (id, title) {
+
+        var todo = this.todoCollection.getById(id);
+
+        console.log(id);
+        console.log(title);
+        console.log(todo);
+
+        todo.body = title;
 
         this.save();
 

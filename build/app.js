@@ -10150,10 +10150,11 @@ require('./component/todo-input');
 require('./component/todo-list');
 require('./component/todo-clear-btn');
 require('./component/todo-filters');
+require('./component/todo-edit');
 require('./service/todo-app');
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./component/todo-clear-btn":9,"./component/todo-filters":10,"./component/todo-input":11,"./component/todo-item":12,"./component/todo-list":13,"./service/todo-app":19,"class-component":1,"jquery":7}],9:[function(require,module,exports){
+},{"./component/todo-clear-btn":9,"./component/todo-edit":10,"./component/todo-filters":11,"./component/todo-input":12,"./component/todo-item":13,"./component/todo-list":14,"./service/todo-app":20,"class-component":1,"jquery":7}],9:[function(require,module,exports){
 
 
 var $ = require('jquery');
@@ -10169,6 +10170,51 @@ $.cc.register('todo-clear-btn', function (elem) {
 });
 
 },{"jquery":7}],10:[function(require,module,exports){
+
+
+var $ = require('jquery');
+
+var Const = require('../const');
+
+
+var TodoEdit = $.cc.subclass(function (pt) {
+    'use strict';
+
+    pt.constructor = function (elem) {
+
+        this.elem = elem;
+
+        this.initEvents();
+
+    };
+
+    pt.initEvents = function () {
+
+        var that = this;
+
+        this.elem.on('keypress', function (e) {
+
+            that.onKeypress(e);
+
+        });
+
+    };
+
+    pt.onKeypress = function (e) {
+
+        if (e.which === Const.KEYCODE.ENTER) {
+
+            this.elem.trigger('todo-edited', this.elem.val());
+
+        }
+
+    };
+
+});
+
+$.cc.assign('todo-edit', TodoEdit);
+
+},{"../const":15,"jquery":7}],11:[function(require,module,exports){
 
 
 
@@ -10206,7 +10252,7 @@ var TodoFilters = $.cc.subclass(function (pt) {
 
 $.cc.assign('todo-filters', TodoFilters);
 
-},{"jquery":7}],11:[function(require,module,exports){
+},{"jquery":7}],12:[function(require,module,exports){
 
 
 var $ = require('jquery');
@@ -10253,7 +10299,7 @@ var TodoInput = $.cc.subclass(function (pt) {
 
 $.cc.assign('todo-input', TodoInput);
 
-},{"../const":14,"jquery":7}],12:[function(require,module,exports){
+},{"../const":15,"jquery":7}],13:[function(require,module,exports){
 
 
 var $ = require('jquery');
@@ -10273,10 +10319,12 @@ var TodoItem = $.cc.subclass(function (pt) {
 
     pt.initElems = function () {
 
-        $('<input class="toggle" type="checkbox" />').appendTo(this.elem);
-        $('<label />').appendTo(this.elem);
-        $('<button class="destroy" />').appendTo(this.elem);
-        $('<input class="edit" />').appendTo(this.elem);
+        var view = $('<div class="view" />').appendTo(this.elem);
+
+        $('<input class="toggle" type="checkbox" />').appendTo(view);
+        $('<label />').appendTo(view);
+        $('<button class="destroy" />').appendTo(view);
+        $('<input class="edit" />').appendTo(this.elem).cc.init('todo-edit');
 
     };
 
@@ -10293,6 +10341,18 @@ var TodoItem = $.cc.subclass(function (pt) {
         this.elem.find('.destroy').on('click', function () {
 
             that.destroy();
+
+        });
+
+        this.elem.find('label').on('dblclick', function () {
+
+            that.startEditing();
+
+        });
+
+        this.elem.on('todo-edited', function (e, title) {
+
+            that.stopEditing(title);
 
         });
 
@@ -10364,9 +10424,22 @@ var TodoItem = $.cc.subclass(function (pt) {
 
     };
 
-    pt.stopEditing = function () {
+    pt.stopEditing = function (title) {
+
+        console.log(title);
 
         this.elem.removeClass('editing');
+
+        if (title === '' || title == null) {
+
+            that.destroy();
+            return;
+
+        }
+
+        this.elem.find('label').text(title);
+
+        this.elem.trigger('todo-item-edited', [this.elem.attr('id'), title]);
 
     };
 
@@ -10375,7 +10448,7 @@ var TodoItem = $.cc.subclass(function (pt) {
 
 $.cc.assign('todo-item', TodoItem);
 
-},{"jquery":7}],13:[function(require,module,exports){
+},{"jquery":7}],14:[function(require,module,exports){
 
 var $ = require('jquery');
 
@@ -10409,7 +10482,7 @@ var TodoList = $.cc.subclass(function (pt) {
 
 $.cc.assign('todo-list', TodoList);
 
-},{"jquery":7}],14:[function(require,module,exports){
+},{"jquery":7}],15:[function(require,module,exports){
 
 
 
@@ -10431,7 +10504,7 @@ module.exports = {
 
 };
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 
 
 var $ = require('jquery');
@@ -10460,7 +10533,7 @@ var Todo = $.cc.subclass(function (pt) {
 
 module.exports = Todo;
 
-},{"jquery":7}],16:[function(require,module,exports){
+},{"jquery":7}],17:[function(require,module,exports){
 
 
 
@@ -10624,7 +10697,7 @@ var TodoCollection = $.cc.subclass(function (pt) {
 
 module.exports = TodoCollection;
 
-},{"jquery":7}],17:[function(require,module,exports){
+},{"jquery":7}],18:[function(require,module,exports){
 
 
 var $ = require('jquery');
@@ -10678,7 +10751,7 @@ var TodoFactory = $.cc.subclass(function (pt) {
 
 module.exports = TodoFactory;
 
-},{"./Todo":15,"jquery":7}],18:[function(require,module,exports){
+},{"./Todo":16,"jquery":7}],19:[function(require,module,exports){
 
 
 var $ = require('jquery');
@@ -10773,7 +10846,7 @@ var TodoRepository = $.cc.subclass(function (pt) {
 
 module.exports = TodoRepository;
 
-},{"../const":14,"./todo-collection":16,"jquery":7}],19:[function(require,module,exports){
+},{"../const":15,"./todo-collection":17,"jquery":7}],20:[function(require,module,exports){
 
 var $ = require('jquery');
 
@@ -10822,6 +10895,12 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
         this.elem.on('todo-item-destroy', function (e, id) {
 
             that.remove(id);
+
+        });
+
+        this.elem.on('todo-item-edited', function (e, id, title) {
+
+            that.editItem(id, title);
 
         });
 
@@ -10963,6 +11042,20 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
 
     };
 
+    pt.editItem = function (id, title) {
+
+        var todo = this.todoCollection.getById(id);
+
+        console.log(id);
+        console.log(title);
+        console.log(todo);
+
+        todo.body = title;
+
+        this.save();
+
+    };
+
     /**
      * Clears the completed todos.
      */
@@ -10992,4 +11085,4 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
 
 $.cc.assign('todo-app', TodoApp);
 
-},{"../const":14,"../domain/todo-factory":17,"../domain/todo-repository":18,"jquery":7}]},{},[8]);
+},{"../const":15,"../domain/todo-factory":18,"../domain/todo-repository":19,"jquery":7}]},{},[8]);

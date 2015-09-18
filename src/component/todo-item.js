@@ -17,10 +17,12 @@ var TodoItem = $.cc.subclass(function (pt) {
 
     pt.initElems = function () {
 
-        $('<input class="toggle" type="checkbox" />').appendTo(this.elem);
-        $('<label />').appendTo(this.elem);
-        $('<button class="destroy" />').appendTo(this.elem);
-        $('<input class="edit" />').appendTo(this.elem);
+        var view = $('<div class="view" />').appendTo(this.elem);
+
+        $('<input class="toggle" type="checkbox" />').appendTo(view);
+        $('<label />').appendTo(view);
+        $('<button class="destroy" />').appendTo(view);
+        $('<input class="edit" />').appendTo(this.elem).cc.init('todo-edit');
 
     };
 
@@ -37,6 +39,18 @@ var TodoItem = $.cc.subclass(function (pt) {
         this.elem.find('.destroy').on('click', function () {
 
             that.destroy();
+
+        });
+
+        this.elem.find('label').on('dblclick', function () {
+
+            that.startEditing();
+
+        });
+
+        this.elem.on('todo-edited', function (e, title) {
+
+            that.stopEditing(title);
 
         });
 
@@ -108,9 +122,22 @@ var TodoItem = $.cc.subclass(function (pt) {
 
     };
 
-    pt.stopEditing = function () {
+    pt.stopEditing = function (title) {
+
+        console.log(title);
 
         this.elem.removeClass('editing');
+
+        if (title === '' || title == null) {
+
+            that.destroy();
+            return;
+
+        }
+
+        this.elem.find('label').text(title);
+
+        this.elem.trigger('todo-item-edited', [this.elem.attr('id'), title]);
 
     };
 

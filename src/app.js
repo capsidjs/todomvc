@@ -9,4 +9,5 @@ require('./component/todo-input');
 require('./component/todo-list');
 require('./component/todo-clear-btn');
 require('./component/todo-filters');
+require('./component/todo-edit');
 require('./service/todo-app');
