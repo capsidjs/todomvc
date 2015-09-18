@@ -8,7 +8,7 @@ var TodoRepository = require('../domain/todo-repository');
 
 
 
-var TodoApp = $.cc.subclass(function (pt, parent) {
+var TodoApp = $.cc.subclass(function (pt) {
     'use strict'
 
     pt.constructor = function (elem) {
