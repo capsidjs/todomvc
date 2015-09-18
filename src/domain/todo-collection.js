@@ -35,7 +35,7 @@ var TodoCollection = $.cc.subclass(function (pt) {
 
         var todo = this.getById(id);
 
-        todo.done = !todo.done;
+        todo.completed = !todo.completed;
 
     };
 
@@ -119,7 +119,7 @@ var TodoCollection = $.cc.subclass(function (pt) {
      */
     pt.completed = function () {
 
-        return new TodoCollection(this.items.filter(function (todo) { return todo.done; }));
+        return new TodoCollection(this.items.filter(function (todo) { return todo.completed; }));
 
     };
 
@@ -130,7 +130,7 @@ var TodoCollection = $.cc.subclass(function (pt) {
      */
     pt.uncompleted = function () {
 
-        return new TodoCollection(this.items.filter(function (todo) { return !todo.done; }));
+        return new TodoCollection(this.items.filter(function (todo) { return !todo.completed; }));
 
     };
 

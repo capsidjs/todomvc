@@ -82,8 +82,8 @@ var TodoRepository = $.cc.subclass(function (pt) {
 
         return {
             id: todo.id,
-            body: todo.body,
-            done: todo.done
+            title: todo.title,
+            completed: todo.completed
         };
 
     };

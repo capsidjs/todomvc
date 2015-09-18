@@ -10378,17 +10378,17 @@ var TodoItem = $.cc.subclass(function (pt) {
     };
 
     /**
-     * Updates the todo body by todo model
+     * Updates the todo title by todo model
      *
      * @param {Todo} todo The todo
      */
     pt.update = function (todo) {
 
         this.elem.attr('id', todo.id);
-        this.elem.find('label').text(todo.body);
-        this.elem.find('.edit').val(todo.body);
+        this.elem.find('label').text(todo.title);
+        this.elem.find('.edit').val(todo.title);
 
-        this.completed = todo.done;
+        this.completed = todo.completed;
         this.updateCompleted();
 
     };
@@ -10537,14 +10537,14 @@ var Todo = $.cc.subclass(function (pt) {
 
     /**
      * @param {String} id The todo's id
-     * @param {String} body The todo's body
-     * @param {Boolean} done The flag indicates if it's done or not
+     * @param {String} title The todo's title
+     * @param {Boolean} completed The flag indicates if it's done or not
      */
-    pt.constructor = function (id, body, done) {
+    pt.constructor = function (id, title, completed) {
 
         this.id = id;
-        this.body = body;
-        this.done = done;
+        this.title = title;
+        this.completed = completed;
 
     };
 
@@ -10590,7 +10590,7 @@ var TodoCollection = $.cc.subclass(function (pt) {
 
         var todo = this.getById(id);
 
-        todo.done = !todo.done;
+        todo.completed = !todo.completed;
 
     };
 
@@ -10674,7 +10674,7 @@ var TodoCollection = $.cc.subclass(function (pt) {
      */
     pt.completed = function () {
 
-        return new TodoCollection(this.items.filter(function (todo) { return todo.done; }));
+        return new TodoCollection(this.items.filter(function (todo) { return todo.completed; }));
 
     };
 
@@ -10685,7 +10685,7 @@ var TodoCollection = $.cc.subclass(function (pt) {
      */
     pt.uncompleted = function () {
 
-        return new TodoCollection(this.items.filter(function (todo) { return !todo.done; }));
+        return new TodoCollection(this.items.filter(function (todo) { return !todo.completed; }));
 
     };
 
@@ -10733,17 +10733,17 @@ var TodoFactory = $.cc.subclass(function (pt) {
     'use strict';
 
     /**
-     * Creates a todo model from the given todo body.
+     * Creates a todo model from the given todo title.
      *
-     * @param {String} todoBody The todo body
+     * @param {String} title The todo title
      * @return {Todo}
      */
-    pt.createByBody = function (todoBody) {
+    pt.createByBody = function (title) {
 
         return this.createFromObject({
             id: this.generateId(),
-            body: todoBody,
-            done: false
+            title: title,
+            completed: false
         });
 
     };
@@ -10756,7 +10756,7 @@ var TodoFactory = $.cc.subclass(function (pt) {
      */
     pt.createFromObject = function (obj) {
 
-        return new Todo(obj.id, obj.body, obj.done);
+        return new Todo(obj.id, obj.title, obj.completed);
 
     };
 
@@ -10855,8 +10855,8 @@ var TodoRepository = $.cc.subclass(function (pt) {
 
         return {
             id: todo.id,
-            body: todo.body,
-            done: todo.done
+            title: todo.title,
+            completed: todo.completed
         };
 
     };

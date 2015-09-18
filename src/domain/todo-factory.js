@@ -14,17 +14,17 @@ var TodoFactory = $.cc.subclass(function (pt) {
     'use strict';
 
     /**
-     * Creates a todo model from the given todo body.
+     * Creates a todo model from the given todo title.
      *
-     * @param {String} todoBody The todo body
+     * @param {String} title The todo title
      * @return {Todo}
      */
-    pt.createByBody = function (todoBody) {
+    pt.createByBody = function (title) {
 
         return this.createFromObject({
             id: this.generateId(),
-            body: todoBody,
-            done: false
+            title: title,
+            completed: false
         });
 
     };
@@ -37,7 +37,7 @@ var TodoFactory = $.cc.subclass(function (pt) {
      */
     pt.createFromObject = function (obj) {
 
-        return new Todo(obj.id, obj.body, obj.done);
+        return new Todo(obj.id, obj.title, obj.completed);
 
     };
 

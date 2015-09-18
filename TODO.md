@@ -1,6 +1,5 @@
 # TODO
 - toggle-all-button (toggle-all function, toggle-state change behaviour)
-- rename model fields (title, completed)
 - Edit cancel behaviour
 - write tests
 - add cov report
@@ -11,6 +10,7 @@
 - pull-request
 
 # DONE
+- rename model fields (title, completed)
 - toggle-all-button (show-hide behaviour)
 - todo-footer (show-hide behaviour)
 - Item counter

@@ -11,14 +11,14 @@ var Todo = $.cc.subclass(function (pt) {
 
     /**
      * @param {String} id The todo's id
-     * @param {String} body The todo's body
-     * @param {Boolean} done The flag indicates if it's done or not
+     * @param {String} title The todo's title
+     * @param {Boolean} completed The flag indicates if it's done or not
      */
-    pt.constructor = function (id, body, done) {
+    pt.constructor = function (id, title, completed) {
 
         this.id = id;
-        this.body = body;
-        this.done = done;
+        this.title = title;
+        this.completed = completed;
 
     };
 

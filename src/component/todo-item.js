@@ -57,17 +57,17 @@ var TodoItem = $.cc.subclass(function (pt) {
     };
 
     /**
-     * Updates the todo body by todo model
+     * Updates the todo title by todo model
      *
      * @param {Todo} todo The todo
      */
     pt.update = function (todo) {
 
         this.elem.attr('id', todo.id);
-        this.elem.find('label').text(todo.body);
-        this.elem.find('.edit').val(todo.body);
+        this.elem.find('label').text(todo.title);
+        this.elem.find('.edit').val(todo.title);
 
-        this.completed = todo.done;
+        this.completed = todo.completed;
         this.updateCompleted();
 
     };
