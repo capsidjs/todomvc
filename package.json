@@ -5,7 +5,7 @@
   "main": "index.html",
   "scripts": {
     "test": "mocha spec",
-    "build": "browserify src/app.js > build/app.js"
+    "build": "browserify src/index.js > build/app.js"
   },
   "repository": "https://github.com/kt3k/todomvc-mangrove.git",
   "keywords": [
