@@ -1,5 +1,4 @@
 # TODO
-- Filter buttons feedback
 - Item counter
 - todo-footer (show-hide behaviour)
 - toggle-all-button (toggle-all function, show-hide behaviour)
@@ -7,6 +6,7 @@
 - write tests
 
 # DONE
+- Filter buttons feedback
 - [bug] unable to toggle
 - Remove
 - Clear Completed

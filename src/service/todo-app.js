@@ -87,6 +87,8 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
 
         this.updateTodoList(this.getDisplayCollection());
 
+        this.updateFilterBtns();
+
     };
 
     /**
@@ -97,6 +99,14 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
     pt.updateTodoList = function (todoCollection) {
 
         this.elem.find('.todo-list').cc.get('todo-list').update(todoCollection);
+
+    };
+
+    pt.updateFilterBtns = function () {
+
+        var filterName = this.getFilterNameFromHash();
+
+        this.elem.find('.todo-filters').cc.get('todo-filters').setFilter(filterName);
 
     };
 
