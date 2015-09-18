@@ -97,6 +97,8 @@ var TodoApp = $.cc.subclass(function (pt) {
 
         this.updateTodoCount();
 
+        this.updateVisibility();
+
     };
 
     /**
@@ -121,6 +123,20 @@ var TodoApp = $.cc.subclass(function (pt) {
     pt.updateTodoCount = function () {
 
         this.elem.find('.todo-count').cc.get('todo-count').setCount(this.todoCollection.uncompleted().toArray().length);
+
+    };
+
+    pt.updateVisibility = function () {
+
+        if (this.isEmpty()) {
+
+            this.elem.find('#main, #footer').css('display', 'none');
+
+        } else {
+
+            this.elem.find('#main, #footer').css('display', 'block');
+
+        }
 
     };
 
