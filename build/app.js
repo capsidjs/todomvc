@@ -10151,10 +10151,11 @@ require('./component/todo-list');
 require('./component/todo-clear-btn');
 require('./component/todo-filters');
 require('./component/todo-edit');
+require('./component/todo-count');
 require('./service/todo-app');
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./component/todo-clear-btn":9,"./component/todo-edit":10,"./component/todo-filters":11,"./component/todo-input":12,"./component/todo-item":13,"./component/todo-list":14,"./service/todo-app":20,"class-component":1,"jquery":7}],9:[function(require,module,exports){
+},{"./component/todo-clear-btn":9,"./component/todo-count":10,"./component/todo-edit":11,"./component/todo-filters":12,"./component/todo-input":13,"./component/todo-item":14,"./component/todo-list":15,"./service/todo-app":21,"class-component":1,"jquery":7}],9:[function(require,module,exports){
 
 
 var $ = require('jquery');
@@ -10170,6 +10171,42 @@ $.cc.register('todo-clear-btn', function (elem) {
 });
 
 },{"jquery":7}],10:[function(require,module,exports){
+
+
+var $ = require('jquery');
+
+var TodoCount = $.cc.subclass(function (pt) {
+    'use strict';
+
+    pt.constructor = function (elem) {
+
+        this.elem = elem;
+
+    };
+
+    pt.setCount = function (count) {
+
+        this.elem.empty();
+
+        if (count === 1) {
+
+            this.elem.text(' item left');
+
+        } else {
+
+            this.elem.text(' items left');
+
+        }
+
+        $('<strong />').text(count).prependTo(this.elem);
+
+    };
+
+});
+
+$.cc.assign('todo-count', TodoCount);
+
+},{"jquery":7}],11:[function(require,module,exports){
 
 
 var $ = require('jquery');
@@ -10214,7 +10251,7 @@ var TodoEdit = $.cc.subclass(function (pt) {
 
 $.cc.assign('todo-edit', TodoEdit);
 
-},{"../const":15,"jquery":7}],11:[function(require,module,exports){
+},{"../const":16,"jquery":7}],12:[function(require,module,exports){
 
 
 
@@ -10252,7 +10289,7 @@ var TodoFilters = $.cc.subclass(function (pt) {
 
 $.cc.assign('todo-filters', TodoFilters);
 
-},{"jquery":7}],12:[function(require,module,exports){
+},{"jquery":7}],13:[function(require,module,exports){
 
 
 var $ = require('jquery');
@@ -10299,7 +10336,7 @@ var TodoInput = $.cc.subclass(function (pt) {
 
 $.cc.assign('todo-input', TodoInput);
 
-},{"../const":15,"jquery":7}],13:[function(require,module,exports){
+},{"../const":16,"jquery":7}],14:[function(require,module,exports){
 
 
 var $ = require('jquery');
@@ -10448,7 +10485,7 @@ var TodoItem = $.cc.subclass(function (pt) {
 
 $.cc.assign('todo-item', TodoItem);
 
-},{"jquery":7}],14:[function(require,module,exports){
+},{"jquery":7}],15:[function(require,module,exports){
 
 var $ = require('jquery');
 
@@ -10482,7 +10519,7 @@ var TodoList = $.cc.subclass(function (pt) {
 
 $.cc.assign('todo-list', TodoList);
 
-},{"jquery":7}],15:[function(require,module,exports){
+},{"jquery":7}],16:[function(require,module,exports){
 
 
 
@@ -10504,7 +10541,7 @@ module.exports = {
 
 };
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 
 
 var $ = require('jquery');
@@ -10533,7 +10570,7 @@ var Todo = $.cc.subclass(function (pt) {
 
 module.exports = Todo;
 
-},{"jquery":7}],17:[function(require,module,exports){
+},{"jquery":7}],18:[function(require,module,exports){
 
 
 
@@ -10697,7 +10734,7 @@ var TodoCollection = $.cc.subclass(function (pt) {
 
 module.exports = TodoCollection;
 
-},{"jquery":7}],18:[function(require,module,exports){
+},{"jquery":7}],19:[function(require,module,exports){
 
 
 var $ = require('jquery');
@@ -10751,7 +10788,7 @@ var TodoFactory = $.cc.subclass(function (pt) {
 
 module.exports = TodoFactory;
 
-},{"./Todo":16,"jquery":7}],19:[function(require,module,exports){
+},{"./Todo":17,"jquery":7}],20:[function(require,module,exports){
 
 
 var $ = require('jquery');
@@ -10846,7 +10883,7 @@ var TodoRepository = $.cc.subclass(function (pt) {
 
 module.exports = TodoRepository;
 
-},{"../const":15,"./todo-collection":17,"jquery":7}],20:[function(require,module,exports){
+},{"../const":16,"./todo-collection":18,"jquery":7}],21:[function(require,module,exports){
 
 var $ = require('jquery');
 
@@ -10944,6 +10981,8 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
 
         this.updateFilterBtns();
 
+        this.updateTodoCount();
+
     };
 
     /**
@@ -10962,6 +11001,12 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
         var filterName = this.getFilterNameFromHash();
 
         this.elem.find('.todo-filters').cc.get('todo-filters').setFilter(filterName);
+
+    };
+
+    pt.updateTodoCount = function () {
+
+        this.elem.find('.todo-count').cc.get('todo-count').setCount(this.todoCollection.uncompleted().toArray().length);
 
     };
 
@@ -11046,10 +11091,6 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
 
         var todo = this.todoCollection.getById(id);
 
-        console.log(id);
-        console.log(title);
-        console.log(todo);
-
         todo.body = title;
 
         this.save();
@@ -11085,4 +11126,4 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
 
 $.cc.assign('todo-app', TodoApp);
 
-},{"../const":15,"../domain/todo-factory":18,"../domain/todo-repository":19,"jquery":7}]},{},[8]);
+},{"../const":16,"../domain/todo-factory":19,"../domain/todo-repository":20,"jquery":7}]},{},[8]);

@@ -95,6 +95,8 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
 
         this.updateFilterBtns();
 
+        this.updateTodoCount();
+
     };
 
     /**
@@ -113,6 +115,12 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
         var filterName = this.getFilterNameFromHash();
 
         this.elem.find('.todo-filters').cc.get('todo-filters').setFilter(filterName);
+
+    };
+
+    pt.updateTodoCount = function () {
+
+        this.elem.find('.todo-count').cc.get('todo-count').setCount(this.todoCollection.uncompleted().toArray().length);
 
     };
 
@@ -196,10 +204,6 @@ var TodoApp = $.cc.subclass(function (pt, parent) {
     pt.editItem = function (id, title) {
 
         var todo = this.todoCollection.getById(id);
-
-        console.log(id);
-        console.log(title);
-        console.log(todo);
 
         todo.body = title;
 
