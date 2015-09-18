@@ -4,6 +4,12 @@
 - rename model fields (title, completed)
 - Edit cancel behaviour
 - write tests
+- add cov report
+- travis
+- jshint
+- spec review
+- code review
+- pull-request
 
 # DONE
 - Item counter
