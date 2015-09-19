@@ -11,4 +11,5 @@ require('./component/todo-clear-btn');
 require('./component/todo-filters');
 require('./component/todo-edit');
 require('./component/todo-count');
+require('./component/todo-toggle-all');
 require('./service/todo-app');

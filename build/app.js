@@ -10245,7 +10245,7 @@ var TodoEdit = $.cc.subclass(function (pt) {
 
 $.cc.assign('todo-edit', TodoEdit);
 
-},{"../const":15,"jquery":7}],11:[function(require,module,exports){
+},{"../const":16,"jquery":7}],11:[function(require,module,exports){
 
 
 
@@ -10330,7 +10330,7 @@ var TodoInput = $.cc.subclass(function (pt) {
 
 $.cc.assign('todo-input', TodoInput);
 
-},{"../const":15,"jquery":7}],13:[function(require,module,exports){
+},{"../const":16,"jquery":7}],13:[function(require,module,exports){
 
 
 var $ = require('jquery');
@@ -10437,14 +10437,14 @@ var TodoItem = $.cc.subclass(function (pt) {
 
     pt.complete = function () {
 
-        this.elem.find('.toggle').attr('checked', 'checked');
+        this.elem.find('.toggle').prop('checked', true);
         this.elem.addClass('completed');
 
     };
 
     pt.uncomplete = function () {
 
-        this.elem.find('.toggle').attr('checked', null);
+        this.elem.find('.toggle').prop('checked', false);
         this.elem.removeClass('completed');
 
     };
@@ -10516,6 +10516,64 @@ $.cc.assign('todo-list', TodoList);
 },{"jquery":7}],15:[function(require,module,exports){
 
 
+var $ = require('jquery');
+
+var TodoToggleAll = $.cc.subclass(function (pt) {
+    'use strict';
+
+    pt.constructor = function (elem) {
+
+        this.elem = elem;
+
+        var that = this;
+
+        this.elem.on('click', function () {
+
+            that.onClick();
+
+        });
+
+    };
+
+    pt.onClick = function () {
+
+        if (this.checked) {
+
+            this.elem.trigger('todo-uncomplete-all');
+
+        } else {
+
+            this.elem.trigger('todo-complete-all');
+
+        }
+
+        this.check = !this.check;
+
+    };
+
+    pt.updateBtnState = function (activeItemExists) {
+
+        this.checked = !activeItemExists;
+
+        if (this.checked) {
+
+            this.elem.prop('checked', true);
+
+        } else {
+
+            this.elem.prop('checked', false);
+
+        }
+
+    };
+
+});
+
+$.cc.assign('todo-toggle-all', TodoToggleAll);
+
+},{"jquery":7}],16:[function(require,module,exports){
+
+
 
 module.exports = {
 
@@ -10535,7 +10593,7 @@ module.exports = {
 
 };
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 
 
 var $ = require('jquery');
@@ -10564,7 +10622,7 @@ var Todo = $.cc.subclass(function (pt) {
 
 module.exports = Todo;
 
-},{"jquery":7}],17:[function(require,module,exports){
+},{"jquery":7}],18:[function(require,module,exports){
 
 
 
@@ -10723,12 +10781,32 @@ var TodoCollection = $.cc.subclass(function (pt) {
 
     };
 
+    pt.completeAll = function () {
+
+        this.items.forEach(function (todo) {
+
+            todo.completed = true;
+
+        });
+
+    };
+
+    pt.uncompleteAll = function () {
+
+        this.items.forEach(function (todo) {
+
+            todo.completed = false;
+
+        });
+
+    };
+
 });
 
 
 module.exports = TodoCollection;
 
-},{"jquery":7}],18:[function(require,module,exports){
+},{"jquery":7}],19:[function(require,module,exports){
 
 
 var $ = require('jquery');
@@ -10782,7 +10860,7 @@ var TodoFactory = $.cc.subclass(function (pt) {
 
 module.exports = TodoFactory;
 
-},{"./Todo":16,"jquery":7}],19:[function(require,module,exports){
+},{"./Todo":17,"jquery":7}],20:[function(require,module,exports){
 
 
 var $ = require('jquery');
@@ -10877,7 +10955,7 @@ var TodoRepository = $.cc.subclass(function (pt) {
 
 module.exports = TodoRepository;
 
-},{"../const":15,"./todo-collection":17,"jquery":7}],20:[function(require,module,exports){
+},{"../const":16,"./todo-collection":18,"jquery":7}],21:[function(require,module,exports){
 (function (global){
 
 
@@ -10892,10 +10970,11 @@ require('./component/todo-clear-btn');
 require('./component/todo-filters');
 require('./component/todo-edit');
 require('./component/todo-count');
+require('./component/todo-toggle-all');
 require('./service/todo-app');
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./component/todo-clear-btn":8,"./component/todo-count":9,"./component/todo-edit":10,"./component/todo-filters":11,"./component/todo-input":12,"./component/todo-item":13,"./component/todo-list":14,"./service/todo-app":21,"class-component":1,"jquery":7}],21:[function(require,module,exports){
+},{"./component/todo-clear-btn":8,"./component/todo-count":9,"./component/todo-edit":10,"./component/todo-filters":11,"./component/todo-input":12,"./component/todo-item":13,"./component/todo-list":14,"./component/todo-toggle-all":15,"./service/todo-app":22,"class-component":1,"jquery":7}],22:[function(require,module,exports){
 
 var $ = require('jquery');
 
@@ -10959,6 +11038,18 @@ var TodoApp = $.cc.subclass(function (pt) {
 
         });
 
+        this.elem.on('todo-complete-all', function () {
+
+            that.completeAll();
+
+        });
+
+        this.elem.on('todo-uncomplete-all', function () {
+
+            that.uncompleteAll();
+
+        });
+
         $(window).on('hashchange', function () {
 
             that.updateView();
@@ -10989,13 +11080,23 @@ var TodoApp = $.cc.subclass(function (pt) {
      */
     pt.updateView = function () {
 
-        this.updateTodoList(this.getDisplayCollection());
+        this.updateTodoList();
+
+        this.updateControls();
+
+    };
+
+    pt.updateControls = function () {
+
+        console.log('update contorls');
 
         this.updateFilterBtns();
 
         this.updateTodoCount();
 
         this.updateVisibility();
+
+        this.updateToggleBtnState();
 
     };
 
@@ -11005,6 +11106,8 @@ var TodoApp = $.cc.subclass(function (pt) {
      * @param {TodoCollection}
      */
     pt.updateTodoList = function (todoCollection) {
+
+        var todoCollection = this.getDisplayCollection();
 
         this.elem.find('.todo-list').cc.get('todo-list').update(todoCollection);
 
@@ -11026,7 +11129,7 @@ var TodoApp = $.cc.subclass(function (pt) {
 
     pt.updateVisibility = function () {
 
-        if (this.isEmpty()) {
+        if (this.todoCollection.isEmpty()) {
 
             this.elem.find('#main, #footer').css('display', 'none');
 
@@ -11035,6 +11138,14 @@ var TodoApp = $.cc.subclass(function (pt) {
             this.elem.find('#main, #footer').css('display', 'block');
 
         }
+
+    };
+
+    pt.updateToggleBtnState = function () {
+
+        console.log('updateToggleBtnState');
+
+        this.elem.find('.todo-toggle-all').cc.get('todo-toggle-all').updateBtnState(!this.todoCollection.uncompleted().isEmpty());
 
     };
 
@@ -11092,9 +11203,11 @@ var TodoApp = $.cc.subclass(function (pt) {
 
         if (this.filterIsEnabled()) {
 
-            this.updateView();
+            this.updateTodoList();
 
         }
+
+        this.updateControls();
 
         this.save();
 
@@ -11138,14 +11251,47 @@ var TodoApp = $.cc.subclass(function (pt) {
 
     };
 
-    /**
-     * Checks if the todo collection is empty
-     *
-     * @return {Boolean}
-     */
-    pt.isEmpty = function () {
+    pt.uncompleteAll = function () {
 
-        return this.todoCollection.isEmpty();
+        if (this.filterIsEnabled()) {
+
+            this.todoCollection.uncompleteAll();
+
+            this.updateView();
+
+            this.save()
+
+        } else {
+
+            this.todoCollection.completed().forEach(function (todo) {
+
+                this.elem.find('#' + todo.id).cc.get('todo-item').toggleCompleted();
+
+            }, this);
+
+        }
+
+    };
+
+    pt.completeAll = function () {
+
+        if (this.filterIsEnabled()) {
+
+            this.todoCollection.completeAll();
+
+            this.updateView();
+
+            this.save()
+
+        } else {
+
+            this.todoCollection.uncompleted().forEach(function (todo) {
+
+                this.elem.find('#' + todo.id).cc.get('todo-item').toggleCompleted();
+
+            }, this);
+
+        }
 
     };
 
@@ -11154,4 +11300,4 @@ var TodoApp = $.cc.subclass(function (pt) {
 
 $.cc.assign('todo-app', TodoApp);
 
-},{"../const":15,"../domain/todo-factory":18,"../domain/todo-repository":19,"jquery":7}]},{},[20]);
+},{"../const":16,"../domain/todo-factory":19,"../domain/todo-repository":20,"jquery":7}]},{},[21]);

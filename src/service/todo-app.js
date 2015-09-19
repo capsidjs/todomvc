@@ -61,6 +61,18 @@ var TodoApp = $.cc.subclass(function (pt) {
 
         });
 
+        this.elem.on('todo-complete-all', function () {
+
+            that.completeAll();
+
+        });
+
+        this.elem.on('todo-uncomplete-all', function () {
+
+            that.uncompleteAll();
+
+        });
+
         $(window).on('hashchange', function () {
 
             that.updateView();
@@ -91,13 +103,23 @@ var TodoApp = $.cc.subclass(function (pt) {
      */
     pt.updateView = function () {
 
-        this.updateTodoList(this.getDisplayCollection());
+        this.updateTodoList();
+
+        this.updateControls();
+
+    };
+
+    pt.updateControls = function () {
+
+        console.log('update contorls');
 
         this.updateFilterBtns();
 
         this.updateTodoCount();
 
         this.updateVisibility();
+
+        this.updateToggleBtnState();
 
     };
 
@@ -107,6 +129,8 @@ var TodoApp = $.cc.subclass(function (pt) {
      * @param {TodoCollection}
      */
     pt.updateTodoList = function (todoCollection) {
+
+        var todoCollection = this.getDisplayCollection();
 
         this.elem.find('.todo-list').cc.get('todo-list').update(todoCollection);
 
@@ -128,7 +152,7 @@ var TodoApp = $.cc.subclass(function (pt) {
 
     pt.updateVisibility = function () {
 
-        if (this.isEmpty()) {
+        if (this.todoCollection.isEmpty()) {
 
             this.elem.find('#main, #footer').css('display', 'none');
 
@@ -137,6 +161,14 @@ var TodoApp = $.cc.subclass(function (pt) {
             this.elem.find('#main, #footer').css('display', 'block');
 
         }
+
+    };
+
+    pt.updateToggleBtnState = function () {
+
+        console.log('updateToggleBtnState');
+
+        this.elem.find('.todo-toggle-all').cc.get('todo-toggle-all').updateBtnState(!this.todoCollection.uncompleted().isEmpty());
 
     };
 
@@ -194,9 +226,11 @@ var TodoApp = $.cc.subclass(function (pt) {
 
         if (this.filterIsEnabled()) {
 
-            this.updateView();
+            this.updateTodoList();
 
         }
+
+        this.updateControls();
 
         this.save();
 
@@ -240,14 +274,47 @@ var TodoApp = $.cc.subclass(function (pt) {
 
     };
 
-    /**
-     * Checks if the todo collection is empty
-     *
-     * @return {Boolean}
-     */
-    pt.isEmpty = function () {
+    pt.uncompleteAll = function () {
 
-        return this.todoCollection.isEmpty();
+        if (this.filterIsEnabled()) {
+
+            this.todoCollection.uncompleteAll();
+
+            this.updateView();
+
+            this.save()
+
+        } else {
+
+            this.todoCollection.completed().forEach(function (todo) {
+
+                this.elem.find('#' + todo.id).cc.get('todo-item').toggleCompleted();
+
+            }, this);
+
+        }
+
+    };
+
+    pt.completeAll = function () {
+
+        if (this.filterIsEnabled()) {
+
+            this.todoCollection.completeAll();
+
+            this.updateView();
+
+            this.save()
+
+        } else {
+
+            this.todoCollection.uncompleted().forEach(function (todo) {
+
+                this.elem.find('#' + todo.id).cc.get('todo-item').toggleCompleted();
+
+            }, this);
+
+        }
 
     };
 

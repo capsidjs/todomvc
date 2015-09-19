@@ -1,6 +1,4 @@
 # TODO
-- toggle-all-button (toggle-all function)
-- toggle-all-button (toggle-state change behaviour)
 - write tests
 - add cov report
 - travis
@@ -10,6 +8,8 @@
 - pull-request
 
 # DONE
+- toggle-all-button (toggle-all function)
+- toggle-all-button (toggle-state change behaviour)
 - Edit cancel behaviour
 - rename model fields (title, completed)
 - toggle-all-button (show-hide behaviour)

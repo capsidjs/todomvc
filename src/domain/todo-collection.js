@@ -156,6 +156,26 @@ var TodoCollection = $.cc.subclass(function (pt) {
 
     };
 
+    pt.completeAll = function () {
+
+        this.items.forEach(function (todo) {
+
+            todo.completed = true;
+
+        });
+
+    };
+
+    pt.uncompleteAll = function () {
+
+        this.items.forEach(function (todo) {
+
+            todo.completed = false;
+
+        });
+
+    };
+
 });
 
 

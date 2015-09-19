@@ -104,14 +104,14 @@ var TodoItem = $.cc.subclass(function (pt) {
 
     pt.complete = function () {
 
-        this.elem.find('.toggle').attr('checked', 'checked');
+        this.elem.find('.toggle').prop('checked', true);
         this.elem.addClass('completed');
 
     };
 
     pt.uncomplete = function () {
 
-        this.elem.find('.toggle').attr('checked', null);
+        this.elem.find('.toggle').prop('checked', false);
         this.elem.removeClass('completed');
 
     };
