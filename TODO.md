@@ -1,13 +1,13 @@
 # TODO
+- official spec review
 - write tests
 - add cov report
-- travis
 - jshint
-- spec review
 - code review
 - pull-request
 
 # DONE
+- travis
 - toggle-all-button (toggle-all function)
 - toggle-all-button (toggle-state change behaviour)
 - Edit cancel behaviour

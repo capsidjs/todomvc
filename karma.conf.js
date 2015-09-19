@@ -10,12 +10,13 @@ module.exports = function(config) {
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ['mocha'],
+    frameworks: ['mocha', 'chai', 'browserify'],
 
 
     // list of files / patterns to load in the browser
     files: [
-      'spec/index.js'
+      'spec/helper.js',
+      'spec/**/*'
     ],
 
 
@@ -27,6 +28,7 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
+      'spec/**/*': ['browserify']
     },
 
 
@@ -34,6 +36,11 @@ module.exports = function(config) {
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
     reporters: ['progress'],
+
+
+    browserify: {
+        debug: true
+    },
 
 
     // web server port
@@ -60,6 +67,6 @@ module.exports = function(config) {
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
-    singleRun: false
+    singleRun: true
   })
 }

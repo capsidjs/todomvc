@@ -2,7 +2,7 @@
 
 var $ = require('jquery');
 
-var Todo = require('./Todo');
+var Todo = require('./todo');
 
 
 /**

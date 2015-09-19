@@ -4,7 +4,8 @@
   "description": "todomvc by mangrove.js",
   "main": "index.html",
   "scripts": {
-    "test": "mocha spec",
+    "test": "karma start karma.conf.js",
+    "ci": "karma start karma.conf.js --browsers PhantomJS",
     "build": "browserify src/index.js > build/app.js"
   },
   "repository": "https://github.com/kt3k/todomvc-mangrove.git",
@@ -22,6 +23,7 @@
   },
   "devDependencies": {
     "karma": "^0.13.9",
+    "karma-browserify": "^4.3.0",
     "karma-chrome-launcher": "^0.2.0",
     "karma-mocha": "^0.2.0",
     "mocha": "^2.2.5"
