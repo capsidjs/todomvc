@@ -26,15 +26,27 @@ var TodoEdit = $.cc.subclass(function (pt) {
 
         });
 
+        this.elem.on('blur', function () {
+
+            that.stopEditing();
+
+        });
+
     };
 
     pt.onKeypress = function (e) {
 
         if (e.which === Const.KEYCODE.ENTER) {
 
-            this.elem.trigger('todo-edited', this.elem.val());
+            this.stopEditing();
 
         }
+
+    };
+
+    pt.stopEditing = function () {
+
+        this.elem.trigger('todo-edited', this.elem.val());
 
     };
 
