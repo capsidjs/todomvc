@@ -22,10 +22,12 @@
     "todomvc-common": "^1.0.2"
   },
   "devDependencies": {
+    "browserify-istanbul": "^0.2.1",
     "karma": "^0.13.9",
     "karma-browserify": "^4.3.0",
     "karma-chai": "^0.1.0",
     "karma-chrome-launcher": "^0.2.0",
+    "karma-coverage": "^0.5.2",
     "karma-mocha": "^0.2.0",
     "karma-phantomjs-launcher": "^0.2.1",
     "mocha": "^2.2.5"
