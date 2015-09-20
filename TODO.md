@@ -1,12 +1,21 @@
 # TODO
 - official spec review
-- write tests
-- add cov report
+- test, component/todo-clear-btn
+- test, component/todo-count
+- test, component/todo-edit
+- test, component/todo-input
+- test, component/todo-item
+- test, component/todo-filters
+- test, component/todo-list
+- test, component/todo-toggle-all
+- test, service/todo-app
+- coveralls
 - jshint
 - code review
 - pull-request
 
 # DONE
+- add cov report
 - travis
 - toggle-all-button (toggle-all function)
 - toggle-all-button (toggle-state change behaviour)
