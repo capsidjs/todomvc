@@ -31,9 +31,9 @@ var TodoApp = $.cc.subclass(function (pt) {
 
         var that = this;
 
-        this.elem.on('todo-new-item', function (e, todoBody) {
+        this.elem.on('todo-new-item', function (e, title) {
 
-            that.addTodo(todoBody);
+            that.addTodo(title);
 
         });
 
@@ -82,11 +82,11 @@ var TodoApp = $.cc.subclass(function (pt) {
     };
 
     /**
-     * @param {String} todoBody The todo body
+     * @param {String} title The todo title
      */
-    pt.addTodo = function (todoBody) {
+    pt.addTodo = function (title) {
 
-        var todo = this.todoFactory.createByBody(todoBody);
+        var todo = this.todoFactory.createByTitle(title);
 
         this.todoCollection.push(todo);
 

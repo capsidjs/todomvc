@@ -19,7 +19,7 @@ var TodoFactory = $.cc.subclass(function (pt) {
      * @param {String} title The todo title
      * @return {Todo}
      */
-    pt.createByBody = function (title) {
+    pt.createByTitle = function (title) {
 
         return this.createFromObject({
             id: this.generateId(),

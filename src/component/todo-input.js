@@ -32,10 +32,10 @@ var TodoInput = $.cc.subclass(function (pt) {
 
         }
 
-        var todoBody = this.elem.val();
+        var title = this.elem.val();
         this.elem.val('');
 
-        this.elem.trigger('todo-new-item', todoBody);
+        this.elem.trigger('todo-new-item', title);
 
     };
 
