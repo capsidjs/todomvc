@@ -1,7 +1,5 @@
 # TODO
 - official spec review
-- test, component/todo-clear-btn
-- test, component/todo-count
 - test, component/todo-edit
 - test, component/todo-input
 - test, component/todo-item
@@ -13,6 +11,8 @@
 - pull-request
 
 # DONE
+- test, component/todo-clear-btn
+- test, component/todo-count
 - jshint
 - coveralls
 - test, domain/todo-factory
