@@ -5,7 +5,7 @@
   "main": "index.html",
   "scripts": {
     "test": "karma start karma.conf.js",
-    "ci": "karma start karma.conf.js --browsers PhantomJS",
+    "ci": "karma start karma.conf.js --browsers PhantomJS --reporters progress,coverage,coveralls",
     "build": "browserify src/index.js > build/app.js"
   },
   "repository": "https://github.com/kt3k/todomvc-mangrove.git",
@@ -28,6 +28,7 @@
     "karma-chai": "^0.1.0",
     "karma-chrome-launcher": "^0.2.0",
     "karma-coverage": "^0.5.2",
+    "karma-coveralls": "^1.1.2",
     "karma-mocha": "^0.2.0",
     "karma-phantomjs-launcher": "^0.2.1",
     "mocha": "^2.2.5"
