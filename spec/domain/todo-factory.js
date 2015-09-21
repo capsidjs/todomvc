@@ -25,7 +25,22 @@ describe('TodoFactory', function () {
             expect(todo).to.be.instanceof(Todo);
             expect(todo.id).to.equal('foo');
             expect(todo.title).to.equal('bar');
-            expect(todo.completed).to.equal(true);
+            expect(todo.completed).to.be.true;
+
+        });
+
+    });
+
+    describe('createByTitle', function () {
+
+        it('creates a todo from the given title', function () {
+
+            var todo = factory.createByTitle('spam');
+
+            expect(todo).to.be.instanceof(Todo);
+            expect(todo.id).to.exist;
+            expect(todo.title).to.equal('spam');
+            expect(todo.completed).to.be.false;
 
         });
 
