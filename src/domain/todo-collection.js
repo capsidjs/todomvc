@@ -3,6 +3,9 @@
 
 var $ = require('jquery');
 
+/**
+ * TodoCollection is the colleciton model of the todo model.
+ */
 var TodoCollection = $.cc.subclass(function (pt) {
     'use strict';
 
@@ -25,12 +28,23 @@ var TodoCollection = $.cc.subclass(function (pt) {
 
     };
 
+    /**
+     * Gets the todo by the id.
+     *
+     * @param {String} id The todo id
+     * @return {Todo}
+     */
     pt.getById = function (id) {
 
         return this.map[id];
 
     };
 
+    /**
+     * Toggles the todo's completed flag by the given id.
+     *
+     * @param {String} id The todo id
+     */
     pt.toggleById = function (id) {
 
         var todo = this.getById(id);
@@ -65,17 +79,8 @@ var TodoCollection = $.cc.subclass(function (pt) {
     };
 
     /**
-     * Unshifts (prepends) the given todo to the list.
+     * Removes the todo.
      *
-     * @param {Todo} todo The todo
-     */
-    pt.unshift = function (todo) {
-
-        this.items.unshift(todo);
-
-    };
-
-    /**
      * @param {Todo} todo The todo to remvoe
      */
     pt.remove = function (todo) {
@@ -104,6 +109,7 @@ var TodoCollection = $.cc.subclass(function (pt) {
     /**
      * Checks if the given todo is included by the list
      *
+     * @private
      * @param {Todo} todo The todo
      */
     pt.has = function (todo) {
@@ -156,6 +162,10 @@ var TodoCollection = $.cc.subclass(function (pt) {
 
     };
 
+
+    /**
+     * Completes all the todos.
+     */
     pt.completeAll = function () {
 
         this.items.forEach(function (todo) {
@@ -166,6 +176,9 @@ var TodoCollection = $.cc.subclass(function (pt) {
 
     };
 
+    /**
+     * Uncompletes all the todos.
+     */
     pt.uncompleteAll = function () {
 
         this.items.forEach(function (todo) {
