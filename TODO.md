@@ -9,12 +9,15 @@
 - test, component/todo-list
 - test, component/todo-toggle-all
 - test, service/todo-app
-- coveralls
 - jshint
 - code review
 - pull-request
 
 # DONE
+- coveralls
+- test, domain/todo-factory
+- test, domain/todo-repository
+- test, domain/todo-collection
 - add cov report
 - travis
 - toggle-all-button (toggle-all function)
