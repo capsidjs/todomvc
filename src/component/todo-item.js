@@ -130,7 +130,8 @@ var TodoItem = $.cc.subclass(function (pt) {
 
         if (title === '' || title == null) {
 
-            that.destroy();
+            this.destroy();
+
             return;
 
         }

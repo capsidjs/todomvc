@@ -6,6 +6,7 @@ var Const = require('../const');
 
 
 var TodoInput = $.cc.subclass(function (pt) {
+    'use strict';
 
     pt.constructor = function (elem) {
 
@@ -15,8 +16,6 @@ var TodoInput = $.cc.subclass(function (pt) {
 
 
         this.elem.on('keypress', function (e) {
-
-            console.log
 
             that.onKeypress(e);
 

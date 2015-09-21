@@ -9,11 +9,11 @@
 - test, component/todo-list
 - test, component/todo-toggle-all
 - test, service/todo-app
-- jshint
 - code review
 - pull-request
 
 # DONE
+- jshint
 - coveralls
 - test, domain/todo-factory
 - test, domain/todo-repository

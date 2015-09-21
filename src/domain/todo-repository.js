@@ -33,7 +33,7 @@ var TodoRepository = $.cc.subclass(function (pt) {
 
         } catch (e) {
 
-            array = []
+            array = [];
 
         }
 

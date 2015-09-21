@@ -81,7 +81,7 @@ describe('TodoCollection', function () {
 
             expect(a).to.equal('spamhamegg');
 
-        })
+        });
 
     });
 

@@ -9,7 +9,7 @@ var TodoRepository = require('../domain/todo-repository');
 
 
 var TodoApp = $.cc.subclass(function (pt) {
-    'use strict'
+    'use strict';
 
     pt.constructor = function (elem) {
 
@@ -124,11 +124,9 @@ var TodoApp = $.cc.subclass(function (pt) {
     };
 
     /**
-     * Updates the todo list by the given collection.
-     *
-     * @param {TodoCollection}
+     * Updates the todo list.
      */
-    pt.updateTodoList = function (todoCollection) {
+    pt.updateTodoList = function () {
 
         var todoCollection = this.getDisplayCollection();
 
@@ -270,7 +268,7 @@ var TodoApp = $.cc.subclass(function (pt) {
 
         this.updateView();
 
-        this.save()
+        this.save();
 
     };
 
@@ -282,7 +280,7 @@ var TodoApp = $.cc.subclass(function (pt) {
 
             this.updateView();
 
-            this.save()
+            this.save();
 
         } else {
 
@@ -304,7 +302,7 @@ var TodoApp = $.cc.subclass(function (pt) {
 
             this.updateView();
 
-            this.save()
+            this.save();
 
         } else {
 

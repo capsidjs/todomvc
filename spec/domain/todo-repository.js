@@ -11,6 +11,7 @@ var todoRepository;
 
 
 describe('TodoRepository', function () {
+    'use strict';
 
     beforeEach(function () {
 
