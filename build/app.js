@@ -10318,10 +10318,10 @@ var TodoInput = $.cc.subclass(function (pt) {
 
         }
 
-        var todoBody = this.elem.val();
+        var title = this.elem.val();
         this.elem.val('');
 
-        this.elem.trigger('todo-new-item', todoBody);
+        this.elem.trigger('todo-new-item', title);
 
     };
 
@@ -10596,35 +10596,6 @@ module.exports = {
 },{}],17:[function(require,module,exports){
 
 
-var $ = require('jquery');
-
-
-/**
- * Todo class is the model of single todo item.
- */
-var Todo = $.cc.subclass(function (pt) {
-    'use strict';
-
-    /**
-     * @param {String} id The todo's id
-     * @param {String} title The todo's title
-     * @param {Boolean} completed The flag indicates if it's done or not
-     */
-    pt.constructor = function (id, title, completed) {
-
-        this.id = id;
-        this.title = title;
-        this.completed = completed;
-
-    };
-
-});
-
-module.exports = Todo;
-
-},{"jquery":7}],18:[function(require,module,exports){
-
-
 
 var $ = require('jquery');
 
@@ -10806,12 +10777,12 @@ var TodoCollection = $.cc.subclass(function (pt) {
 
 module.exports = TodoCollection;
 
-},{"jquery":7}],19:[function(require,module,exports){
+},{"jquery":7}],18:[function(require,module,exports){
 
 
 var $ = require('jquery');
 
-var Todo = require('./Todo');
+var Todo = require('./todo');
 
 
 /**
@@ -10828,7 +10799,7 @@ var TodoFactory = $.cc.subclass(function (pt) {
      * @param {String} title The todo title
      * @return {Todo}
      */
-    pt.createByBody = function (title) {
+    pt.createByTitle = function (title) {
 
         return this.createFromObject({
             id: this.generateId(),
@@ -10860,7 +10831,7 @@ var TodoFactory = $.cc.subclass(function (pt) {
 
 module.exports = TodoFactory;
 
-},{"./Todo":17,"jquery":7}],20:[function(require,module,exports){
+},{"./todo":20,"jquery":7}],19:[function(require,module,exports){
 
 
 var $ = require('jquery');
@@ -10955,7 +10926,36 @@ var TodoRepository = $.cc.subclass(function (pt) {
 
 module.exports = TodoRepository;
 
-},{"../const":16,"./todo-collection":18,"jquery":7}],21:[function(require,module,exports){
+},{"../const":16,"./todo-collection":17,"jquery":7}],20:[function(require,module,exports){
+
+
+var $ = require('jquery');
+
+
+/**
+ * Todo class is the model of single todo item.
+ */
+var Todo = $.cc.subclass(function (pt) {
+    'use strict';
+
+    /**
+     * @param {String} id The todo's id
+     * @param {String} title The todo's title
+     * @param {Boolean} completed The flag indicates if it's done or not
+     */
+    pt.constructor = function (id, title, completed) {
+
+        this.id = id;
+        this.title = title;
+        this.completed = completed;
+
+    };
+
+});
+
+module.exports = Todo;
+
+},{"jquery":7}],21:[function(require,module,exports){
 (function (global){
 
 
@@ -11008,9 +11008,9 @@ var TodoApp = $.cc.subclass(function (pt) {
 
         var that = this;
 
-        this.elem.on('todo-new-item', function (e, todoBody) {
+        this.elem.on('todo-new-item', function (e, title) {
 
-            that.addTodo(todoBody);
+            that.addTodo(title);
 
         });
 
@@ -11059,11 +11059,11 @@ var TodoApp = $.cc.subclass(function (pt) {
     };
 
     /**
-     * @param {String} todoBody The todo body
+     * @param {String} title The todo title
      */
-    pt.addTodo = function (todoBody) {
+    pt.addTodo = function (title) {
 
-        var todo = this.todoFactory.createByBody(todoBody);
+        var todo = this.todoFactory.createByTitle(title);
 
         this.todoCollection.push(todo);
 
@@ -11300,4 +11300,4 @@ var TodoApp = $.cc.subclass(function (pt) {
 
 $.cc.assign('todo-app', TodoApp);
 
-},{"../const":16,"../domain/todo-factory":19,"../domain/todo-repository":20,"jquery":7}]},{},[21]);
+},{"../const":16,"../domain/todo-factory":18,"../domain/todo-repository":19,"jquery":7}]},{},[21]);
