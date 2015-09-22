@@ -12,6 +12,11 @@ var TodoFilters = $.cc.subclass(function (pt) {
 
 	};
 
+	/**
+	 * Sets the given filter button active.
+	 *
+	 * @param {String} name The name of the filter
+	 */
 	pt.setFilter = function (name) {
 
 		this.elem.find('a').removeClass('selected');
@@ -29,6 +34,7 @@ var TodoFilters = $.cc.subclass(function (pt) {
 			this.elem.find('a[name="all"]').addClass('selected');
 
 		}
+
 	};
 
 });
