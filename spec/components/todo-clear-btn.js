@@ -1,4 +1,6 @@
+/* global describe, it */
 
+var $ = require('jquery');
 
 describe('TodoClearBtn', function () {
     'use strict';

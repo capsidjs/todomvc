@@ -1,4 +1,6 @@
+/* global describe, it, expect */
 
+var $ = require('jquery');
 
 
 describe('TodoCount', function () {

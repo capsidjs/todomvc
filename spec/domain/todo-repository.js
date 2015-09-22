@@ -1,4 +1,4 @@
-
+/* global describe, it, expect, beforeEach */
 
 
 var Todo = require('../../src/domain/todo');

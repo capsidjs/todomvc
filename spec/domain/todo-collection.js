@@ -1,5 +1,5 @@
-
-
+/* global describe, it, expect, beforeEach */
+/* jshint expr: true */
 
 var Todo = require('../../src/domain/todo');
 var TodoCollection = require('../../src/domain/todo-collection');

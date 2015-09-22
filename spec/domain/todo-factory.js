@@ -1,4 +1,5 @@
-
+/* global describe, it, expect, beforeEach */
+/* jshint expr: true */
 
 var Todo = require('../../src/domain/todo');
 var TodoFactory = require('../../src/domain/todo-factory');
