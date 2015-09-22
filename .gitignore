@@ -1,5 +1,8 @@
-# npm
-/node_modules
+
+node_modules/
+!node_modules/todomvc-common/base.js
+!node_modules/todomvc-common/base.css
+!node_modules/todomvc-app-css/index.css
 
 # coverage
-/coverage
+coverage
