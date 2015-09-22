@@ -1,5 +1,3 @@
-
-
 var $ = require('jquery');
 
 $.cc.register('todo-clear-btn', function (elem) {

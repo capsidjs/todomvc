@@ -1,5 +1,3 @@
-
-
 var $ = require('jquery');
 
 var TodoCount = $.cc.subclass(function (pt) {

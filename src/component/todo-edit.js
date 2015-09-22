@@ -1,5 +1,3 @@
-
-
 var $ = require('jquery');
 
 var Const = require('../const');
