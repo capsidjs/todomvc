@@ -3,53 +3,53 @@
 var $ = require('jquery');
 
 var TodoToggleAll = $.cc.subclass(function (pt) {
-    'use strict';
+	'use strict';
 
-    pt.constructor = function (elem) {
+	pt.constructor = function (elem) {
 
-        this.elem = elem;
+		this.elem = elem;
 
-        var that = this;
+		var self = this;
 
-        this.elem.on('click', function () {
+		this.elem.on('click', function () {
 
-            that.onClick();
+			self.onClick();
 
-        });
+		});
 
-    };
+	};
 
-    pt.onClick = function () {
+	pt.onClick = function () {
 
-        if (this.checked) {
+		if (this.checked) {
 
-            this.elem.trigger('todo-uncomplete-all');
+			this.elem.trigger('todo-uncomplete-all');
 
-        } else {
+		} else {
 
-            this.elem.trigger('todo-complete-all');
+			this.elem.trigger('todo-complete-all');
 
-        }
+		}
 
-        this.check = !this.check;
+		this.check = !this.check;
 
-    };
+	};
 
-    pt.updateBtnState = function (activeItemExists) {
+	pt.updateBtnState = function (activeItemExists) {
 
-        this.checked = !activeItemExists;
+		this.checked = !activeItemExists;
 
-        if (this.checked) {
+		if (this.checked) {
 
-            this.elem.prop('checked', true);
+			this.elem.prop('checked', true);
 
-        } else {
+		} else {
 
-            this.elem.prop('checked', false);
+			this.elem.prop('checked', false);
 
-        }
+		}
 
-    };
+	};
 
 });
 

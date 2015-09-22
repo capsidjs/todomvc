@@ -6,7 +6,7 @@
   "scripts": {
     "test": "karma start karma.conf.js",
     "ci": "karma start karma.conf.js --browsers PhantomJS --reporters progress,coverage,coveralls",
-    "lint": "jshint src/ spec/",
+    "lint": "jshint src/ spec/ && jscs src/ spec/",
     "build": "browserify src/index.js > build/app.js"
   },
   "repository": "https://github.com/kt3k/todomvc-mangrove.git",
@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "browserify-istanbul": "^0.2.1",
+    "jscs": "^2.1.1",
     "jshint": "^2.8.0",
     "karma": "^0.13.9",
     "karma-browserify": "^4.3.0",

@@ -6,37 +6,37 @@ var Const = require('../const');
 
 
 var TodoInput = $.cc.subclass(function (pt) {
-    'use strict';
+	'use strict';
 
-    pt.constructor = function (elem) {
+	pt.constructor = function (elem) {
 
-        this.elem = elem;
+		this.elem = elem;
 
-        var that = this;
+		var self = this;
 
 
-        this.elem.on('keypress', function (e) {
+		this.elem.on('keypress', function (e) {
 
-            that.onKeypress(e);
+			self.onKeypress(e);
 
-        });
+		});
 
-    };
+	};
 
-    pt.onKeypress = function (e) {
+	pt.onKeypress = function (e) {
 
-        if (e.which !== Const.KEYCODE.ENTER || !this.elem.val().trim()) {
+		if (e.which !== Const.KEYCODE.ENTER || !this.elem.val().trim()) {
 
-            return;
+			return;
 
-        }
+		}
 
-        var title = this.elem.val();
-        this.elem.val('');
+		var title = this.elem.val();
+		this.elem.val('');
 
-        this.elem.trigger('todo-new-item', title);
+		this.elem.trigger('todo-new-item', title);
 
-    };
+	};
 
 });
 

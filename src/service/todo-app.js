@@ -9,312 +9,314 @@ var TodoRepository = require('../domain/todo-repository');
 
 
 var TodoApp = $.cc.subclass(function (pt) {
-    'use strict';
+	'use strict';
 
-    pt.constructor = function (elem) {
+	pt.constructor = function (elem) {
 
-        this.elem = elem;
+		this.elem = elem;
 
-        this.todoFactory = new TodoFactory();
-        this.todoRepository = new TodoRepository();
+		this.todoFactory = new TodoFactory();
+		this.todoRepository = new TodoRepository();
 
-        this.todoCollection = this.todoRepository.getAll();
+		this.todoCollection = this.todoRepository.getAll();
 
-        this.initEvents();
+		this.initEvents();
 
-        this.updateView();
+		this.updateView();
 
-    };
+	};
 
 
-    pt.initEvents = function () {
+	pt.initEvents = function () {
 
-        var that = this;
+		var self = this;
 
-        this.elem.on('todo-new-item', function (e, title) {
+		this.elem.on('todo-new-item', function (e, title) {
 
-            that.addTodo(title);
+			self.addTodo(title);
 
-        });
+		});
 
-        this.elem.on('todo-item-toggle', function (e, id) {
+		this.elem.on('todo-item-toggle', function (e, id) {
 
-            that.toggle(id);
+			self.toggle(id);
 
-        });
+		});
 
-        this.elem.on('todo-item-destroy', function (e, id) {
+		this.elem.on('todo-item-destroy', function (e, id) {
 
-            that.remove(id);
+			self.remove(id);
 
-        });
+		});
 
-        this.elem.on('todo-item-edited', function (e, id, title) {
+		this.elem.on('todo-item-edited', function (e, id, title) {
 
-            that.editItem(id, title);
+			self.editItem(id, title);
 
-        });
+		});
 
-        this.elem.on('todo-clear-completed', function () {
+		this.elem.on('todo-clear-completed', function () {
 
-            that.clearCompleted();
+			self.clearCompleted();
 
-        });
+		});
 
-        this.elem.on('todo-complete-all', function () {
+		this.elem.on('todo-complete-all', function () {
 
-            that.completeAll();
+			self.completeAll();
 
-        });
+		});
 
-        this.elem.on('todo-uncomplete-all', function () {
+		this.elem.on('todo-uncomplete-all', function () {
 
-            that.uncompleteAll();
+			self.uncompleteAll();
 
-        });
+		});
 
-        $(window).on('hashchange', function () {
+		$(window).on('hashchange', function () {
 
-            that.updateView();
+			self.updateView();
 
-        });
+		});
 
-    };
+	};
 
-    /**
-     * @param {String} title The todo title
-     */
-    pt.addTodo = function (title) {
+	/**
+	 * @param {String} title The todo title
+	 */
+	pt.addTodo = function (title) {
 
-        var todo = this.todoFactory.createByTitle(title);
+		var todo = this.todoFactory.createByTitle(title);
 
-        this.todoCollection.push(todo);
+		this.todoCollection.push(todo);
 
-        this.updateView();
+		this.updateView();
 
-        this.save();
+		this.save();
 
-    };
+	};
 
-    /**
-     * Updates the view in the todo app.
-     *
-     * @private
-     */
-    pt.updateView = function () {
+	/**
+	 * Updates the view in the todo app.
+	 *
+	 * @private
+	 */
+	pt.updateView = function () {
 
-        this.updateTodoList();
+		this.updateTodoList();
 
-        this.updateControls();
+		this.updateControls();
 
-    };
+	};
 
-    pt.updateControls = function () {
+	pt.updateControls = function () {
 
-        console.log('update contorls');
+		console.log('update contorls');
 
-        this.updateFilterBtns();
+		this.updateFilterBtns();
 
-        this.updateTodoCount();
+		this.updateTodoCount();
 
-        this.updateVisibility();
+		this.updateVisibility();
 
-        this.updateToggleBtnState();
+		this.updateToggleBtnState();
 
-    };
+	};
 
-    /**
-     * Updates the todo list.
-     */
-    pt.updateTodoList = function () {
+	/**
+	 * Updates the todo list.
+	 */
+	pt.updateTodoList = function () {
 
-        var todoCollection = this.getDisplayCollection();
+		var todoCollection = this.getDisplayCollection();
 
-        this.elem.find('.todo-list').cc.get('todo-list').update(todoCollection);
+		this.elem.find('.todo-list').cc.get('todo-list').update(todoCollection);
 
-    };
+	};
 
-    pt.updateFilterBtns = function () {
+	pt.updateFilterBtns = function () {
 
-        var filterName = this.getFilterNameFromHash();
+		var filterName = this.getFilterNameFromHash();
 
-        this.elem.find('.todo-filters').cc.get('todo-filters').setFilter(filterName);
+		this.elem.find('.todo-filters').cc.get('todo-filters').setFilter(filterName);
 
-    };
+	};
 
-    pt.updateTodoCount = function () {
+	pt.updateTodoCount = function () {
 
-        this.elem.find('.todo-count').cc.get('todo-count').setCount(this.todoCollection.uncompleted().toArray().length);
+		this.elem.find('.todo-count').cc.get('todo-count').setCount(this.todoCollection.uncompleted().toArray().length);
 
-    };
+	};
 
-    pt.updateVisibility = function () {
+	pt.updateVisibility = function () {
 
-        if (this.todoCollection.isEmpty()) {
+		if (this.todoCollection.isEmpty()) {
 
-            this.elem.find('#main, #footer').css('display', 'none');
+			this.elem.find('#main, #footer').css('display', 'none');
 
-        } else {
+		} else {
 
-            this.elem.find('#main, #footer').css('display', 'block');
+			this.elem.find('#main, #footer').css('display', 'block');
 
-        }
+		}
 
-    };
+	};
 
-    pt.updateToggleBtnState = function () {
+	pt.updateToggleBtnState = function () {
 
-        console.log('updateToggleBtnState');
+		console.log('updateToggleBtnState');
 
-        this.elem.find('.todo-toggle-all').cc.get('todo-toggle-all').updateBtnState(!this.todoCollection.uncompleted().isEmpty());
+		this.elem.find('.todo-toggle-all').cc.get('todo-toggle-all').updateBtnState(
+			!this.todoCollection.uncompleted().isEmpty()
+		);
 
-    };
+	};
 
-    pt.getDisplayCollection = function () {
+	pt.getDisplayCollection = function () {
 
-        var filterName = this.getFilterNameFromHash();
+		var filterName = this.getFilterNameFromHash();
 
-        if (filterName === Const.FILTER.ACTIVE) {
+		if (filterName === Const.FILTER.ACTIVE) {
 
-            return this.todoCollection.uncompleted();
+			return this.todoCollection.uncompleted();
 
-        }
+		}
 
-        if (filterName === Const.FILTER.COMPLETED) {
+		if (filterName === Const.FILTER.COMPLETED) {
 
-            return this.todoCollection.completed();
+			return this.todoCollection.completed();
 
-        }
+		}
 
-        return this.todoCollection;
+		return this.todoCollection;
 
-    };
+	};
 
-    pt.filterIsEnabled = function () {
+	pt.filterIsEnabled = function () {
 
-        var filterName = this.getFilterNameFromHash();
+		var filterName = this.getFilterNameFromHash();
 
-        return filterName === Const.FILTER.ACTIVE || filterName === Const.FILTER.COMPLETED;
+		return filterName === Const.FILTER.ACTIVE || filterName === Const.FILTER.COMPLETED;
 
-    };
+	};
 
-    pt.getFilterNameFromHash = function () {
+	pt.getFilterNameFromHash = function () {
 
-        return window.location.hash.substring(1);
+		return window.location.hash.substring(1);
 
-    };
+	};
 
-    /**
-     * Saves the current todo collection state.
-     */
-    pt.save = function () {
+	/**
+	 * Saves the current todo collection state.
+	 */
+	pt.save = function () {
 
-        this.todoRepository.saveAll(this.todoCollection);
+		this.todoRepository.saveAll(this.todoCollection);
 
-    };
+	};
 
-    /**
-     * Toggles the todo state of the given id.
-     *
-     * @param {String} id The todo id
-     */
-    pt.toggle = function (id) {
+	/**
+	 * Toggles the todo state of the given id.
+	 *
+	 * @param {String} id The todo id
+	 */
+	pt.toggle = function (id) {
 
-        this.todoCollection.toggleById(id);
+		this.todoCollection.toggleById(id);
 
-        if (this.filterIsEnabled()) {
+		if (this.filterIsEnabled()) {
 
-            this.updateTodoList();
+			this.updateTodoList();
 
-        }
+		}
 
-        this.updateControls();
+		this.updateControls();
 
-        this.save();
+		this.save();
 
-    };
+	};
 
-    /**
-     * Removes the todo of the given id.
-     *
-     * @param {String} id The todo id
-     */
-    pt.remove = function (id) {
+	/**
+	 * Removes the todo of the given id.
+	 *
+	 * @param {String} id The todo id
+	 */
+	pt.remove = function (id) {
 
-        this.todoCollection.removeById(id);
+		this.todoCollection.removeById(id);
 
-        this.updateView();
+		this.updateView();
 
-        this.save();
+		this.save();
 
-    };
+	};
 
-    pt.editItem = function (id, title) {
+	pt.editItem = function (id, title) {
 
-        var todo = this.todoCollection.getById(id);
+		var todo = this.todoCollection.getById(id);
 
-        todo.body = title;
+		todo.body = title;
 
-        this.save();
+		this.save();
 
-    };
+	};
 
-    /**
-     * Clears the completed todos.
-     */
-    pt.clearCompleted = function () {
+	/**
+	 * Clears the completed todos.
+	 */
+	pt.clearCompleted = function () {
 
-        this.todoCollection = this.todoCollection.uncompleted();
+		this.todoCollection = this.todoCollection.uncompleted();
 
-        this.updateView();
+		this.updateView();
 
-        this.save();
+		this.save();
 
-    };
+	};
 
-    pt.uncompleteAll = function () {
+	pt.uncompleteAll = function () {
 
-        if (this.filterIsEnabled()) {
+		if (this.filterIsEnabled()) {
 
-            this.todoCollection.uncompleteAll();
+			this.todoCollection.uncompleteAll();
 
-            this.updateView();
+			this.updateView();
 
-            this.save();
+			this.save();
 
-        } else {
+		} else {
 
-            this.todoCollection.completed().forEach(function (todo) {
+			this.todoCollection.completed().forEach(function (todo) {
 
-                this.elem.find('#' + todo.id).cc.get('todo-item').toggleCompleted();
+				this.elem.find('#' + todo.id).cc.get('todo-item').toggleCompleted();
 
-            }, this);
+			}, this);
 
-        }
+		}
 
-    };
+	};
 
-    pt.completeAll = function () {
+	pt.completeAll = function () {
 
-        if (this.filterIsEnabled()) {
+		if (this.filterIsEnabled()) {
 
-            this.todoCollection.completeAll();
+			this.todoCollection.completeAll();
 
-            this.updateView();
+			this.updateView();
 
-            this.save();
+			this.save();
 
-        } else {
+		} else {
 
-            this.todoCollection.uncompleted().forEach(function (todo) {
+			this.todoCollection.uncompleted().forEach(function (todo) {
 
-                this.elem.find('#' + todo.id).cc.get('todo-item').toggleCompleted();
+				this.elem.find('#' + todo.id).cc.get('todo-item').toggleCompleted();
 
-            }, this);
+			}, this);
 
-        }
+		}
 
-    };
+	};
 
 });
 

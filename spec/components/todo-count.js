@@ -4,28 +4,28 @@ var $ = require('jquery');
 
 
 describe('TodoCount', function () {
-    'use strict';
+	'use strict';
 
-    describe('setCount', function () {
+	describe('setCount', function () {
 
-        it('sets label properly', function () {
+		it('sets label properly', function () {
 
-            var dom = $('<span />');
+			var dom = $('<span />');
 
-            dom.cc.init('todo-count').setCount(0);
+			dom.cc.init('todo-count').setCount(0);
 
-            expect(dom.html()).to.equal('<strong>0</strong> items left');
+			expect(dom.html()).to.equal('<strong>0</strong> items left');
 
-            dom.cc.init('todo-count').setCount(1);
+			dom.cc.init('todo-count').setCount(1);
 
-            expect(dom.html()).to.equal('<strong>1</strong> item left');
+			expect(dom.html()).to.equal('<strong>1</strong> item left');
 
-            dom.cc.init('todo-count').setCount(2);
+			dom.cc.init('todo-count').setCount(2);
 
-            expect(dom.html()).to.equal('<strong>2</strong> items left');
+			expect(dom.html()).to.equal('<strong>2</strong> items left');
 
-        });
+		});
 
-    });
+	});
 
 });

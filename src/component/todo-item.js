@@ -4,143 +4,143 @@ var $ = require('jquery');
 
 
 var TodoItem = $.cc.subclass(function (pt) {
-    'use strict';
+	'use strict';
 
-    pt.constructor = function (elem) {
+	pt.constructor = function (elem) {
 
-        this.elem = elem;
+		this.elem = elem;
 
-        this.initElems();
-        this.initEvents();
+		this.initElems();
+		this.initEvents();
 
-    };
+	};
 
-    pt.initElems = function () {
+	pt.initElems = function () {
 
-        var view = $('<div class="view" />').appendTo(this.elem);
+		var view = $('<div class="view" />').appendTo(this.elem);
 
-        $('<input class="toggle" type="checkbox" />').appendTo(view);
-        $('<label />').appendTo(view);
-        $('<button class="destroy" />').appendTo(view);
-        $('<input class="edit" />').appendTo(this.elem).cc.init('todo-edit');
+		$('<input class="toggle" type="checkbox" />').appendTo(view);
+		$('<label />').appendTo(view);
+		$('<button class="destroy" />').appendTo(view);
+		$('<input class="edit" />').appendTo(this.elem).cc.init('todo-edit');
 
-    };
+	};
 
-    pt.initEvents = function () {
+	pt.initEvents = function () {
 
-        var that = this;
+		var self = this;
 
-        this.elem.find('.toggle').on('click', function () {
+		this.elem.find('.toggle').on('click', function () {
 
-            that.toggleCompleted();
+			self.toggleCompleted();
 
-        });
+		});
 
-        this.elem.find('.destroy').on('click', function () {
+		this.elem.find('.destroy').on('click', function () {
 
-            that.destroy();
+			self.destroy();
 
-        });
+		});
 
-        this.elem.find('label').on('dblclick', function () {
+		this.elem.find('label').on('dblclick', function () {
 
-            that.startEditing();
+			self.startEditing();
 
-        });
+		});
 
-        this.elem.on('todo-edited', function (e, title) {
+		this.elem.on('todo-edited', function (e, title) {
 
-            that.stopEditing(title);
+			self.stopEditing(title);
 
-        });
+		});
 
-    };
+	};
 
-    /**
-     * Updates the todo title by todo model
-     *
-     * @param {Todo} todo The todo
-     */
-    pt.update = function (todo) {
+	/**
+	 * Updates the todo title by todo model
+	 *
+	 * @param {Todo} todo The todo
+	 */
+	pt.update = function (todo) {
 
-        this.elem.attr('id', todo.id);
-        this.elem.find('label').text(todo.title);
-        this.elem.find('.edit').val(todo.title);
+		this.elem.attr('id', todo.id);
+		this.elem.find('label').text(todo.title);
+		this.elem.find('.edit').val(todo.title);
 
-        this.completed = todo.completed;
-        this.updateCompleted();
+		this.completed = todo.completed;
+		this.updateCompleted();
 
-    };
+	};
 
-    pt.toggleCompleted = function () {
+	pt.toggleCompleted = function () {
 
-        this.elem.trigger('todo-item-toggle', this.elem.attr('id'));
+		this.elem.trigger('todo-item-toggle', this.elem.attr('id'));
 
-        this.completed = !this.completed;
-        this.updateCompleted();
+		this.completed = !this.completed;
+		this.updateCompleted();
 
-    };
+	};
 
-    pt.destroy = function () {
+	pt.destroy = function () {
 
-        this.elem.parent().trigger('todo-item-destroy', this.elem.attr('id'));
+		this.elem.parent().trigger('todo-item-destroy', this.elem.attr('id'));
 
-        this.elem.remove();
+		this.elem.remove();
 
-    };
+	};
 
-    pt.updateCompleted = function () {
+	pt.updateCompleted = function () {
 
-        if (this.completed) {
+		if (this.completed) {
 
-            this.complete();
+			this.complete();
 
-        } else {
+		} else {
 
-            this.uncomplete();
-        }
+			this.uncomplete();
+		}
 
-    };
+	};
 
-    pt.complete = function () {
+	pt.complete = function () {
 
-        this.elem.find('.toggle').prop('checked', true);
-        this.elem.addClass('completed');
+		this.elem.find('.toggle').prop('checked', true);
+		this.elem.addClass('completed');
 
-    };
+	};
 
-    pt.uncomplete = function () {
+	pt.uncomplete = function () {
 
-        this.elem.find('.toggle').prop('checked', false);
-        this.elem.removeClass('completed');
+		this.elem.find('.toggle').prop('checked', false);
+		this.elem.removeClass('completed');
 
-    };
+	};
 
-    pt.startEditing = function () {
+	pt.startEditing = function () {
 
-        this.elem.addClass('editing');
+		this.elem.addClass('editing');
 
-    };
+	};
 
-    pt.stopEditing = function (title) {
+	pt.stopEditing = function (title) {
 
-        console.log(title);
+		console.log(title);
 
-        this.elem.removeClass('editing');
+		this.elem.removeClass('editing');
 
-        if (!title) {
+		if (!title) {
 
-            this.destroy();
+			this.destroy();
 
-            return;
+			return;
 
-        }
+		}
 
-        this.elem.find('label').text(title);
+		this.elem.find('label').text(title);
 
-        this.elem.trigger('todo-item-edited', [this.elem.attr('id'), title]);
+		this.elem.trigger('todo-item-edited', [this.elem.attr('id'), title]);
 
-    };
+	};
 
 });
 

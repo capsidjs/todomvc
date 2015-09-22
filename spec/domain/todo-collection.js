@@ -10,191 +10,191 @@ var todo1;
 var todo2;
 
 describe('TodoCollection', function () {
-    'use strict';
+	'use strict';
 
-    beforeEach(function () {
+	beforeEach(function () {
 
-        todo0 = new Todo('a0', 'spam', true),
-        todo1 = new Todo('a1', 'ham', false),
-        todo2 = new Todo('a2', 'egg', true),
+		todo0 = new Todo('a0', 'spam', true),
+		todo1 = new Todo('a1', 'ham', false),
+		todo2 = new Todo('a2', 'egg', true),
 
-        collection = new TodoCollection([todo0, todo1, todo2]);
+		collection = new TodoCollection([todo0, todo1, todo2]);
 
-    });
+	});
 
-    describe('constructor', function () {
+	describe('constructor', function () {
 
-        it('craete an empty contructor if the give array is null', function () {
+		it('craete an empty contructor if the give array is null', function () {
 
-            collection = new TodoCollection();
+			collection = new TodoCollection();
 
-            expect(collection.isEmpty()).to.be.true;
+			expect(collection.isEmpty()).to.be.true;
 
-        });
+		});
 
-    });
+	});
 
-    describe('getById', function () {
+	describe('getById', function () {
 
-        it('gets the todo by the given id', function () {
+		it('gets the todo by the given id', function () {
 
-            expect(collection.getById('a0')).to.equal(todo0);
-            expect(collection.getById('a1')).to.equal(todo1);
-            expect(collection.getById('a2')).to.equal(todo2);
+			expect(collection.getById('a0')).to.equal(todo0);
+			expect(collection.getById('a1')).to.equal(todo1);
+			expect(collection.getById('a2')).to.equal(todo2);
 
-        });
+		});
 
-    });
+	});
 
-    describe('toggleById', function () {
+	describe('toggleById', function () {
 
-        it('toggles the completed state of the todo of the given id', function () {
+		it('toggles the completed state of the todo of the given id', function () {
 
-            collection.toggleById('a0');
+			collection.toggleById('a0');
 
-            expect(collection.getById('a0').completed).to.be.false;
+			expect(collection.getById('a0').completed).to.be.false;
 
-        });
+		});
 
-    });
+	});
 
-    describe('forEach', function () {
+	describe('forEach', function () {
 
-        it('iterates calling the given func in the given context', function () {
+		it('iterates calling the given func in the given context', function () {
 
-            var a = '';
+			var a = '';
 
-            var Ctx = function () {
-            };
+			var Ctx = function () {
+			};
 
-            Ctx.prototype.method = function (title) {
+			Ctx.prototype.method = function (title) {
 
-                a = a + title;
+				a = a + title;
 
-            };
+			};
 
-            collection.forEach(function (todo) {
+			collection.forEach(function (todo) {
 
-                this.method(todo.title);
+				this.method(todo.title);
 
-            }, new Ctx());
+			}, new Ctx());
 
-            expect(a).to.equal('spamhamegg');
+			expect(a).to.equal('spamhamegg');
 
-        });
+		});
 
-    });
+	});
 
-    describe('push', function () {
+	describe('push', function () {
 
-        it('pushes the given todo at the end of the collection', function () {
+		it('pushes the given todo at the end of the collection', function () {
 
-            collection.push(new Todo('a3', 'spam ham', false));
+			collection.push(new Todo('a3', 'spam ham', false));
 
-            expect(collection.toArray()).to.have.length(4);
+			expect(collection.toArray()).to.have.length(4);
 
-        });
+		});
 
-    });
+	});
 
-    describe('remove', function () {
+	describe('remove', function () {
 
-        it('removes the given todo', function () {
+		it('removes the given todo', function () {
 
-            collection.remove(todo0);
+			collection.remove(todo0);
 
-            expect(collection.toArray()).to.have.length(2);
+			expect(collection.toArray()).to.have.length(2);
 
-        });
+		});
 
-        it('throws when the given todo does not exist', function () {
+		it('throws when the given todo does not exist', function () {
 
-            expect(function () {
+			expect(function () {
 
-                collection.remove(new Todo('a3', 'spam ham', false));
+				collection.remove(new Todo('a3', 'spam ham', false));
 
-            }).to.throw(Error);
+			}).to.throw(Error);
 
-        });
+		});
 
-    });
+	});
 
-    describe('removeById', function () {
+	describe('removeById', function () {
 
-        it('removes the todo by the id', function () {
+		it('removes the todo by the id', function () {
 
-            collection.removeById('a0');
+			collection.removeById('a0');
 
-            expect(collection.toArray()).to.have.length(2);
+			expect(collection.toArray()).to.have.length(2);
 
-        });
+		});
 
-    });
+	});
 
-    describe('completed', function () {
+	describe('completed', function () {
 
-        it('returns the collection of the completed todos', function () {
+		it('returns the collection of the completed todos', function () {
 
-            var completed = collection.completed();
+			var completed = collection.completed();
 
-            expect(completed).to.be.instanceof(TodoCollection);
-            expect(completed.toArray()).to.have.length(2);
-            expect(completed.toArray()[0].id).to.equal('a0');
-            expect(completed.toArray()[1].id).to.equal('a2');
+			expect(completed).to.be.instanceof(TodoCollection);
+			expect(completed.toArray()).to.have.length(2);
+			expect(completed.toArray()[0].id).to.equal('a0');
+			expect(completed.toArray()[1].id).to.equal('a2');
 
-        });
+		});
 
-    });
+	});
 
-    describe('uncompleted', function () {
+	describe('uncompleted', function () {
 
-        it('returns the collection of the uncompleted todos', function () {
+		it('returns the collection of the uncompleted todos', function () {
 
-            var uncompleted = collection.uncompleted();
+			var uncompleted = collection.uncompleted();
 
-            expect(uncompleted).to.be.instanceof(TodoCollection);
-            expect(uncompleted.toArray()).to.have.length(1);
-            expect(uncompleted.toArray()[0].id).to.equal('a1');
+			expect(uncompleted).to.be.instanceof(TodoCollection);
+			expect(uncompleted.toArray()).to.have.length(1);
+			expect(uncompleted.toArray()[0].id).to.equal('a1');
 
-        });
+		});
 
-    });
+	});
 
-    describe('toArray', function () {
+	describe('toArray', function () {
 
-        it('returns the array of the todos', function () {
+		it('returns the array of the todos', function () {
 
-            expect(collection.toArray()).to.be.an('array');
-            expect(collection.toArray()).to.have.length(3);
-            expect(collection.toArray()[0]).to.equal(todo0);
-            expect(collection.toArray()[1]).to.equal(todo1);
-            expect(collection.toArray()[2]).to.equal(todo2);
+			expect(collection.toArray()).to.be.an('array');
+			expect(collection.toArray()).to.have.length(3);
+			expect(collection.toArray()[0]).to.equal(todo0);
+			expect(collection.toArray()[1]).to.equal(todo1);
+			expect(collection.toArray()[2]).to.equal(todo2);
 
-        });
+		});
 
-    });
+	});
 
-    describe('completeAll', function () {
+	describe('completeAll', function () {
 
-        it('completes all the todos', function () {
+		it('completes all the todos', function () {
 
-            collection.completeAll();
+			collection.completeAll();
 
-            expect(collection.completed().toArray()).to.have.length(3);
+			expect(collection.completed().toArray()).to.have.length(3);
 
-        });
+		});
 
-    });
+	});
 
-    describe('uncompleteAll', function () {
+	describe('uncompleteAll', function () {
 
-        it('uncompletes all the todos', function () {
+		it('uncompletes all the todos', function () {
 
-            collection.uncompleteAll();
+			collection.uncompleteAll();
 
-            expect(collection.completed().toArray()).to.have.length(0);
+			expect(collection.completed().toArray()).to.have.length(0);
 
-        });
-    });
+		});
+	});
 
 });

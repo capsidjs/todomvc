@@ -4,32 +4,32 @@
 var $ = require('jquery');
 
 var TodoFilters = $.cc.subclass(function (pt) {
-    'use strict';
+	'use strict';
 
-    pt.constructor = function (elem) {
+	pt.constructor = function (elem) {
 
-        this.elem = elem;
+		this.elem = elem;
 
-    };
+	};
 
-    pt.setFilter = function (name) {
+	pt.setFilter = function (name) {
 
-        this.elem.find('a').removeClass('selected');
+		this.elem.find('a').removeClass('selected');
 
-        if (name === '/active') {
+		if (name === '/active') {
 
-            this.elem.find('a[name="active"]').addClass('selected');
+			this.elem.find('a[name="active"]').addClass('selected');
 
-        } else if (name === '/completed') {
+		} else if (name === '/completed') {
 
-            this.elem.find('a[name="completed"]').addClass('selected');
+			this.elem.find('a[name="completed"]').addClass('selected');
 
-        } else {
+		} else {
 
-            this.elem.find('a[name="all"]').addClass('selected');
+			this.elem.find('a[name="all"]').addClass('selected');
 
-        }
-    };
+		}
+	};
 
 });
 

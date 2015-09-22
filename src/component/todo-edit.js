@@ -6,49 +6,49 @@ var Const = require('../const');
 
 
 var TodoEdit = $.cc.subclass(function (pt) {
-    'use strict';
+	'use strict';
 
-    pt.constructor = function (elem) {
+	pt.constructor = function (elem) {
 
-        this.elem = elem;
+		this.elem = elem;
 
-        this.initEvents();
+		this.initEvents();
 
-    };
+	};
 
-    pt.initEvents = function () {
+	pt.initEvents = function () {
 
-        var that = this;
+		var self = this;
 
-        this.elem.on('keypress', function (e) {
+		this.elem.on('keypress', function (e) {
 
-            that.onKeypress(e);
+			self.onKeypress(e);
 
-        });
+		});
 
-        this.elem.on('blur', function () {
+		this.elem.on('blur', function () {
 
-            that.stopEditing();
+			self.stopEditing();
 
-        });
+		});
 
-    };
+	};
 
-    pt.onKeypress = function (e) {
+	pt.onKeypress = function (e) {
 
-        if (e.which === Const.KEYCODE.ENTER) {
+		if (e.which === Const.KEYCODE.ENTER) {
 
-            this.stopEditing();
+			this.stopEditing();
 
-        }
+		}
 
-    };
+	};
 
-    pt.stopEditing = function () {
+	pt.stopEditing = function () {
 
-        this.elem.trigger('todo-edited', this.elem.val());
+		this.elem.trigger('todo-edited', this.elem.val());
 
-    };
+	};
 
 });
 
