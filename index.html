@@ -1,69 +1,44 @@
 <!doctype html>
 <html lang="en">
-
-  <head>
-
-    <meta charset="utf-8">
-    <title>class-component.js • TodoMVC</title>
-
-    <link rel="stylesheet" href="node_modules/todomvc-common/base.css">
-    <link rel="stylesheet" href="node_modules/todomvc-app-css/index.css">
-
-  </head>
-
-  <body>
-
-    <section id="todoapp" class="todo-app">
-
-      <header id="header">
-
-        <h1>todos</h1>
-        <input id="new-todo" class="todo-input" placeholder="What needs to be done?" autofocus />
-
-      </header>
-
-      <section id="main">
-
-        <input id="toggle-all" class="todo-toggle-all" type="checkbox" />
-        <label for="toggle-all">Mark all as complete</label>
-
-        <ul id="todo-list" class="todo-list"></ul>
-
-      </section>
-
-      <footer id="footer" class="todo-controls">
-
-        <span id="todo-count" class="todo-count">
-          <strong class="todo-counter">0</strong> items left
-        </span>
-
-        <ul id="filters" class="todo-filters">
-          <li>
-            <a class="todo-filter" name="all" href="#/">All</a>
-          </li>
-          <li>
-            <a class="todo-filter" name="active" href="#/active">Active</a>
-          </li>
-          <li>
-            <a class="todo-filter" name="completed" href="#/completed">Completed</a>
-          </li>
-        </ul>
-
-        <button id="clear-completed" class="todo-clear-btn">Clear completed</button>
-
-      </footer>
-
-    </section>
-
-    <footer id="info">
-      <p>Double-click to edit a todo</p>
-      <p>Written by <a href="https://github.com/kt3k">Yoshiya Hinosawa</a></p>
-      <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
-    </footer>
-
-    <script src="node_modules/todomvc-common/base.js"></script>
-    <script src="build/app.js"></script>
-
-  </body>
-
+	<head>
+		<meta charset="utf-8">
+		<title>class-component.js • TodoMVC</title>
+		<link rel="stylesheet" href="node_modules/todomvc-common/base.css">
+		<link rel="stylesheet" href="node_modules/todomvc-app-css/index.css">
+	</head>
+	<body>
+		<section id="todoapp" class="todo-app">
+			<header id="header">
+				<h1>todos</h1>
+				<input id="new-todo" class="todo-input" placeholder="What needs to be done?" autofocus />
+			</header>
+			<section id="main">
+				<input id="toggle-all" class="todo-toggle-all" type="checkbox" />
+				<label for="toggle-all">Mark all as complete</label>
+				<ul id="todo-list" class="todo-list"></ul>
+			</section>
+			<footer id="footer">
+				<span id="todo-count" class="todo-count"></span>
+				<ul id="filters" class="todo-filters">
+					<li>
+						<a class="todo-filter" name="all" href="#/">All</a>
+					</li>
+					<li>
+						<a class="todo-filter" name="active" href="#/active">Active</a>
+					</li>
+					<li>
+						<a class="todo-filter" name="completed" href="#/completed">Completed</a>
+					</li>
+				</ul>
+				<button id="clear-completed" class="todo-clear-btn">Clear completed</button>
+			</footer>
+		</section>
+		<footer id="info">
+			<p>Double-click to edit a todo</p>
+			<p>Written by <a href="https://github.com/kt3k">Yoshiya Hinosawa</a></p>
+			<p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
+		</footer>
+		<script src="node_modules/todomvc-common/base.js"></script>
+		<script src="build/app.js"></script>
+	</body>
 </html>
