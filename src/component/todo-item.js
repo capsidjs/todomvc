@@ -128,7 +128,7 @@ var TodoItem = $.cc.subclass(function (pt) {
 
         this.elem.removeClass('editing');
 
-        if (title === '' || title == null) {
+        if (!title) {
 
             this.destroy();
 
