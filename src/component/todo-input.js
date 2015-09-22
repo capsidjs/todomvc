@@ -23,11 +23,11 @@ var TodoInput = $.cc.subclass(function (pt) {
 
 	};
 
-    /**
-     * Handler for key presses.
-     *
-     * @param {Event}
-     */
+	/**
+	 * Handler for key presses.
+	 *
+	 * @param {Event}
+	 */
 	pt.onKeypress = function (e) {
 
 		if (e.which !== Const.KEYCODE.ENTER || !this.elem.val().trim()) {
