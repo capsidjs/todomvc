@@ -13,7 +13,7 @@ var TodoList = $.cc.subclass(function (pt) {
 	/**
 	 * Updates the todo items by the given todo model list.
 	 *
-	 * @param {TodoCollection} todoList The tood list
+	 * @param {TodoCollection} todoList The todo list
 	 */
 	pt.update = function (todoList) {
 
