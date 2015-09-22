@@ -1,7 +1,4 @@
-
-
 var $ = require('jquery');
-
 
 /**
  * Todo class is the model of single todo item.

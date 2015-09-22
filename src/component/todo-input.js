@@ -1,10 +1,10 @@
-
-
 var $ = require('jquery');
+
 var Const = require('../const');
 
-
-
+/**
+ * TodoInput class controls the input for adding todos.
+ */
 var TodoInput = $.cc.subclass(function (pt) {
 	'use strict';
 
@@ -23,6 +23,11 @@ var TodoInput = $.cc.subclass(function (pt) {
 
 	};
 
+    /**
+     * Handler for key presses.
+     *
+     * @param {Event}
+     */
 	pt.onKeypress = function (e) {
 
 		if (e.which !== Const.KEYCODE.ENTER || !this.elem.val().trim()) {

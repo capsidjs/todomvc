@@ -1,7 +1,4 @@
-
-
 var $ = require('jquery');
-
 
 var TodoItem = $.cc.subclass(function (pt) {
 	'use strict';

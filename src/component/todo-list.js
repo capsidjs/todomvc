@@ -1,4 +1,3 @@
-
 var $ = require('jquery');
 
 var TodoList = $.cc.subclass(function (pt) {

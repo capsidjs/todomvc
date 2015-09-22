@@ -1,6 +1,3 @@
-
-
-
 var $ = require('jquery');
 
 /**

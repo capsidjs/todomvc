@@ -1,11 +1,7 @@
-
-
 var $ = require('jquery');
+
 var Const = require('../const');
-
 var TodoCollection = require('./todo-collection');
-
-
 
 var TodoRepository = $.cc.subclass(function (pt) {
 	'use strict';

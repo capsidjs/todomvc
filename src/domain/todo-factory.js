@@ -1,9 +1,6 @@
-
-
 var $ = require('jquery');
 
 var Todo = require('./todo');
-
 
 /**
  * TodoFactory is the factory for todo.
@@ -41,6 +38,11 @@ var TodoFactory = $.cc.subclass(function (pt) {
 
 	};
 
+	/**
+	 * Generates a random id.
+	 *
+	 * @private
+	 */
 	pt.generateId = function () {
 
 		return Math.floor(Math.random() * 1000000000).toString();

@@ -1,5 +1,3 @@
-
-
 var $ = require('jquery');
 
 var TodoToggleAll = $.cc.subclass(function (pt) {
