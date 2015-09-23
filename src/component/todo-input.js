@@ -30,13 +30,19 @@ var TodoInput = $.cc.subclass(function (pt) {
 	 */
 	pt.onKeypress = function (e) {
 
-		if (e.which !== Const.KEYCODE.ENTER || !this.elem.val().trim()) {
+		if (e.which !== Const.KEYCODE.ENTER) {
 
 			return;
 
 		}
 
-		var title = this.elem.val();
+		if (!this.elem.val() || !this.elem.val().trim()) {
+
+			return;
+
+		}
+
+		var title = this.elem.val().trim();
 		this.elem.val('');
 
 		this.elem.trigger('todo-new-item', title);
