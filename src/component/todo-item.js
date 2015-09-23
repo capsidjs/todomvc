@@ -1,5 +1,8 @@
 var $ = require('jquery');
 
+/**
+ * TodoItem class controls todo item in a list.
+ */
 var TodoItem = $.cc.subclass(function (pt) {
 	'use strict';
 
@@ -12,6 +15,11 @@ var TodoItem = $.cc.subclass(function (pt) {
 
 	};
 
+	/**
+	 * Inits elements
+	 *
+	 * @private
+	 */
 	pt.initElems = function () {
 
 		var view = $('<div class="view" />').appendTo(this.elem);
@@ -23,6 +31,11 @@ var TodoItem = $.cc.subclass(function (pt) {
 
 	};
 
+	/**
+	 * Inits events.
+	 *
+	 * @private
+	 */
 	pt.initEvents = function () {
 
 		var self = this;
@@ -56,7 +69,10 @@ var TodoItem = $.cc.subclass(function (pt) {
 	/**
 	 * Updates the todo title by todo model
 	 *
-	 * @param {Todo} todo The todo
+	 * @param {Object} todo The todo
+	 * @param {String} todo.id The id
+	 * @param {String} todo.title The title
+	 * @param {Boolean} todo.completed If completed or not
 	 */
 	pt.update = function (todo) {
 
@@ -65,19 +81,25 @@ var TodoItem = $.cc.subclass(function (pt) {
 		this.elem.find('.edit').val(todo.title);
 
 		this.completed = todo.completed;
-		this.updateCompleted();
+		this.updateView();
 
 	};
 
+	/**
+	 * Toggles the completed state of the item.
+	 */
 	pt.toggleCompleted = function () {
 
 		this.elem.trigger('todo-item-toggle', this.elem.attr('id'));
 
 		this.completed = !this.completed;
-		this.updateCompleted();
+		this.updateView();
 
 	};
 
+	/**
+	 * Destroys the item.
+	 */
 	pt.destroy = function () {
 
 		this.elem.parent().trigger('todo-item-destroy', this.elem.attr('id'));
@@ -86,7 +108,12 @@ var TodoItem = $.cc.subclass(function (pt) {
 
 	};
 
-	pt.updateCompleted = function () {
+	/**
+	 * Updates the view state according to the current completed state.
+	 *
+	 * @private
+	 */
+	pt.updateView = function () {
 
 		if (this.completed) {
 
@@ -99,6 +126,9 @@ var TodoItem = $.cc.subclass(function (pt) {
 
 	};
 
+	/**
+	 * Completes the item state.
+	 */
 	pt.complete = function () {
 
 		this.elem.find('.toggle').prop('checked', true);
@@ -106,6 +136,9 @@ var TodoItem = $.cc.subclass(function (pt) {
 
 	};
 
+	/**
+	 * Uncompletes the item state.
+	 */
 	pt.uncomplete = function () {
 
 		this.elem.find('.toggle').prop('checked', false);
@@ -113,15 +146,19 @@ var TodoItem = $.cc.subclass(function (pt) {
 
 	};
 
+	/**
+	 * Starts editing.
+	 */
 	pt.startEditing = function () {
 
 		this.elem.addClass('editing');
 
 	};
 
+	/**
+	 * Stops editing
+	 */
 	pt.stopEditing = function (title) {
-
-		console.log(title);
 
 		this.elem.removeClass('editing');
 
