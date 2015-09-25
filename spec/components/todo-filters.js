@@ -1,4 +1,5 @@
 /* globals describe, it, expect, beforeEach */
+/* jshint expr: true */
 
 var $ = require('jquery');
 

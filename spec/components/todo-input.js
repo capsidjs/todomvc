@@ -1,4 +1,4 @@
-/* global describe, it, expect */
+/* global describe, it, expect, beforeEach */
 
 var $ = require('jquery');
 
@@ -7,6 +7,7 @@ var Const = require('../../src/const');
 var elem;
 
 describe('TodoInput', function () {
+	'use strict';
 
 	beforeEach(function () {
 
