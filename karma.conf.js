@@ -44,7 +44,7 @@ module.exports = function(config) {
 
     browserify: {
         debug: true,
-        transform: [require('browserify-istanbul')({ignore: '**/spec/**/*'})]
+        transform: [require('browserify-istanbul')({ignore: ['**/spec/**/*', '**/src/*']})]
     },
 
 
