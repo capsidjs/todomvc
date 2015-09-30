@@ -87,6 +87,8 @@ var TodoItem = $.cc.subclass(function (pt) {
 
 	/**
 	 * Toggles the completed state of the item.
+	 *
+	 * @private
 	 */
 	pt.toggleCompleted = function () {
 
@@ -99,6 +101,8 @@ var TodoItem = $.cc.subclass(function (pt) {
 
 	/**
 	 * Destroys the item.
+	 *
+	 * @private
 	 */
 	pt.destroy = function () {
 
@@ -128,6 +132,8 @@ var TodoItem = $.cc.subclass(function (pt) {
 
 	/**
 	 * Completes the item state.
+	 *
+	 * @private
 	 */
 	pt.complete = function () {
 
@@ -138,6 +144,8 @@ var TodoItem = $.cc.subclass(function (pt) {
 
 	/**
 	 * Uncompletes the item state.
+	 *
+	 * @private
 	 */
 	pt.uncomplete = function () {
 
@@ -148,6 +156,8 @@ var TodoItem = $.cc.subclass(function (pt) {
 
 	/**
 	 * Starts editing.
+	 *
+	 * @private
 	 */
 	pt.startEditing = function () {
 
@@ -156,7 +166,9 @@ var TodoItem = $.cc.subclass(function (pt) {
 	};
 
 	/**
-	 * Stops editing
+	 * Stops editing.
+	 *
+	 * @private
 	 */
 	pt.stopEditing = function (title) {
 
