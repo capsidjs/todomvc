@@ -4,8 +4,10 @@
 var $ = require('jquery');
 var todoItem;
 var elem;
+var parentElem;
 
 describe('todo-edit', function () {
+	'use strict';
 
 	beforeEach(function () {
 
