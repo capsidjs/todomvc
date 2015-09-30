@@ -1,16 +1,14 @@
 # TODO
+- test, component/todo-list
+- test, component/todo-toggle-all
+- test, service/todo-app
 - official spec review
+
+# DONE
 - test, component/todo-edit
 - test, component/todo-input
 - test, component/todo-item
 - test, component/todo-filters
-- test, component/todo-list
-- test, component/todo-toggle-all
-- test, service/todo-app
-- code review
-- pull-request
-
-# DONE
 - test, component/todo-clear-btn
 - test, component/todo-count
 - jshint
