@@ -11,13 +11,16 @@ var TodoToggleAll = $.cc.subclass(function (pt) {
 
 		this.elem.on('click', function () {
 
-			self.onClick();
+			self.toggleAll();
 
 		});
 
 	};
 
-	pt.onClick = function () {
+	/**
+	 * Toggles the all items.
+	 */
+	pt.toggleAll = function () {
 
 		if (this.checked) {
 
@@ -33,6 +36,11 @@ var TodoToggleAll = $.cc.subclass(function (pt) {
 
 	};
 
+	/**
+	 * Updates the button state by the given active items' condition.
+	 *
+	 * @param {Boolean} activeItemExists true if any active item exists, false otherwise
+	 */
 	pt.updateBtnState = function (activeItemExists) {
 
 		this.checked = !activeItemExists;
