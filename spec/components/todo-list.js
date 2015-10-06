@@ -1,8 +1,10 @@
 /* global describe, it, expect, beforeEach */
 
+var $ = require('jquery');
+
 var TodoCollection = require('../../src/domain/todo-collection');
 var TodoFactory = require('../../src/domain/todo-factory');
-todoFactory = new TodoFactory();
+var todoFactory = new TodoFactory();
 
 var todoList;
 
