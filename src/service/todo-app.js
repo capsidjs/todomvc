@@ -196,8 +196,6 @@ var TodoApp = $.cc.subclass(function (pt) {
 	 */
 	pt.updateToggleBtnState = function () {
 
-		console.log('updateToggleBtnState');
-
 		this.elem.find('.todo-toggle-all').cc.get('todo-toggle-all').updateBtnState(
 			!this.todoCollection.uncompleted().isEmpty()
 		);
