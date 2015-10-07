@@ -4,6 +4,9 @@ var Const = require('../const');
 var TodoFactory = require('../domain/todo-factory');
 var TodoRepository = require('../domain/todo-repository');
 
+/**
+ * The todo application class.
+ */
 var TodoApp = $.cc.subclass(function (pt) {
 	'use strict';
 
@@ -23,6 +26,11 @@ var TodoApp = $.cc.subclass(function (pt) {
 	};
 
 
+	/**
+	 * Initializes events.
+	 *
+	 * @private
+	 */
 	pt.initEvents = function () {
 
 		var self = this;
@@ -78,6 +86,9 @@ var TodoApp = $.cc.subclass(function (pt) {
 	};
 
 	/**
+	 * Adds new item by the given title.
+	 *
+	 * @private
 	 * @param {String} title The todo title
 	 */
 	pt.addTodo = function (title) {
@@ -105,9 +116,12 @@ var TodoApp = $.cc.subclass(function (pt) {
 
 	};
 
+	/**
+	 * Updates the controls.
+	 *
+	 * @private
+	 */
 	pt.updateControls = function () {
-
-		console.log('update contorls');
 
 		this.updateFilterBtns();
 
@@ -121,6 +135,8 @@ var TodoApp = $.cc.subclass(function (pt) {
 
 	/**
 	 * Updates the todo list.
+	 *
+	 * @private
 	 */
 	pt.updateTodoList = function () {
 
@@ -130,6 +146,11 @@ var TodoApp = $.cc.subclass(function (pt) {
 
 	};
 
+	/**
+	 * Updates the filter buttons.
+	 *
+	 * @private
+	 */
 	pt.updateFilterBtns = function () {
 
 		var filterName = this.getFilterNameFromHash();
@@ -138,12 +159,22 @@ var TodoApp = $.cc.subclass(function (pt) {
 
 	};
 
+	/**
+	 * Updates the todo counter.
+	 *
+	 * @private
+	 */
 	pt.updateTodoCount = function () {
 
 		this.elem.find('.todo-count').cc.get('todo-count').setCount(this.todoCollection.uncompleted().toArray().length);
 
 	};
 
+	/**
+	 * Updates the visiblity of components.
+	 *
+	 * @private
+	 */
 	pt.updateVisibility = function () {
 
 		if (this.todoCollection.isEmpty()) {
@@ -158,6 +189,11 @@ var TodoApp = $.cc.subclass(function (pt) {
 
 	};
 
+	/**
+	 * Updates the toggle-all button state.
+	 *
+	 * @private
+	 */
 	pt.updateToggleBtnState = function () {
 
 		console.log('updateToggleBtnState');
@@ -168,6 +204,12 @@ var TodoApp = $.cc.subclass(function (pt) {
 
 	};
 
+
+	/**
+	 * Gets the todo collection which is displayable in the current filter.
+	 *
+	 * @private
+	 */
 	pt.getDisplayCollection = function () {
 
 		var filterName = this.getFilterNameFromHash();
@@ -188,6 +230,11 @@ var TodoApp = $.cc.subclass(function (pt) {
 
 	};
 
+	/**
+	 * Returns if the filter is enabled.
+	 *
+	 * @private
+	 */
 	pt.filterIsEnabled = function () {
 
 		var filterName = this.getFilterNameFromHash();
@@ -196,6 +243,9 @@ var TodoApp = $.cc.subclass(function (pt) {
 
 	};
 
+	/**
+	 * Gets the filter name from the hash string.
+	 */
 	pt.getFilterNameFromHash = function () {
 
 		return window.location.hash.substring(1);
@@ -247,6 +297,12 @@ var TodoApp = $.cc.subclass(function (pt) {
 
 	};
 
+	/**
+	 * Edits the todo item of the given id by the given title.
+	 *
+	 * @param {String} id The todo id
+	 * @param {String} title The todo title
+	 */
 	pt.editItem = function (id, title) {
 
 		var todo = this.todoCollection.getById(id);
@@ -270,6 +326,11 @@ var TodoApp = $.cc.subclass(function (pt) {
 
 	};
 
+	/**
+	 * Uncompletes all the todo items.
+	 *
+	 * @private
+	 */
 	pt.uncompleteAll = function () {
 
 		if (this.filterIsEnabled()) {
@@ -292,6 +353,11 @@ var TodoApp = $.cc.subclass(function (pt) {
 
 	};
 
+	/**
+	 * Completes all the todo items.
+	 *
+	 * @private
+	 */
 	pt.completeAll = function () {
 
 		if (this.filterIsEnabled()) {
