@@ -5,7 +5,6 @@
   "main": "index.html",
   "scripts": {
     "test": "karma start karma.conf.js",
-    "ci": "karma start karma.conf.js --browsers PhantomJS --reporters progress,coverage,coveralls",
     "lint": "eslint src/ spec/ karma.conf.js",
     "build": "browserify src/index.js > build/app.js",
     "open-cov": "open coverage/Chrome*/lcov-report/index.html"
