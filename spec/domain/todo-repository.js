@@ -1,17 +1,14 @@
-/* global describe, it, expect, beforeEach */
+const Todo = require('../../src/domain/todo')
+const TodoCollection = require('../../src/domain/todo-collection')
+const TodoRepository = require('../../src/domain/todo-repository')
+const Const = require('../../src/const')
 
-var Todo = require('../../src/domain/todo')
-var TodoCollection = require('../../src/domain/todo-collection')
-var TodoRepository = require('../../src/domain/todo-repository')
+const {expect} = require('chai')
 
-var Const = require('../../src/const')
+let todoRepository
 
-var todoRepository
-
-describe('TodoRepository', function () {
-  'use strict'
-
-  beforeEach(function () {
+describe('TodoRepository', () => {
+  beforeEach(() => {
     todoRepository = new TodoRepository()
 
     todoRepository.saveAll(new TodoCollection([
@@ -21,14 +18,14 @@ describe('TodoRepository', function () {
     ]))
   })
 
-  describe('saveAll', function () {
-    it('saves the all of todos in the collection', function () {
+  describe('saveAll', () => {
+    it('saves the all of todos in the collection', () => {
       todoRepository.saveAll(new TodoCollection([
         new Todo('b0', 'foo', true),
         new Todo('b1', 'bar', false)
       ]))
 
-      var collection = todoRepository.getAll()
+      const collection = todoRepository.getAll()
 
       expect(collection).to.be.instanceof(TodoCollection)
       expect(collection.toArray()).to.have.length(2)
@@ -37,27 +34,27 @@ describe('TodoRepository', function () {
     })
   })
 
-  describe('getAll', function () {
-    it('gets the all of saved todos', function () {
-      var collection = todoRepository.getAll()
+  describe('getAll', () => {
+    it('gets the all of saved todos', () => {
+      const collection = todoRepository.getAll()
 
       expect(collection).to.be.instanceof(TodoCollection)
       expect(collection.toArray()).to.have.length(3)
     })
 
-    it('gets an empty todo collection when nothing stored', function () {
+    it('gets an empty todo collection when nothing stored', () => {
       window.localStorage.clear()
 
-      var collection = todoRepository.getAll()
+      const collection = todoRepository.getAll()
 
       expect(collection).to.be.instanceof(TodoCollection)
       expect(collection.toArray()).to.have.length(0)
     })
 
-    it('gets an empty todo collection when the stored json is broken', function () {
+    it('gets an empty todo collection when the stored json is broken', () => {
       window.localStorage[Const.STORAGE_KEY.TODO_LIST] = '['
 
-      var collection = todoRepository.getAll()
+      const collection = todoRepository.getAll()
 
       expect(collection).to.be.instanceof(TodoCollection)
       expect(collection.toArray()).to.have.length(0)

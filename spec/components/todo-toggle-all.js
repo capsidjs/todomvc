@@ -1,6 +1,5 @@
-/* global describe, it, expect, beforeEach */
-
 var $ = require('jquery')
+const {expect} = require('chai')
 
 var elem
 var toggleAll

@@ -1,6 +1,5 @@
-/* global describe, it, expect, beforeEach */
-
 var $ = require('jquery')
+const {expect} = require('chai')
 
 var TodoCollection = require('../../src/domain/todo-collection')
 var TodoFactory = require('../../src/domain/todo-factory')

@@ -294,7 +294,7 @@ var ClassComponentContext = subclass(function (pt) {
 
         if (!coelement) {
 
-            throw new Error('no coelement named: ' + coelementName + ', on the dom: ' + this.jqObj.get(0).tagName);
+            throw new Error('no coelement named: ' + coelementName);// + ', on the dom: ' + this.jqObj.get(0).tagName);
 
         }
 
@@ -10138,652 +10138,605 @@ return jQuery;
 }));
 
 },{}],8:[function(require,module,exports){
-
+'use strict';
 
 var $ = require('jquery');
 
 $.cc.register('todo-clear-btn', function (elem) {
+  'use strict';
 
-    elem.on('click', function () {
-
-        elem.trigger('todo-clear-completed');
-
-    });
-
+  elem.on('click', function () {
+    elem.trigger('todo-clear-completed');
+  });
 });
 
 },{"jquery":7}],9:[function(require,module,exports){
-
+'use strict';
 
 var $ = require('jquery');
 
 var TodoCount = $.cc.subclass(function (pt) {
-    'use strict';
+  'use strict';
 
-    pt.constructor = function (elem) {
+  pt.constructor = function (elem) {
+    this.elem = elem;
+  };
 
-        this.elem = elem;
+  pt.setCount = function (count) {
+    this.elem.empty();
 
-    };
+    if (count === 1) {
+      this.elem.text(' item left');
+    } else {
+      this.elem.text(' items left');
+    }
 
-    pt.setCount = function (count) {
-
-        this.elem.empty();
-
-        if (count === 1) {
-
-            this.elem.text(' item left');
-
-        } else {
-
-            this.elem.text(' items left');
-
-        }
-
-        $('<strong />').text(count).prependTo(this.elem);
-
-    };
-
+    $('<strong />').text(count).prependTo(this.elem);
+  };
 });
 
 $.cc.assign('todo-count', TodoCount);
 
 },{"jquery":7}],10:[function(require,module,exports){
-
+'use strict';
 
 var $ = require('jquery');
 
 var Const = require('../const');
 
-
+/**
+ * TodoEdit controls the edit area of each todo item.
+ */
 var TodoEdit = $.cc.subclass(function (pt) {
-    'use strict';
+  'use strict';
 
-    pt.constructor = function (elem) {
+  pt.constructor = function (elem) {
+    this.elem = elem;
 
-        this.elem = elem;
+    this.initEvents();
+  };
 
-        this.initEvents();
+  /**
+   * Initializes the events
+   *
+   * @private
+   */
+  pt.initEvents = function () {
+    var self = this;
 
-    };
+    this.elem.on('keypress', function (e) {
+      self.onKeypress(e);
+    });
 
-    pt.initEvents = function () {
+    this.elem.on('blur', function () {
+      self.stopEditing();
+    });
+  };
 
-        var that = this;
+  /**
+   * Handler for the key press events.
+   *
+   * @param {Event} e The event
+   */
+  pt.onKeypress = function (e) {
+    if (e.which === Const.KEYCODE.ENTER) {
+      this.stopEditing();
+    }
+  };
 
-        this.elem.on('keypress', function (e) {
-
-            that.onKeypress(e);
-
-        });
-
-        this.elem.on('blur', function () {
-
-            that.stopEditing();
-
-        });
-
-    };
-
-    pt.onKeypress = function (e) {
-
-        if (e.which === Const.KEYCODE.ENTER) {
-
-            this.stopEditing();
-
-        }
-
-    };
-
-    pt.stopEditing = function () {
-
-        this.elem.trigger('todo-edited', this.elem.val());
-
-    };
-
+  /**
+   * Stops editing with current value.
+   */
+  pt.stopEditing = function () {
+    this.elem.trigger('todo-edited', this.elem.val());
+  };
 });
 
 $.cc.assign('todo-edit', TodoEdit);
 
 },{"../const":16,"jquery":7}],11:[function(require,module,exports){
-
-
+'use strict';
 
 var $ = require('jquery');
 
 var TodoFilters = $.cc.subclass(function (pt) {
-    'use strict';
+  'use strict';
 
-    pt.constructor = function (elem) {
+  pt.constructor = function (elem) {
+    this.elem = elem;
+  };
 
-        this.elem = elem;
+  /**
+   * Sets the given filter button active.
+   *
+   * @param {String} name The name of the filter
+   */
+  pt.setFilter = function (name) {
+    this.elem.find('a').removeClass('selected');
 
-    };
-
-    pt.setFilter = function (name) {
-
-        this.elem.find('a').removeClass('selected');
-
-        if (name === '/active') {
-
-            this.elem.find('a[name="active"]').addClass('selected');
-
-        } else if (name === '/completed') {
-
-            this.elem.find('a[name="completed"]').addClass('selected');
-
-        } else {
-
-            this.elem.find('a[name="all"]').addClass('selected');
-
-        }
-    };
-
+    if (name === '/active') {
+      this.elem.find('a[name="active"]').addClass('selected');
+    } else if (name === '/completed') {
+      this.elem.find('a[name="completed"]').addClass('selected');
+    } else {
+      this.elem.find('a[name="all"]').addClass('selected');
+    }
+  };
 });
 
 $.cc.assign('todo-filters', TodoFilters);
 
 },{"jquery":7}],12:[function(require,module,exports){
-
+'use strict';
 
 var $ = require('jquery');
+
 var Const = require('../const');
 
-
-
+/**
+ * TodoInput class controls the input for adding todos.
+ */
 var TodoInput = $.cc.subclass(function (pt) {
+  'use strict';
 
-    pt.constructor = function (elem) {
+  pt.constructor = function (elem) {
+    this.elem = elem;
 
-        this.elem = elem;
+    var self = this;
 
-        var that = this;
+    this.elem.on('keypress', function (e) {
+      self.onKeypress(e);
+    });
+  };
 
+  /**
+   * Handler for key presses.
+   *
+   * @param {Event}
+   */
+  pt.onKeypress = function (e) {
+    if (e.which !== Const.KEYCODE.ENTER) {
+      return;
+    }
 
-        this.elem.on('keypress', function (e) {
+    if (!this.elem.val() || !this.elem.val().trim()) {
+      return;
+    }
 
-            console.log
+    var title = this.elem.val().trim();
+    this.elem.val('');
 
-            that.onKeypress(e);
-
-        });
-
-    };
-
-    pt.onKeypress = function (e) {
-
-        if (e.which !== Const.KEYCODE.ENTER || !this.elem.val().trim()) {
-
-            return;
-
-        }
-
-        var title = this.elem.val();
-        this.elem.val('');
-
-        this.elem.trigger('todo-new-item', title);
-
-    };
-
+    this.elem.trigger('todo-new-item', title);
+  };
 });
-
 
 $.cc.assign('todo-input', TodoInput);
 
 },{"../const":16,"jquery":7}],13:[function(require,module,exports){
-
+'use strict';
 
 var $ = require('jquery');
 
-
+/**
+ * TodoItem class controls todo item in a list.
+ */
 var TodoItem = $.cc.subclass(function (pt) {
-    'use strict';
+  'use strict';
 
-    pt.constructor = function (elem) {
+  pt.constructor = function (elem) {
+    this.elem = elem;
 
-        this.elem = elem;
+    this.initElems();
+    this.initEvents();
+  };
 
-        this.initElems();
-        this.initEvents();
+  /**
+   * Inits elements
+   *
+   * @private
+   */
+  pt.initElems = function () {
+    var view = $('<div class="view" />').appendTo(this.elem);
 
-    };
+    $('<input class="toggle" type="checkbox" />').appendTo(view);
+    $('<label />').appendTo(view);
+    $('<button class="destroy" />').appendTo(view);
+    $('<input class="edit" />').appendTo(this.elem).cc.init('todo-edit');
+  };
 
-    pt.initElems = function () {
+  /**
+   * Inits events.
+   *
+   * @private
+   */
+  pt.initEvents = function () {
+    var self = this;
 
-        var view = $('<div class="view" />').appendTo(this.elem);
+    this.elem.find('.toggle').on('click', function () {
+      self.toggleCompleted();
+    });
 
-        $('<input class="toggle" type="checkbox" />').appendTo(view);
-        $('<label />').appendTo(view);
-        $('<button class="destroy" />').appendTo(view);
-        $('<input class="edit" />').appendTo(this.elem).cc.init('todo-edit');
+    this.elem.find('.destroy').on('click', function () {
+      self.destroy();
+    });
 
-    };
+    this.elem.find('label').on('dblclick', function () {
+      self.startEditing();
+    });
 
-    pt.initEvents = function () {
+    this.elem.on('todo-edited', function (e, title) {
+      self.stopEditing(title);
+    });
+  };
 
-        var that = this;
+  /**
+   * Updates the todo title by todo model
+   *
+   * @param {Object} todo The todo
+   * @param {String} todo.id The id
+   * @param {String} todo.title The title
+   * @param {Boolean} todo.completed If completed or not
+   */
+  pt.update = function (todo) {
+    this.elem.attr('id', todo.id);
+    this.elem.find('label').text(todo.title);
+    this.elem.find('.edit').val(todo.title);
 
-        this.elem.find('.toggle').on('click', function () {
+    this.completed = todo.completed;
+    this.updateView();
+  };
 
-            that.toggleCompleted();
+  /**
+   * Toggles the completed state of the item.
+   *
+   * @private
+   */
+  pt.toggleCompleted = function () {
+    this.elem.trigger('todo-item-toggle', this.elem.attr('id'));
 
-        });
+    this.completed = !this.completed;
+    this.updateView();
+  };
 
-        this.elem.find('.destroy').on('click', function () {
+  /**
+   * Destroys the item.
+   *
+   * @private
+   */
+  pt.destroy = function () {
+    this.elem.parent().trigger('todo-item-destroy', this.elem.attr('id'));
 
-            that.destroy();
+    this.elem.remove();
+  };
 
-        });
+  /**
+   * Updates the view state according to the current completed state.
+   *
+   * @private
+   */
+  pt.updateView = function () {
+    if (this.completed) {
+      this.complete();
+    } else {
+      this.uncomplete();
+    }
+  };
 
-        this.elem.find('label').on('dblclick', function () {
+  /**
+   * Completes the item state.
+   *
+   * @private
+   */
+  pt.complete = function () {
+    this.elem.find('.toggle').prop('checked', true);
+    this.elem.addClass('completed');
+  };
 
-            that.startEditing();
+  /**
+   * Uncompletes the item state.
+   *
+   * @private
+   */
+  pt.uncomplete = function () {
+    this.elem.find('.toggle').prop('checked', false);
+    this.elem.removeClass('completed');
+  };
 
-        });
+  /**
+   * Starts editing.
+   *
+   * @private
+   */
+  pt.startEditing = function () {
+    this.elem.addClass('editing');
+  };
 
-        this.elem.on('todo-edited', function (e, title) {
+  /**
+   * Stops editing.
+   *
+   * @private
+   */
+  pt.stopEditing = function (title) {
+    this.elem.removeClass('editing');
 
-            that.stopEditing(title);
+    if (!title) {
+      this.destroy();
 
-        });
+      return;
+    }
 
-    };
+    this.elem.find('label').text(title);
 
-    /**
-     * Updates the todo title by todo model
-     *
-     * @param {Todo} todo The todo
-     */
-    pt.update = function (todo) {
-
-        this.elem.attr('id', todo.id);
-        this.elem.find('label').text(todo.title);
-        this.elem.find('.edit').val(todo.title);
-
-        this.completed = todo.completed;
-        this.updateCompleted();
-
-    };
-
-    pt.toggleCompleted = function () {
-
-        this.elem.trigger('todo-item-toggle', this.elem.attr('id'));
-
-        this.completed = !this.completed;
-        this.updateCompleted();
-
-    };
-
-    pt.destroy = function () {
-
-        this.elem.parent().trigger('todo-item-destroy', this.elem.attr('id'));
-
-        this.elem.remove();
-
-    };
-
-    pt.updateCompleted = function () {
-
-        if (this.completed) {
-
-            this.complete();
-
-        } else {
-
-            this.uncomplete();
-        }
-
-    };
-
-    pt.complete = function () {
-
-        this.elem.find('.toggle').prop('checked', true);
-        this.elem.addClass('completed');
-
-    };
-
-    pt.uncomplete = function () {
-
-        this.elem.find('.toggle').prop('checked', false);
-        this.elem.removeClass('completed');
-
-    };
-
-    pt.startEditing = function () {
-
-        this.elem.addClass('editing');
-
-    };
-
-    pt.stopEditing = function (title) {
-
-        console.log(title);
-
-        this.elem.removeClass('editing');
-
-        if (title === '' || title == null) {
-
-            that.destroy();
-            return;
-
-        }
-
-        this.elem.find('label').text(title);
-
-        this.elem.trigger('todo-item-edited', [this.elem.attr('id'), title]);
-
-    };
-
+    this.elem.trigger('todo-item-edited', [this.elem.attr('id'), title]);
+  };
 });
-
 
 $.cc.assign('todo-item', TodoItem);
 
 },{"jquery":7}],14:[function(require,module,exports){
+'use strict';
 
 var $ = require('jquery');
 
 var TodoList = $.cc.subclass(function (pt) {
-    'use strict';
+  'use strict';
 
-    pt.constructor = function (elem) {
+  pt.constructor = function (elem) {
+    this.elem = elem;
+  };
 
-        this.elem = elem;
+  /**
+   * Updates the todo items by the given todo model list.
+   *
+   * @param {TodoCollection} todoList The todo list
+   */
+  pt.update = function (todoList) {
+    this.elem.empty();
 
-    };
-
-    /**
-     * Updates the todo items by the given todo model list.
-     *
-     * @param {TodoCollection} todoList The tood list
-     */
-    pt.update = function (todoList) {
-
-        this.elem.empty();
-
-        todoList.forEach(function (todo) {
-
-            $('<li />').appendTo(this.elem).cc.init('todo-item').update(todo);
-
-        }, this);
-
-    };
-
+    todoList.forEach(function (todo) {
+      $('<li />').appendTo(this.elem).cc.init('todo-item').update(todo);
+    }, this);
+  };
 });
 
 $.cc.assign('todo-list', TodoList);
 
 },{"jquery":7}],15:[function(require,module,exports){
-
+'use strict';
 
 var $ = require('jquery');
 
 var TodoToggleAll = $.cc.subclass(function (pt) {
-    'use strict';
+  'use strict';
 
-    pt.constructor = function (elem) {
+  pt.constructor = function (elem) {
+    this.elem = elem;
 
-        this.elem = elem;
+    var self = this;
 
-        var that = this;
+    this.elem.on('click', function () {
+      self.toggleAll();
+    });
+  };
 
-        this.elem.on('click', function () {
+  /**
+   * Toggles the all items.
+   */
+  pt.toggleAll = function () {
+    if (this.checked) {
+      this.elem.trigger('todo-uncomplete-all');
+    } else {
+      this.elem.trigger('todo-complete-all');
+    }
 
-            that.onClick();
+    this.check = !this.check;
+  };
 
-        });
+  /**
+   * Updates the button state by the given active items' condition.
+   *
+   * @param {Boolean} activeItemExists true if any active item exists, false otherwise
+   */
+  pt.updateBtnState = function (activeItemExists) {
+    this.checked = !activeItemExists;
 
-    };
-
-    pt.onClick = function () {
-
-        if (this.checked) {
-
-            this.elem.trigger('todo-uncomplete-all');
-
-        } else {
-
-            this.elem.trigger('todo-complete-all');
-
-        }
-
-        this.check = !this.check;
-
-    };
-
-    pt.updateBtnState = function (activeItemExists) {
-
-        this.checked = !activeItemExists;
-
-        if (this.checked) {
-
-            this.elem.prop('checked', true);
-
-        } else {
-
-            this.elem.prop('checked', false);
-
-        }
-
-    };
-
+    if (this.checked) {
+      this.elem.prop('checked', true);
+    } else {
+      this.elem.prop('checked', false);
+    }
+  };
 });
 
 $.cc.assign('todo-toggle-all', TodoToggleAll);
 
 },{"jquery":7}],16:[function(require,module,exports){
-
-
+'use strict';
 
 module.exports = {
+  KEYCODE: {
+    ENTER: 13,
+    ESCAPE: 27
+  },
 
-    KEYCODE: {
-        ENTER: 13,
-        ESCAPE: 27
-    },
+  STORAGE_KEY: {
+    TODO_LIST: 'todos-class-component'
+  },
 
-    STORAGE_KEY: {
-        TODO_LIST: 'todos-class-component'
-    },
-
-    FILTER: {
-        ACTIVE: '/active',
-        COMPLETED: '/completed'
-    }
-
+  FILTER: {
+    ACTIVE: '/active',
+    COMPLETED: '/completed'
+  }
 };
 
 },{}],17:[function(require,module,exports){
-
-
+'use strict';
 
 var $ = require('jquery');
 
+/**
+ * TodoCollection is the colleciton model of the todo model.
+ */
 var TodoCollection = $.cc.subclass(function (pt) {
-    'use strict';
+  'use strict';
 
-    /**
-     * @param {Todo[]} todos The todo items
-     */
-    pt.constructor = function (todos) {
+  /**
+   * @param {Todo[]} todos The todo items
+   */
 
-        todos = todos || [];
+  pt.constructor = function (todos) {
+    todos = todos || [];
 
-        this.items = todos;
+    this.items = todos;
 
-        this.map = {};
+    this.map = {};
 
-        this.items.forEach(function (todo) {
+    this.items.forEach(function (todo) {
+      this.map[todo.id] = todo;
+    }, this);
+  };
 
-            this.map[todo.id] = todo;
+  /**
+   * Gets the todo by the id.
+   *
+   * @param {String} id The todo id
+   * @return {Todo}
+   */
+  pt.getById = function (id) {
+    return this.map[id];
+  };
 
-        }, this);
+  /**
+   * Toggles the todo's completed flag by the given id.
+   *
+   * @param {String} id The todo id
+   */
+  pt.toggleById = function (id) {
+    var todo = this.getById(id);
 
-    };
+    todo.completed = !todo.completed;
+  };
 
-    pt.getById = function (id) {
+  /**
+   * Iterates calling of func in the given context.
+   *
+   * @param {Function} func The iteration function
+   * @param {Object} ctx The context
+   */
+  pt.forEach = function (func, ctx) {
+    this.items.forEach(func, ctx);
+  };
 
-        return this.map[id];
+  /**
+   * Pushes (appends) the given todo at the end of the list
+   *
+   * @param {Todo} todo The todo
+   */
+  pt.push = function (todo) {
+    this.items.push(todo);
 
-    };
+    this.map[todo.id] = todo;
+  };
 
-    pt.toggleById = function (id) {
+  /**
+   * Removes the todo.
+   *
+   * @param {Todo} todo The todo to remvoe
+   */
+  pt.remove = function (todo) {
+    if (!this.has(todo)) {
+      throw new Error('The colletion does not have the todo: ' + todo.toString());
+    }
 
-        var todo = this.getById(id);
+    this.items.splice(this.items.indexOf(todo), 1);
+  };
 
-        todo.completed = !todo.completed;
+  /**
+   * Removes the item by the id.
+   *
+   * @param {String} id The todo id
+   */
+  pt.removeById = function (id) {
+    this.remove(this.getById(id));
+  };
 
-    };
+  /**
+   * Checks if the given todo is included by the list
+   *
+   * @private
+   * @param {Todo} todo The todo
+   */
+  pt.has = function (todo) {
+    return this.items.indexOf(todo) !== -1;
+  };
 
-    /**
-     * Iterates calling of func in the given context.
-     *
-     * @param {Function} func The iteration function
-     * @param {Object} ctx The context
-     */
-    pt.forEach = function (func, ctx) {
+  /**
+   * Returns a todo subcollection of completed items.
+   *
+   * @return {TodoCollection}
+   */
+  pt.completed = function () {
+    return new TodoCollection(this.items.filter(function (todo) {
+      return todo.completed;
+    }));
+  };
 
-        this.items.forEach(func, ctx);
+  /**
+   * Returns a todo subcollection of uncompleted items.
+   *
+   * @return {TodoCollection}
+   */
+  pt.uncompleted = function () {
+    return new TodoCollection(this.items.filter(function (todo) {
+      return !todo.completed;
+    }));
+  };
 
-    };
+  /**
+   * Gets the array of todos
+   *
+   * @return {Todo[]}
+   */
+  pt.toArray = function () {
+    return this.items.slice(0);
+  };
 
-    /**
-     * Pushes (appends) the given todo at the end of the list
-     *
-     * @param {Todo} todo The todo
-     */
-    pt.push = function (todo) {
+  /**
+   * Checks if the collection is empty.
+   *
+   * @param {Boolean}
+   */
+  pt.isEmpty = function () {
+    return this.items.length === 0;
+  };
 
-        this.items.push(todo);
+  /**
+   * Completes all the todos.
+   */
+  pt.completeAll = function () {
+    this.items.forEach(function (todo) {
+      todo.completed = true;
+    });
+  };
 
-        this.map[todo.id] = todo;
-
-    };
-
-    /**
-     * Unshifts (prepends) the given todo to the list.
-     *
-     * @param {Todo} todo The todo
-     */
-    pt.unshift = function (todo) {
-
-        this.items.unshift(todo);
-
-    };
-
-    /**
-     * @param {Todo} todo The todo to remvoe
-     */
-    pt.remove = function (todo) {
-
-        if (!this.has(todo)) {
-
-            throw new Error('The colletion does not have the todo: ' + todo.toString());
-
-        }
-
-        this.items.splice(this.items.indexOf(todo), 1);
-
-    };
-
-    /**
-     * Removes the item by the id.
-     *
-     * @param {String} id The todo id
-     */
-    pt.removeById = function (id) {
-
-        this.remove(this.getById(id));
-
-    };
-
-    /**
-     * Checks if the given todo is included by the list
-     *
-     * @param {Todo} todo The todo
-     */
-    pt.has = function (todo) {
-
-        return this.items.indexOf(todo) !== -1;
-
-    };
-
-    /**
-     * Returns a todo subcollection of completed items.
-     *
-     * @return {TodoCollection}
-     */
-    pt.completed = function () {
-
-        return new TodoCollection(this.items.filter(function (todo) { return todo.completed; }));
-
-    };
-
-    /**
-     * Returns a todo subcollection of uncompleted items.
-     *
-     * @return {TodoCollection}
-     */
-    pt.uncompleted = function () {
-
-        return new TodoCollection(this.items.filter(function (todo) { return !todo.completed; }));
-
-    };
-
-    /**
-     * Gets the array of todos
-     *
-     * @return {Todo[]}
-     */
-    pt.toArray = function () {
-
-        return this.items.slice(0);
-
-    };
-
-    /**
-     * Checks if the collection is empty.
-     *
-     * @param {Boolean}
-     */
-    pt.isEmpty = function () {
-
-        return this.items.length === 0;
-
-    };
-
-    pt.completeAll = function () {
-
-        this.items.forEach(function (todo) {
-
-            todo.completed = true;
-
-        });
-
-    };
-
-    pt.uncompleteAll = function () {
-
-        this.items.forEach(function (todo) {
-
-            todo.completed = false;
-
-        });
-
-    };
-
+  /**
+   * Uncompletes all the todos.
+   */
+  pt.uncompleteAll = function () {
+    this.items.forEach(function (todo) {
+      todo.completed = false;
+    });
+  };
 });
-
 
 module.exports = TodoCollection;
 
 },{"jquery":7}],18:[function(require,module,exports){
-
+'use strict';
 
 var $ = require('jquery');
 
 var Todo = require('./todo');
-
 
 /**
  * TodoFactory is the factory for todo.
@@ -10791,174 +10744,151 @@ var Todo = require('./todo');
  * @class
  */
 var TodoFactory = $.cc.subclass(function (pt) {
-    'use strict';
+  'use strict';
 
-    /**
-     * Creates a todo model from the given todo title.
-     *
-     * @param {String} title The todo title
-     * @return {Todo}
-     */
-    pt.createByTitle = function (title) {
+  /**
+   * Creates a todo model from the given todo title.
+   *
+   * @param {String} title The todo title
+   * @return {Todo}
+   */
 
-        return this.createFromObject({
-            id: this.generateId(),
-            title: title,
-            completed: false
-        });
+  pt.createByTitle = function (title) {
+    return this.createFromObject({
+      id: this.generateId(),
+      title: title,
+      completed: false
+    });
+  };
 
-    };
+  /**
+   * Creates Todo model from the object
+   *
+   * @param {Object} obj The source object
+   * @return {Todo}
+   */
+  pt.createFromObject = function (obj) {
+    return new Todo(obj.id, obj.title, obj.completed);
+  };
 
-    /**
-     * Creates Todo model from the object
-     *
-     * @param {Object} obj The source object
-     * @return {Todo}
-     */
-    pt.createFromObject = function (obj) {
-
-        return new Todo(obj.id, obj.title, obj.completed);
-
-    };
-
-    pt.generateId = function () {
-
-        return '' + Math.floor(Math.random() * 1000000000);
-
-    };
-
+  /**
+   * Generates a random id.
+   *
+   * @private
+   */
+  pt.generateId = function () {
+    return Math.floor(Math.random() * 1000000000).toString();
+  };
 });
 
 module.exports = TodoFactory;
 
 },{"./todo":20,"jquery":7}],19:[function(require,module,exports){
-
+'use strict';
 
 var $ = require('jquery');
-var Const = require('../const');
 
+var Const = require('../const');
 var TodoCollection = require('./todo-collection');
 
-
-
 var TodoRepository = $.cc.subclass(function (pt) {
-    'use strict';
+  'use strict';
 
-    /**
-     * Gets all the todo items.
-     *
-     * @return {TodoList}
-     */
-    pt.getAll = function () {
+  /**
+   * Gets all the todo items.
+   *
+   * @return {TodoList}
+   */
 
-        var json = window.localStorage[Const.STORAGE_KEY.TODO_LIST];
+  pt.getAll = function () {
+    var json = window.localStorage[Const.STORAGE_KEY.TODO_LIST];
 
-        if (!json) {
+    if (!json) {
+      return new TodoCollection([]);
+    }
 
-            return new TodoCollection([]);
+    var array;
 
-        }
+    try {
+      array = JSON.parse(json);
+    } catch (e) {
+      array = [];
+    }
 
-        var array;
+    return new TodoCollection(array);
+  };
 
-        try {
+  /**
+   * Saves all the todo items.
+   *
+   * @param {domain.TodoCollection} todos
+   */
+  pt.saveAll = function (todos) {
+    var json = JSON.stringify(this.collectionToArray(todos));
 
-            array = JSON.parse(json);
+    window.localStorage[Const.STORAGE_KEY.TODO_LIST] = json;
+  };
 
-        } catch (e) {
+  /**
+   * Converts the todo collections into js array of objects.
+   *
+   * @private
+   * @param {TodoCollection} todos The todo collection
+   * @return {Array<Object>}
+   */
+  pt.collectionToArray = function (todos) {
+    return todos.toArray().map(function (todo) {
+      return this.toObject(todo);
+    }, this);
+  };
 
-            array = []
-
-        }
-
-        return new TodoCollection(array);
-
+  /**
+   * Converts the todo item into js object.
+   *
+   * @private
+   * @param {Todo} todo The todo item
+   * @return {Object}
+   */
+  pt.toObject = function (todo) {
+    return {
+      id: todo.id,
+      title: todo.title,
+      completed: todo.completed
     };
-
-    /**
-     * Saves all the todo items.
-     *
-     * @param {domain.TodoCollection} todos
-     */
-    pt.saveAll = function (todos) {
-
-        var json = JSON.stringify(this.collectionToArray(todos));
-
-        window.localStorage[Const.STORAGE_KEY.TODO_LIST] = json;
-
-    };
-
-    /**
-     * Converts the todo collections into js array of objects.
-     *
-     * @private
-     * @param {TodoCollection} todos The todo collection
-     * @return {Array<Object>}
-     */
-    pt.collectionToArray = function (todos) {
-
-        return todos.toArray().map(function (todo) {
-
-            return this.toObject(todo);
-
-        }, this);
-
-    };
-
-    /**
-     * Converts the todo item into js object.
-     *
-     * @private
-     * @param {Todo} todo The todo item
-     * @return {Object}
-     */
-    pt.toObject = function (todo) {
-
-        return {
-            id: todo.id,
-            title: todo.title,
-            completed: todo.completed
-        };
-
-    };
-
+  };
 });
 
 module.exports = TodoRepository;
 
 },{"../const":16,"./todo-collection":17,"jquery":7}],20:[function(require,module,exports){
-
+'use strict';
 
 var $ = require('jquery');
-
 
 /**
  * Todo class is the model of single todo item.
  */
 var Todo = $.cc.subclass(function (pt) {
-    'use strict';
+  'use strict';
 
-    /**
-     * @param {String} id The todo's id
-     * @param {String} title The todo's title
-     * @param {Boolean} completed The flag indicates if it's done or not
-     */
-    pt.constructor = function (id, title, completed) {
+  /**
+   * @param {String} id The todo's id
+   * @param {String} title The todo's title
+   * @param {Boolean} completed The flag indicates if it's done or not
+   */
 
-        this.id = id;
-        this.title = title;
-        this.completed = completed;
-
-    };
-
+  pt.constructor = function (id, title, completed) {
+    this.id = id;
+    this.title = title;
+    this.completed = completed;
+  };
 });
 
 module.exports = Todo;
 
 },{"jquery":7}],21:[function(require,module,exports){
 (function (global){
-
-
+'use strict';
 
 global.$ = global.jQuery = require('jquery');
 require('class-component');
@@ -10975,328 +10905,306 @@ require('./service/todo-app');
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./component/todo-clear-btn":8,"./component/todo-count":9,"./component/todo-edit":10,"./component/todo-filters":11,"./component/todo-input":12,"./component/todo-item":13,"./component/todo-list":14,"./component/todo-toggle-all":15,"./service/todo-app":22,"class-component":1,"jquery":7}],22:[function(require,module,exports){
+'use strict';
 
 var $ = require('jquery');
 
 var Const = require('../const');
-
 var TodoFactory = require('../domain/todo-factory');
 var TodoRepository = require('../domain/todo-repository');
 
-
-
+/**
+ * The todo application class.
+ */
 var TodoApp = $.cc.subclass(function (pt) {
-    'use strict'
-
-    pt.constructor = function (elem) {
-
-        this.elem = elem;
-
-        this.todoFactory = new TodoFactory();
-        this.todoRepository = new TodoRepository();
-
-        this.todoCollection = this.todoRepository.getAll();
-
-        this.initEvents();
-
-        this.updateView();
-
-    };
-
-
-    pt.initEvents = function () {
-
-        var that = this;
-
-        this.elem.on('todo-new-item', function (e, title) {
-
-            that.addTodo(title);
-
-        });
-
-        this.elem.on('todo-item-toggle', function (e, id) {
-
-            that.toggle(id);
-
-        });
-
-        this.elem.on('todo-item-destroy', function (e, id) {
-
-            that.remove(id);
-
-        });
-
-        this.elem.on('todo-item-edited', function (e, id, title) {
-
-            that.editItem(id, title);
-
-        });
-
-        this.elem.on('todo-clear-completed', function () {
-
-            that.clearCompleted();
-
-        });
-
-        this.elem.on('todo-complete-all', function () {
-
-            that.completeAll();
-
-        });
-
-        this.elem.on('todo-uncomplete-all', function () {
-
-            that.uncompleteAll();
-
-        });
-
-        $(window).on('hashchange', function () {
-
-            that.updateView();
-
-        });
-
-    };
-
-    /**
-     * @param {String} title The todo title
-     */
-    pt.addTodo = function (title) {
-
-        var todo = this.todoFactory.createByTitle(title);
-
-        this.todoCollection.push(todo);
-
-        this.updateView();
-
-        this.save();
-
-    };
-
-    /**
-     * Updates the view in the todo app.
-     *
-     * @private
-     */
-    pt.updateView = function () {
-
-        this.updateTodoList();
-
-        this.updateControls();
-
-    };
-
-    pt.updateControls = function () {
-
-        console.log('update contorls');
-
-        this.updateFilterBtns();
-
-        this.updateTodoCount();
-
-        this.updateVisibility();
-
-        this.updateToggleBtnState();
-
-    };
-
-    /**
-     * Updates the todo list by the given collection.
-     *
-     * @param {TodoCollection}
-     */
-    pt.updateTodoList = function (todoCollection) {
-
-        var todoCollection = this.getDisplayCollection();
-
-        this.elem.find('.todo-list').cc.get('todo-list').update(todoCollection);
-
-    };
-
-    pt.updateFilterBtns = function () {
-
-        var filterName = this.getFilterNameFromHash();
-
-        this.elem.find('.todo-filters').cc.get('todo-filters').setFilter(filterName);
-
-    };
-
-    pt.updateTodoCount = function () {
-
-        this.elem.find('.todo-count').cc.get('todo-count').setCount(this.todoCollection.uncompleted().toArray().length);
-
-    };
-
-    pt.updateVisibility = function () {
-
-        if (this.todoCollection.isEmpty()) {
-
-            this.elem.find('#main, #footer').css('display', 'none');
-
-        } else {
-
-            this.elem.find('#main, #footer').css('display', 'block');
-
-        }
-
-    };
-
-    pt.updateToggleBtnState = function () {
-
-        console.log('updateToggleBtnState');
-
-        this.elem.find('.todo-toggle-all').cc.get('todo-toggle-all').updateBtnState(!this.todoCollection.uncompleted().isEmpty());
-
-    };
-
-    pt.getDisplayCollection = function () {
-
-        var filterName = this.getFilterNameFromHash();
-
-        if (filterName === Const.FILTER.ACTIVE) {
-
-            return this.todoCollection.uncompleted();
-
-        }
-
-        if (filterName === Const.FILTER.COMPLETED) {
-
-            return this.todoCollection.completed();
-
-        }
-
-        return this.todoCollection;
-
-    };
-
-    pt.filterIsEnabled = function () {
-
-        var filterName = this.getFilterNameFromHash();
-
-        return filterName === Const.FILTER.ACTIVE || filterName === Const.FILTER.COMPLETED;
-
-    };
-
-    pt.getFilterNameFromHash = function () {
-
-        return window.location.hash.substring(1);
-
-    };
-
-    /**
-     * Saves the current todo collection state.
-     */
-    pt.save = function () {
-
-        this.todoRepository.saveAll(this.todoCollection);
-
-    };
-
-    /**
-     * Toggles the todo state of the given id.
-     *
-     * @param {String} id The todo id
-     */
-    pt.toggle = function (id) {
-
-        this.todoCollection.toggleById(id);
-
-        if (this.filterIsEnabled()) {
-
-            this.updateTodoList();
-
-        }
-
-        this.updateControls();
-
-        this.save();
-
-    };
-
-    /**
-     * Removes the todo of the given id.
-     *
-     * @param {String} id The todo id
-     */
-    pt.remove = function (id) {
-
-        this.todoCollection.removeById(id);
-
-        this.updateView();
-
-        this.save();
-
-    };
-
-    pt.editItem = function (id, title) {
-
-        var todo = this.todoCollection.getById(id);
-
-        todo.body = title;
-
-        this.save();
-
-    };
-
-    /**
-     * Clears the completed todos.
-     */
-    pt.clearCompleted = function () {
-
-        this.todoCollection = this.todoCollection.uncompleted();
-
-        this.updateView();
-
-        this.save()
-
-    };
-
-    pt.uncompleteAll = function () {
-
-        if (this.filterIsEnabled()) {
-
-            this.todoCollection.uncompleteAll();
-
-            this.updateView();
-
-            this.save()
-
-        } else {
-
-            this.todoCollection.completed().forEach(function (todo) {
-
-                this.elem.find('#' + todo.id).cc.get('todo-item').toggleCompleted();
-
-            }, this);
-
-        }
-
-    };
-
-    pt.completeAll = function () {
-
-        if (this.filterIsEnabled()) {
-
-            this.todoCollection.completeAll();
-
-            this.updateView();
-
-            this.save()
-
-        } else {
-
-            this.todoCollection.uncompleted().forEach(function (todo) {
-
-                this.elem.find('#' + todo.id).cc.get('todo-item').toggleCompleted();
-
-            }, this);
-
-        }
-
-    };
-
+  'use strict';
+
+  pt.constructor = function (elem) {
+    this.elem = elem;
+
+    this.todoFactory = new TodoFactory();
+    this.todoRepository = new TodoRepository();
+
+    this.todoCollection = this.todoRepository.getAll();
+
+    this.initEvents();
+
+    this.updateView();
+  };
+
+  /**
+   * Initializes events.
+   *
+   * @private
+   */
+  pt.initEvents = function () {
+    var self = this;
+
+    this.elem.on('todo-new-item', function (e, title) {
+      self.addTodo(title);
+    });
+
+    this.elem.on('todo-item-toggle', function (e, id) {
+      self.toggle(id);
+    });
+
+    this.elem.on('todo-item-destroy', function (e, id) {
+      self.remove(id);
+    });
+
+    this.elem.on('todo-item-edited', function (e, id, title) {
+      self.editItem(id, title);
+    });
+
+    this.elem.on('todo-clear-completed', function () {
+      self.clearCompleted();
+    });
+
+    this.elem.on('todo-complete-all', function () {
+      self.completeAll();
+    });
+
+    this.elem.on('todo-uncomplete-all', function () {
+      self.uncompleteAll();
+    });
+
+    $(window).on('hashchange', function () {
+      self.updateView();
+    });
+  };
+
+  /**
+   * Adds new item by the given title.
+   *
+   * @private
+   * @param {String} title The todo title
+   */
+  pt.addTodo = function (title) {
+    var todo = this.todoFactory.createByTitle(title);
+
+    this.todoCollection.push(todo);
+
+    this.updateView();
+
+    this.save();
+  };
+
+  /**
+   * Updates the view in the todo app.
+   *
+   * @private
+   */
+  pt.updateView = function () {
+    this.updateTodoList();
+
+    this.updateControls();
+  };
+
+  /**
+   * Updates the controls.
+   *
+   * @private
+   */
+  pt.updateControls = function () {
+    this.updateFilterBtns();
+
+    this.updateTodoCount();
+
+    this.updateVisibility();
+
+    this.updateToggleBtnState();
+  };
+
+  /**
+   * Updates the todo list.
+   *
+   * @private
+   */
+  pt.updateTodoList = function () {
+    var todoCollection = this.getDisplayCollection();
+
+    this.elem.find('.todo-list').cc.get('todo-list').update(todoCollection);
+  };
+
+  /**
+   * Updates the filter buttons.
+   *
+   * @private
+   */
+  pt.updateFilterBtns = function () {
+    var filterName = this.getFilterNameFromHash();
+
+    this.elem.find('.todo-filters').cc.get('todo-filters').setFilter(filterName);
+  };
+
+  /**
+   * Updates the todo counter.
+   *
+   * @private
+   */
+  pt.updateTodoCount = function () {
+    this.elem.find('.todo-count').cc.get('todo-count').setCount(this.todoCollection.uncompleted().toArray().length);
+  };
+
+  /**
+   * Updates the visiblity of components.
+   *
+   * @private
+   */
+  pt.updateVisibility = function () {
+    if (this.todoCollection.isEmpty()) {
+      this.elem.find('#main, #footer').css('display', 'none');
+    } else {
+      this.elem.find('#main, #footer').css('display', 'block');
+    }
+  };
+
+  /**
+   * Updates the toggle-all button state.
+   *
+   * @private
+   */
+  pt.updateToggleBtnState = function () {
+    this.elem.find('.todo-toggle-all').cc.get('todo-toggle-all').updateBtnState(!this.todoCollection.uncompleted().isEmpty());
+  };
+
+  /**
+   * Gets the todo collection which is displayable in the current filter.
+   *
+   * @private
+   */
+  pt.getDisplayCollection = function () {
+    var filterName = this.getFilterNameFromHash();
+
+    if (filterName === Const.FILTER.ACTIVE) {
+      return this.todoCollection.uncompleted();
+    }
+
+    if (filterName === Const.FILTER.COMPLETED) {
+      return this.todoCollection.completed();
+    }
+
+    return this.todoCollection;
+  };
+
+  /**
+   * Returns if the filter is enabled.
+   *
+   * @private
+   */
+  pt.filterIsEnabled = function () {
+    var filterName = this.getFilterNameFromHash();
+
+    return filterName === Const.FILTER.ACTIVE || filterName === Const.FILTER.COMPLETED;
+  };
+
+  /**
+   * Gets the filter name from the hash string.
+   */
+  pt.getFilterNameFromHash = function () {
+    return window.location.hash.substring(1);
+  };
+
+  /**
+   * Saves the current todo collection state.
+   */
+  pt.save = function () {
+    this.todoRepository.saveAll(this.todoCollection);
+  };
+
+  /**
+   * Toggles the todo state of the given id.
+   *
+   * @param {String} id The todo id
+   */
+  pt.toggle = function (id) {
+    this.todoCollection.toggleById(id);
+
+    if (this.filterIsEnabled()) {
+      this.updateTodoList();
+    }
+
+    this.updateControls();
+
+    this.save();
+  };
+
+  /**
+   * Removes the todo of the given id.
+   *
+   * @param {String} id The todo id
+   */
+  pt.remove = function (id) {
+    this.todoCollection.removeById(id);
+
+    this.updateView();
+
+    this.save();
+  };
+
+  /**
+   * Edits the todo item of the given id by the given title.
+   *
+   * @param {String} id The todo id
+   * @param {String} title The todo title
+   */
+  pt.editItem = function (id, title) {
+    var todo = this.todoCollection.getById(id);
+
+    todo.body = title;
+
+    this.save();
+  };
+
+  /**
+   * Clears the completed todos.
+   */
+  pt.clearCompleted = function () {
+    this.todoCollection = this.todoCollection.uncompleted();
+
+    this.updateView();
+
+    this.save();
+  };
+
+  /**
+   * Uncompletes all the todo items.
+   *
+   * @private
+   */
+  pt.uncompleteAll = function () {
+    if (this.filterIsEnabled()) {
+      this.todoCollection.uncompleteAll();
+
+      this.updateView();
+
+      this.save();
+    } else {
+      this.todoCollection.completed().forEach(function (todo) {
+        this.elem.find('#' + todo.id).cc.get('todo-item').toggleCompleted();
+      }, this);
+    }
+  };
+
+  /**
+   * Completes all the todo items.
+   *
+   * @private
+   */
+  pt.completeAll = function () {
+    if (this.filterIsEnabled()) {
+      this.todoCollection.completeAll();
+
+      this.updateView();
+
+      this.save();
+    } else {
+      this.todoCollection.uncompleted().forEach(function (todo) {
+        this.elem.find('#' + todo.id).cc.get('todo-item').toggleCompleted();
+      }, this);
+    }
+  };
 });
-
 
 $.cc.assign('todo-app', TodoApp);
 

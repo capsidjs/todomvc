@@ -1,12 +1,9 @@
-/* global describe, it, expect */
+const $ = require('jquery')
+const {expect} = require('chai')
 
-var $ = require('jquery')
-
-describe('TodoCount', function () {
-  'use strict'
-
-  describe('setCount', function () {
-    it('sets label properly', function () {
+describe('TodoCount', () => {
+  describe('setCount', () => {
+    it('sets label properly', () => {
       var dom = $('<span />')
 
       dom.cc.init('todo-count').setCount(0)

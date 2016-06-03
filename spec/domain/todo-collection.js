@@ -1,18 +1,15 @@
-/* global describe, it, expect, beforeEach */
-/* jshint expr: true */
+const Todo = require('../../src/domain/todo')
+const TodoCollection = require('../../src/domain/todo-collection')
 
-var Todo = require('../../src/domain/todo')
-var TodoCollection = require('../../src/domain/todo-collection')
+const {expect} = require('chai')
 
-var collection
-var todo0
-var todo1
-var todo2
+let collection
+let todo0
+let todo1
+let todo2
 
-describe('TodoCollection', function () {
-  'use strict'
-
-  beforeEach(function () {
+describe('TodoCollection', () => {
+  beforeEach(() => {
     todo0 = new Todo('a0', 'spam', true)
     todo1 = new Todo('a1', 'ham', false)
     todo2 = new Todo('a2', 'egg', true)
@@ -20,35 +17,35 @@ describe('TodoCollection', function () {
     collection = new TodoCollection([todo0, todo1, todo2])
   })
 
-  describe('constructor', function () {
-    it('craete an empty contructor if the give array is null', function () {
+  describe('constructor', () => {
+    it('craete an empty contructor if the give array is null', () => {
       collection = new TodoCollection()
 
       expect(collection.isEmpty()).to.be.true
     })
   })
 
-  describe('getById', function () {
-    it('gets the todo by the given id', function () {
+  describe('getById', () => {
+    it('gets the todo by the given id', () => {
       expect(collection.getById('a0')).to.equal(todo0)
       expect(collection.getById('a1')).to.equal(todo1)
       expect(collection.getById('a2')).to.equal(todo2)
     })
   })
 
-  describe('toggleById', function () {
-    it('toggles the completed state of the todo of the given id', function () {
+  describe('toggleById', () => {
+    it('toggles the completed state of the todo of the given id', () => {
       collection.toggleById('a0')
 
       expect(collection.getById('a0').completed).to.be.false
     })
   })
 
-  describe('forEach', function () {
-    it('iterates calling the given func in the given context', function () {
-      var a = ''
+  describe('forEach', () => {
+    it('iterates calling the given func in the given context', () => {
+      let a = ''
 
-      var Ctx = function () {}
+      const Ctx = function () {}
 
       Ctx.prototype.method = function (title) {
         a = a + title
@@ -62,38 +59,38 @@ describe('TodoCollection', function () {
     })
   })
 
-  describe('push', function () {
-    it('pushes the given todo at the end of the collection', function () {
+  describe('push', () => {
+    it('pushes the given todo at the end of the collection', () => {
       collection.push(new Todo('a3', 'spam ham', false))
 
       expect(collection.toArray()).to.have.length(4)
     })
   })
 
-  describe('remove', function () {
-    it('removes the given todo', function () {
+  describe('remove', () => {
+    it('removes the given todo', () => {
       collection.remove(todo0)
 
       expect(collection.toArray()).to.have.length(2)
     })
 
-    it('throws when the given todo does not exist', function () {
+    it('throws when the given todo does not exist', () => {
       expect(function () {
         collection.remove(new Todo('a3', 'spam ham', false))
       }).to.throw(Error)
     })
   })
 
-  describe('removeById', function () {
-    it('removes the todo by the id', function () {
+  describe('removeById', () => {
+    it('removes the todo by the id', () => {
       collection.removeById('a0')
 
       expect(collection.toArray()).to.have.length(2)
     })
   })
 
-  describe('completed', function () {
-    it('returns the collection of the completed todos', function () {
+  describe('completed', () => {
+    it('returns the collection of the completed todos', () => {
       var completed = collection.completed()
 
       expect(completed).to.be.instanceof(TodoCollection)
@@ -103,8 +100,8 @@ describe('TodoCollection', function () {
     })
   })
 
-  describe('uncompleted', function () {
-    it('returns the collection of the uncompleted todos', function () {
+  describe('uncompleted', () => {
+    it('returns the collection of the uncompleted todos', () => {
       var uncompleted = collection.uncompleted()
 
       expect(uncompleted).to.be.instanceof(TodoCollection)
@@ -113,8 +110,8 @@ describe('TodoCollection', function () {
     })
   })
 
-  describe('toArray', function () {
-    it('returns the array of the todos', function () {
+  describe('toArray', () => {
+    it('returns the array of the todos', () => {
       expect(collection.toArray()).to.be.an('array')
       expect(collection.toArray()).to.have.length(3)
       expect(collection.toArray()[0]).to.equal(todo0)
@@ -123,16 +120,16 @@ describe('TodoCollection', function () {
     })
   })
 
-  describe('completeAll', function () {
-    it('completes all the todos', function () {
+  describe('completeAll', () => {
+    it('completes all the todos', () => {
       collection.completeAll()
 
       expect(collection.completed().toArray()).to.have.length(3)
     })
   })
 
-  describe('uncompleteAll', function () {
-    it('uncompletes all the todos', function () {
+  describe('uncompleteAll', () => {
+    it('uncompletes all the todos', () => {
       collection.uncompleteAll()
 
       expect(collection.completed().toArray()).to.have.length(0)

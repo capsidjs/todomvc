@@ -1,7 +1,5 @@
-/* globals describe, it, expect, beforeEach */
-/* jshint expr: true */
-
-var $ = require('jquery')
+const $ = require('jquery')
+const {expect} = require('chai')
 
 var filterControl
 var elem

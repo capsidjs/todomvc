@@ -1,7 +1,5 @@
-/* globals describe, it, expect, beforeEach */
-/* jshint expr: true */
-
 var $ = require('jquery')
+const {expect} = require('chai')
 var todoItem
 var elem
 var parentElem

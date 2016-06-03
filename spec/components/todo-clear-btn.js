@@ -1,16 +1,12 @@
-/* global describe, it */
+const $ = require('jquery')
 
-var $ = require('jquery')
-
-describe('TodoClearBtn', function () {
-  'use strict'
-
-  it('triggers todo-clear-completed event when clicked', function (done) {
-    var dom = $('<button />')
+describe('TodoClearBtn', () => {
+  it('triggers todo-clear-completed event when clicked', done => {
+    const dom = $('<button />')
 
     dom.cc.init('todo-clear-btn')
 
-    dom.on('todo-clear-completed', function () { done() })
+    dom.on('todo-clear-completed', () => done())
 
     dom.click()
   })

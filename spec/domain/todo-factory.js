@@ -1,21 +1,18 @@
-/* global describe, it, expect, beforeEach */
-/* jshint expr: true */
+const Todo = require('../../src/domain/todo')
+const TodoFactory = require('../../src/domain/todo-factory')
 
-var Todo = require('../../src/domain/todo')
-var TodoFactory = require('../../src/domain/todo-factory')
+const {expect} = require('chai')
 
-describe('TodoFactory', function () {
-  'use strict'
+describe('TodoFactory', () => {
+  let factory
 
-  var factory
-
-  beforeEach(function () {
+  beforeEach(() => {
     factory = new TodoFactory()
   })
 
-  describe('createFromObject', function () {
-    it('creates a todo model from the object', function () {
-      var todo = factory.createFromObject({id: 'foo', title: 'bar', completed: true})
+  describe('createFromObject', () => {
+    it('creates a todo model from the object', () => {
+      const todo = factory.createFromObject({id: 'foo', title: 'bar', completed: true})
 
       expect(todo).to.be.instanceof(Todo)
       expect(todo.id).to.equal('foo')
@@ -24,9 +21,9 @@ describe('TodoFactory', function () {
     })
   })
 
-  describe('createByTitle', function () {
-    it('creates a todo from the given title', function () {
-      var todo = factory.createByTitle('spam')
+  describe('createByTitle', () => {
+    it('creates a todo from the given title', () => {
+      const todo = factory.createByTitle('spam')
 
       expect(todo).to.be.instanceof(Todo)
       expect(todo.id).to.exist

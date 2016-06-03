@@ -1,13 +1,11 @@
-/* global describe, it, expect, beforeEach */
+const $ = require('jquery')
+const {expect} = require('chai')
 
-var $ = require('jquery')
-var elem
-var todoApp
+let elem
+let todoApp
 
-describe('todo-app', function () {
-  'use strict'
-
-  beforeEach(function () {
+describe('todo-app', () => {
+  beforeEach(() => {
     elem = $('<div />')
 
     var main = $('<div id="main">').appendTo(elem)
@@ -25,19 +23,19 @@ describe('todo-app', function () {
     todoApp = elem.cc.init('todo-app')
   })
 
-  describe('on todo-new-item', function () {
-    it('adds the item of the given title', function () {
+  describe('on todo-new-item', () => {
+    it('adds the item of the given title', () => {
       elem.trigger('todo-new-item', 'foo')
 
       expect(todoApp.todoCollection.toArray()).to.have.length(1)
     })
   })
 
-  describe('on todo-item-toggle', function () {})
-  describe('on todo-item-destroy', function () {})
-  describe('on todo-item-edited', function () {})
-  describe('on todo-clear-completed', function () {})
-  describe('on todo-complete-all', function () {})
-  describe('on todo-uncomplete-all', function () {})
-  describe('on window hashchange', function () {})
+  describe('on todo-item-toggle', () => {})
+  describe('on todo-item-destroy', () => {})
+  describe('on todo-item-edited', () => {})
+  describe('on todo-clear-completed', () => {})
+  describe('on todo-complete-all', () => {})
+  describe('on todo-uncomplete-all', () => {})
+  describe('on window hashchange', () => {})
 })
