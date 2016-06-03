@@ -1,21 +1,19 @@
-var $ = require('jquery')
+const TodoCollection = require('../../src/domain/todo-collection')
+const TodoFactory = require('../../src/domain/todo-factory')
+const todoFactory = new TodoFactory()
+
+const $ = require('jquery')
 const {expect} = require('chai')
 
-var TodoCollection = require('../../src/domain/todo-collection')
-var TodoFactory = require('../../src/domain/todo-factory')
-var todoFactory = new TodoFactory()
+let todoList
 
-var todoList
-
-describe('todo-list', function () {
-  'use strict'
-
-  beforeEach(function () {
+describe('todo-list', () => {
+  beforeEach(() => {
     todoList = $('<div />').cc.init('todo-list')
   })
 
-  describe('update', function () {
-    it('updates the todo list view by the given todo array', function () {
+  describe('update', () => {
+    it('updates the todo list view by the given todo array', () => {
       todoList.update(new TodoCollection([
         todoFactory.createByTitle('foo0'),
         todoFactory.createByTitle('foo1'),

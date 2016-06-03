@@ -1,13 +1,11 @@
 const $ = require('jquery')
 const {expect} = require('chai')
 
-var filterControl
-var elem
+let filterControl
+let elem
 
-describe('TodoFilters', function () {
-  'use strict'
-
-  beforeEach(function () {
+describe('TodoFilters', () => {
+  beforeEach(() => {
     elem = $('<div />')
     filterControl = elem.cc.init('todo-filters')
 
@@ -16,8 +14,8 @@ describe('TodoFilters', function () {
     $('<li><a name="completed" /></li>').appendTo(elem)
   })
 
-  describe('setFilter', function () {
-    it('sets the filter button for the given name active', function () {
+  describe('setFilter', () => {
+    it('sets the filter button for the given name active', () => {
       filterControl.setFilter('/all')
 
       expect(elem.find('a[name="all"]').hasClass('selected')).to.be.true

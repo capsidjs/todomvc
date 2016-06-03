@@ -1,13 +1,12 @@
-var $ = require('jquery')
+const $ = require('jquery')
 const {expect} = require('chai')
-var todoItem
-var elem
-var parentElem
 
-describe('todo-edit', function () {
-  'use strict'
+let todoItem
+let elem
+let parentElem
 
-  beforeEach(function () {
+describe('todo-edit', () => {
+  beforeEach(() => {
     parentElem = $('<ul />')
 
     elem = $('<li />').appendTo(parentElem)
@@ -17,7 +16,7 @@ describe('todo-edit', function () {
     todoItem.update({id: 'foo', title: 'bar', completed: false})
   })
 
-  it('initializes its content html', function () {
+  it('initializes its content html', () => {
     expect(elem.find('.view')).to.have.length(1)
     expect(elem.find('.view input.toggle[type="checkbox"]')).to.have.length(1)
     expect(elem.find('.view label')).to.have.length(1)
@@ -25,8 +24,8 @@ describe('todo-edit', function () {
     expect(elem.find('input.edit')).to.have.length(1)
   })
 
-  describe('update', function () {
-    it('updates the content by the given todo object', function () {
+  describe('update', () => {
+    it('updates the content by the given todo object', () => {
       expect(elem.attr('id')).to.equal('foo')
       expect(elem.find('label').text()).to.equal('bar')
       expect(elem.find('.edit').val()).to.equal('bar')
@@ -43,8 +42,8 @@ describe('todo-edit', function () {
     })
   })
 
-  describe('on .toggle click', function () {
-    it('toggles the state of the todo', function () {
+  describe('on .toggle click', () => {
+    it('toggles the state of the todo', () => {
       elem.find('.toggle').trigger('click')
 
       expect(elem.hasClass('completed')).to.be.true
@@ -57,8 +56,8 @@ describe('todo-edit', function () {
     })
   })
 
-  describe('on .destroy click', function () {
-    it('removes the element', function () {
+  describe('on .destroy click', () => {
+    it('removes the element', () => {
       expect(elem.parent()).to.have.length(1)
 
       elem.find('.destroy').trigger('click')
@@ -66,8 +65,8 @@ describe('todo-edit', function () {
       expect(elem.parent()).to.have.length(0)
     })
 
-    it('triggers the todo-item-destroy event on the parent element', function (done) {
-      parentElem.on('todo-item-destroy', function (e, id) {
+    it('triggers the todo-item-destroy event on the parent element', done => {
+      parentElem.on('todo-item-destroy', (e, id) => {
         expect(id).to.equal('foo')
 
         done()
@@ -77,16 +76,16 @@ describe('todo-edit', function () {
     })
   })
 
-  describe('on label dblclick', function () {
-    it('adds editing class to the element', function () {
+  describe('on label dblclick', () => {
+    it('adds editing class to the element', () => {
       elem.find('label').trigger('dblclick')
 
       expect(elem.hasClass('editing')).to.be.true
     })
   })
 
-  describe('on todo-edited event', function () {
-    it('removes editing class', function () {
+  describe('on todo-edited event', () => {
+    it('removes editing class', () => {
       elem.find('label').trigger('dblclick')
 
       expect(elem.hasClass('editing')).to.be.true
@@ -96,20 +95,20 @@ describe('todo-edit', function () {
       expect(elem.hasClass('editing')).to.be.false
     })
 
-    it('removes the element when the todo title is empty', function () {
+    it('removes the element when the todo title is empty', () => {
       elem.trigger('todo-edited', '')
 
       expect(elem.parent()).to.have.length(0)
     })
 
-    it('updates label when the todo title is not empty', function () {
+    it('updates label when the todo title is not empty', () => {
       elem.trigger('todo-edited', 'ham egg')
 
       expect(elem.find('label').text()).to.equal('ham egg')
     })
 
-    it('triggers todo-item-edited button when the todo title is not empty', function (done) {
-      elem.on('todo-item-edited', function (e, id, title) {
+    it('triggers todo-item-edited button when the todo title is not empty', done => {
+      elem.on('todo-item-edited', (e, id, title) => {
         expect(id).to.equal('foo')
         expect(title).to.equal('ham egg')
 
