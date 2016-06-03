@@ -1,12 +1,9 @@
-var $ = require('jquery');
+var $ = require('jquery')
 
 $.cc.register('todo-clear-btn', function (elem) {
-	'use strict';
+  'use strict'
 
-	elem.on('click', function () {
-
-		elem.trigger('todo-clear-completed');
-
-	});
-
-});
+  elem.on('click', function () {
+    elem.trigger('todo-clear-completed')
+  })
+})

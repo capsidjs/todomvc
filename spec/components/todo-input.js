@@ -1,56 +1,43 @@
 /* global describe, it, expect, beforeEach */
 
-var $ = require('jquery');
+var $ = require('jquery')
 
-var Const = require('../../src/const');
+var Const = require('../../src/const')
 
-var elem;
+var elem
 
 describe('TodoInput', function () {
-	'use strict';
+  'use strict'
 
-	beforeEach(function () {
+  beforeEach(function () {
+    elem = $('<input />').val('abc')
 
-		elem = $('<input />').val('abc');
+    elem.cc.init('todo-input')
+  })
 
-		elem.cc.init('todo-input');
+  describe('on keypress', function () {
+    it('does nothing when the keycode is not ENTER', function () {
+      elem.trigger($.Event('keypress', {which: 32}))
 
-	});
+      expect(elem.val()).to.equal('abc')
+    })
 
-	describe('on keypress', function () {
+    it('does nothing when the keycode is ENTER and the value is whitespace', function () {
+      elem.val('   ')
 
-		it('does nothing when the keycode is not ENTER', function () {
+      elem.trigger($.Event('keypress', {which: Const.KEYCODE.ENTER}))
 
-			elem.trigger($.Event('keypress', {which: 32}));
+      expect(elem.val()).to.equal('   ')
+    })
 
-			expect(elem.val()).to.equal('abc');
+    it('empties the value and triggers todo-new-item event', function (done) {
+      elem.on('todo-new-item', function (e, title) {
+        expect(title).to.equal('abc')
 
-		});
+        done()
+      })
 
-		it('does nothing when the keycode is ENTER and the value is whitespace', function () {
-
-			elem.val('   ');
-
-			elem.trigger($.Event('keypress', {which: Const.KEYCODE.ENTER}));
-
-			expect(elem.val()).to.equal('   ');
-
-		});
-
-		it('empties the value and triggers todo-new-item event', function (done) {
-
-			elem.on('todo-new-item', function (e, title) {
-
-				expect(title).to.equal('abc');
-
-				done();
-
-			});
-
-			elem.trigger($.Event('keypress', {which: Const.KEYCODE.ENTER}));
-
-		});
-
-	});
-
-});
+      elem.trigger($.Event('keypress', {which: Const.KEYCODE.ENTER}))
+    })
+  })
+})
