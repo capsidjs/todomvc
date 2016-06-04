@@ -10025,46 +10025,90 @@ return jQuery;
 },{}],10:[function(require,module,exports){
 'use strict';
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _dec, _dec2, _class, _desc, _value, _class2;
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var $ = require('jquery');
-
-var TodoClearBtn = function TodoClearBtn(elem) {
-  _classCallCheck(this, TodoClearBtn);
-
-  elem.on('click', function () {
-    elem.trigger('todo-clear-completed');
+function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
+  var desc = {};
+  Object['ke' + 'ys'](descriptor).forEach(function (key) {
+    desc[key] = descriptor[key];
   });
-};
+  desc.enumerable = !!desc.enumerable;
+  desc.configurable = !!desc.configurable;
 
-$.cc('todo-clear-btn', TodoClearBtn);
+  if ('value' in desc || desc.initializer) {
+    desc.writable = true;
+  }
 
-},{"jquery":9}],11:[function(require,module,exports){
+  desc = decorators.slice().reverse().reduce(function (desc, decorator) {
+    return decorator(target, property, desc) || desc;
+  }, desc);
+
+  if (context && desc.initializer !== void 0) {
+    desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
+    desc.initializer = undefined;
+  }
+
+  if (desc.initializer === void 0) {
+    Object['define' + 'Property'](target, property, desc);
+    desc = null;
+  }
+
+  return desc;
+}
+
+var _$$cc = $.cc;
+var component = _$$cc.component;
+var event = _$$cc.event;
+
+
+void (_dec = component('todo-clear-btn'), _dec2 = event('click'), _dec(_class = (_class2 = function () {
+  function _class2() {
+    _classCallCheck(this, _class2);
+  }
+
+  _createClass(_class2, [{
+    key: 'onClick',
+    value: function onClick() {
+      this.elem.trigger('todo-clear-completed');
+    }
+  }]);
+
+  return _class2;
+}(), (_applyDecoratedDescriptor(_class2.prototype, 'onClick', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'onClick'), _class2.prototype)), _class2)) || _class);
+
+},{}],11:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var _dec, _class;
 
-var $ = require('jquery');
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var _require = require('dom-gen');
 
 var strong = _require.strong;
+var component = $.cc.component;
 
-var TodoCount = function () {
-  function TodoCount(elem) {
-    _classCallCheck(this, TodoCount);
+/**
+ * The todo counting element.
+ */
 
-    this.elem = elem;
+void (_dec = component('todo-count'), _dec(_class = function () {
+  function _class() {
+    _classCallCheck(this, _class);
   }
-  /**
-   * @param {number} count The number of todos
-   */
 
-
-  _createClass(TodoCount, [{
+  _createClass(_class, [{
     key: 'setCount',
+
+    /**
+     * @param {number} count The number of todos
+     */
     value: function setCount(count) {
       this.elem.empty();
 
@@ -10072,63 +10116,63 @@ var TodoCount = function () {
     }
   }]);
 
-  return TodoCount;
-}();
+  return _class;
+}()) || _class);
 
-$.cc('todo-count', TodoCount);
-
-},{"dom-gen":8,"jquery":9}],12:[function(require,module,exports){
+},{"dom-gen":8}],12:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _dec, _dec2, _dec3, _class, _desc, _value, _class2;
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var $ = require('jquery');
+function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
+  var desc = {};
+  Object['ke' + 'ys'](descriptor).forEach(function (key) {
+    desc[key] = descriptor[key];
+  });
+  desc.enumerable = !!desc.enumerable;
+  desc.configurable = !!desc.configurable;
+
+  if ('value' in desc || desc.initializer) {
+    desc.writable = true;
+  }
+
+  desc = decorators.slice().reverse().reduce(function (desc, decorator) {
+    return decorator(target, property, desc) || desc;
+  }, desc);
+
+  if (context && desc.initializer !== void 0) {
+    desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
+    desc.initializer = undefined;
+  }
+
+  if (desc.initializer === void 0) {
+    Object['define' + 'Property'](target, property, desc);
+    desc = null;
+  }
+
+  return desc;
+}
 
 var Const = require('../const');
+
+var _$$cc = $.cc;
+var event = _$$cc.event;
+var component = _$$cc.component;
 
 /**
  * TodoEdit controls the edit area of each todo item.
  */
 
-var TodoEdit = function () {
-  function TodoEdit(elem) {
-    _classCallCheck(this, TodoEdit);
-
-    this.elem = elem;
-
-    this.initEvents();
+void (_dec = component('todo-edit'), _dec2 = event('keypress'), _dec3 = event('blur'), _dec(_class = (_class2 = function () {
+  function _class2() {
+    _classCallCheck(this, _class2);
   }
 
-  /**
-   * Initializes the events
-   *
-   * @private
-   */
-
-
-  _createClass(TodoEdit, [{
-    key: 'initEvents',
-    value: function initEvents() {
-      var _this = this;
-
-      this.elem.on('keypress', function (e) {
-        _this.onKeypress(e);
-      });
-
-      this.elem.on('blur', function () {
-        _this.stopEditing();
-      });
-    }
-
-    /**
-     * Handler for the key press events.
-     *
-     * @param {Event} e The event
-     */
-
-  }, {
+  _createClass(_class2, [{
     key: 'onKeypress',
     value: function onKeypress(e) {
       if (e.which === Const.KEYCODE.ENTER) {
@@ -10147,35 +10191,37 @@ var TodoEdit = function () {
     }
   }]);
 
-  return TodoEdit;
-}();
+  return _class2;
+}(), (_applyDecoratedDescriptor(_class2.prototype, 'onKeypress', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'onKeypress'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'stopEditing', [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, 'stopEditing'), _class2.prototype)), _class2)) || _class);
 
-$.cc('todo-edit', TodoEdit);
-
-},{"../const":18,"jquery":9}],13:[function(require,module,exports){
+},{"../const":18}],13:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _dec, _class;
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var $ = require('jquery');
+var component = $.cc.component;
 
-var TodoFilters = function () {
-  function TodoFilters(elem) {
-    _classCallCheck(this, TodoFilters);
+/**
+ * The todo filter controls.
+ */
 
-    this.elem = elem;
+void (_dec = component('todo-filters'), _dec(_class = function () {
+  function _class() {
+    _classCallCheck(this, _class);
   }
 
-  /**
-   * Sets the given filter button active.
-   * @param {String} name The name of the filter
-   */
-
-
-  _createClass(TodoFilters, [{
+  _createClass(_class, [{
     key: 'setFilter',
+
+
+    /**
+     * Sets the given filter button active.
+     * @param {String} name The name of the filter
+     */
     value: function setFilter(name) {
       this.elem.find('a').removeClass('selected');
 
@@ -10189,46 +10235,63 @@ var TodoFilters = function () {
     }
   }]);
 
-  return TodoFilters;
-}();
+  return _class;
+}()) || _class);
 
-$.cc('todo-filters', TodoFilters);
-
-},{"jquery":9}],14:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _dec, _dec2, _class, _desc, _value, _class2;
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var $ = require('jquery');
+function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
+  var desc = {};
+  Object['ke' + 'ys'](descriptor).forEach(function (key) {
+    desc[key] = descriptor[key];
+  });
+  desc.enumerable = !!desc.enumerable;
+  desc.configurable = !!desc.configurable;
+
+  if ('value' in desc || desc.initializer) {
+    desc.writable = true;
+  }
+
+  desc = decorators.slice().reverse().reduce(function (desc, decorator) {
+    return decorator(target, property, desc) || desc;
+  }, desc);
+
+  if (context && desc.initializer !== void 0) {
+    desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
+    desc.initializer = undefined;
+  }
+
+  if (desc.initializer === void 0) {
+    Object['define' + 'Property'](target, property, desc);
+    desc = null;
+  }
+
+  return desc;
+}
 
 var Const = require('../const');
+
+var _$$cc = $.cc;
+var event = _$$cc.event;
+var component = _$$cc.component;
 
 /**
  * TodoInput class controls the input for adding todos.
  */
 
-var TodoInput = function () {
-  function TodoInput(elem) {
-    var _this = this;
-
-    _classCallCheck(this, TodoInput);
-
-    this.elem = elem;
-
-    this.elem.on('keypress', function (e) {
-      _this.onKeypress(e);
-    });
+void (_dec = component('todo-input'), _dec2 = event('keypress'), _dec(_class = (_class2 = function () {
+  function _class2() {
+    _classCallCheck(this, _class2);
   }
 
-  /**
-   * Handler for key presses.
-   * @param {Event}
-   */
-
-
-  _createClass(TodoInput, [{
+  _createClass(_class2, [{
     key: 'onKeypress',
     value: function onKeypress(e) {
       if (e.which !== Const.KEYCODE.ENTER) {
@@ -10246,19 +10309,46 @@ var TodoInput = function () {
     }
   }]);
 
-  return TodoInput;
-}();
+  return _class2;
+}(), (_applyDecoratedDescriptor(_class2.prototype, 'onKeypress', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'onKeypress'), _class2.prototype)), _class2)) || _class);
 
-$.cc('todo-input', TodoInput);
-
-},{"../const":18,"jquery":9}],15:[function(require,module,exports){
+},{"../const":18}],15:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _dec, _dec2, _dec3, _dec4, _dec5, _class, _desc, _value, _class2;
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var $ = require('jquery');
+function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
+  var desc = {};
+  Object['ke' + 'ys'](descriptor).forEach(function (key) {
+    desc[key] = descriptor[key];
+  });
+  desc.enumerable = !!desc.enumerable;
+  desc.configurable = !!desc.configurable;
+
+  if ('value' in desc || desc.initializer) {
+    desc.writable = true;
+  }
+
+  desc = decorators.slice().reverse().reduce(function (desc, decorator) {
+    return decorator(target, property, desc) || desc;
+  }, desc);
+
+  if (context && desc.initializer !== void 0) {
+    desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
+    desc.initializer = undefined;
+  }
+
+  if (desc.initializer === void 0) {
+    Object['define' + 'Property'](target, property, desc);
+    desc = null;
+  }
+
+  return desc;
+}
 
 var _require = require('dom-gen');
 
@@ -10266,71 +10356,32 @@ var div = _require.div;
 var input = _require.input;
 var label = _require.label;
 var button = _require.button;
+var _$$cc = $.cc;
+var event = _$$cc.event;
+var component = _$$cc.component;
 
 /**
  * TodoItem class controls todo item in a list.
  */
 
-var TodoItem = function () {
-  function TodoItem(elem) {
-    _classCallCheck(this, TodoItem);
+void (_dec = component('todo-item'), _dec2 = event('click', '.toggle'), _dec3 = event('click', '.destroy'), _dec4 = event('dblclick', 'label'), _dec5 = event('todo-edited'), _dec(_class = (_class2 = function () {
+  function _class2(elem) {
+    _classCallCheck(this, _class2);
 
-    this.elem = elem;
-
-    this.initElems();
-    this.initEvents();
+    elem.append(div(input({ attr: { type: 'checkbox' } }).addClass('toggle'), label(), button().addClass('destroy')).addClass('view'), input().addClass('edit').cc('todo-edit'));
   }
 
   /**
-   * Inits elements
+   * Updates the todo title by todo model
    *
-   * @private
+   * @param {Object} todo The todo
+   * @param {String} todo.id The id
+   * @param {String} todo.title The title
+   * @param {Boolean} todo.completed If completed or not
    */
 
 
-  _createClass(TodoItem, [{
-    key: 'initElems',
-    value: function initElems() {
-      this.elem.append(div(input({ attr: { type: 'checkbox' } }).addClass('toggle'), label(), button().addClass('destroy')).addClass('view'), input().addClass('edit').cc('todo-edit'));
-    }
-
-    /**
-     * Inits events.
-     * @private
-     */
-
-  }, {
-    key: 'initEvents',
-    value: function initEvents() {
-      var _this = this;
-
-      this.elem.find('.toggle').on('click', function () {
-        _this.toggleCompleted();
-      });
-
-      this.elem.find('.destroy').on('click', function () {
-        _this.destroy();
-      });
-
-      this.elem.find('label').on('dblclick', function () {
-        _this.startEditing();
-      });
-
-      this.elem.on('todo-edited', function (e, title) {
-        _this.stopEditing(title);
-      });
-    }
-
-    /**
-     * Updates the todo title by todo model
-     *
-     * @param {Object} todo The todo
-     * @param {String} todo.id The id
-     * @param {String} todo.title The title
-     * @param {Boolean} todo.completed If completed or not
-     */
-
-  }, {
+  _createClass(_class2, [{
     key: 'update',
     value: function update(todo) {
       this.elem.attr('id', todo.id);
@@ -10425,7 +10476,7 @@ var TodoItem = function () {
 
   }, {
     key: 'stopEditing',
-    value: function stopEditing(title) {
+    value: function stopEditing(e, title) {
       this.elem.removeClass('editing');
 
       if (!title) {
@@ -10440,39 +10491,39 @@ var TodoItem = function () {
     }
   }]);
 
-  return TodoItem;
-}();
+  return _class2;
+}(), (_applyDecoratedDescriptor(_class2.prototype, 'toggleCompleted', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggleCompleted'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'destroy', [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, 'destroy'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'startEditing', [_dec4], Object.getOwnPropertyDescriptor(_class2.prototype, 'startEditing'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'stopEditing', [_dec5], Object.getOwnPropertyDescriptor(_class2.prototype, 'stopEditing'), _class2.prototype)), _class2)) || _class);
 
-$.cc('todo-item', TodoItem);
-
-},{"dom-gen":8,"jquery":9}],16:[function(require,module,exports){
+},{"dom-gen":8}],16:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var _dec, _class;
 
-var $ = require('jquery');
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var _require = require('dom-gen');
 
 var li = _require.li;
+var component = $.cc.component;
 
-var TodoList = function () {
-  function TodoList(elem) {
-    _classCallCheck(this, TodoList);
+/**
+ * The todo list component.
+ */
 
-    this.elem = elem;
+void (_dec = component('todo-list'), _dec(_class = function () {
+  function _class() {
+    _classCallCheck(this, _class);
   }
 
-  /**
-   * Updates the todo items by the given todo model list.
-   * @param {TodoCollection} todoList The todo list
-   */
-
-
-  _createClass(TodoList, [{
+  _createClass(_class, [{
     key: 'update',
+
+    /**
+     * Updates the todo items by the given todo model list.
+     * @param {TodoCollection} todoList The todo list
+     */
     value: function update(todoList) {
       var _this = this;
 
@@ -10484,39 +10535,61 @@ var TodoList = function () {
     }
   }]);
 
-  return TodoList;
-}();
+  return _class;
+}()) || _class);
 
-$.cc('todo-list', TodoList);
-
-},{"dom-gen":8,"jquery":9}],17:[function(require,module,exports){
+},{"dom-gen":8}],17:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _dec, _dec2, _class, _desc, _value, _class2;
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var $ = require('jquery');
+function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
+  var desc = {};
+  Object['ke' + 'ys'](descriptor).forEach(function (key) {
+    desc[key] = descriptor[key];
+  });
+  desc.enumerable = !!desc.enumerable;
+  desc.configurable = !!desc.configurable;
 
-var TodoToggleAll = function () {
-  function TodoToggleAll(elem) {
-    var _this = this;
-
-    _classCallCheck(this, TodoToggleAll);
-
-    this.elem = elem;
-
-    this.elem.on('click', function () {
-      _this.toggleAll();
-    });
+  if ('value' in desc || desc.initializer) {
+    desc.writable = true;
   }
 
-  /**
-   * Toggles the all items.
-   */
+  desc = decorators.slice().reverse().reduce(function (desc, decorator) {
+    return decorator(target, property, desc) || desc;
+  }, desc);
 
+  if (context && desc.initializer !== void 0) {
+    desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
+    desc.initializer = undefined;
+  }
 
-  _createClass(TodoToggleAll, [{
+  if (desc.initializer === void 0) {
+    Object['define' + 'Property'](target, property, desc);
+    desc = null;
+  }
+
+  return desc;
+}
+
+var _$$cc = $.cc;
+var event = _$$cc.event;
+var component = _$$cc.component;
+
+/**
+ * The toggle all button
+ */
+
+void (_dec = component('todo-toggle-all'), _dec2 = event('click'), _dec(_class = (_class2 = function () {
+  function _class2() {
+    _classCallCheck(this, _class2);
+  }
+
+  _createClass(_class2, [{
     key: 'toggleAll',
     value: function toggleAll() {
       if (this.checked) {
@@ -10530,7 +10603,6 @@ var TodoToggleAll = function () {
 
     /**
      * Updates the button state by the given active items' condition.
-     *
      * @param {Boolean} activeItemExists true if any active item exists, false otherwise
      */
 
@@ -10547,12 +10619,10 @@ var TodoToggleAll = function () {
     }
   }]);
 
-  return TodoToggleAll;
-}();
+  return _class2;
+}(), (_applyDecoratedDescriptor(_class2.prototype, 'toggleAll', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggleAll'), _class2.prototype)), _class2)) || _class);
 
-$.cc('todo-toggle-all', TodoToggleAll);
-
-},{"jquery":9}],18:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -11011,8 +11081,6 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
   return desc;
 }
 
-var $ = require('jquery');
-
 var Const = require('../const');
 var TodoFactory = require('../domain/todo-factory');
 var TodoRepository = require('../domain/todo-repository');
@@ -11025,13 +11093,13 @@ var component = _$$cc.component;
  * The todo application class.
  */
 
-var TodoApp = (_dec = component('todo-app'), _dec2 = event('todo-new-item'), _dec3 = event('todo-item-toggle'), _dec4 = event('todo-item-destroy'), _dec5 = event('todo-item-edited'), _dec6 = event('todo-clear-completed'), _dec7 = event('todo-uncomplete-all'), _dec8 = event('todo-complete-all'), _dec(_class = (_class2 = function () {
+void (_dec = component('todo-app'), _dec2 = event('todo-new-item'), _dec3 = event('todo-item-toggle'), _dec4 = event('todo-item-destroy'), _dec5 = event('todo-item-edited'), _dec6 = event('todo-clear-completed'), _dec7 = event('todo-uncomplete-all'), _dec8 = event('todo-complete-all'), _dec(_class = (_class2 = function () {
   /**
    * @param {jQuery} elem The element
    */
 
-  function TodoApp(elem) {
-    _classCallCheck(this, TodoApp);
+  function _class2(elem) {
+    _classCallCheck(this, _class2);
 
     this.todoFactory = new TodoFactory();
     this.todoRepository = new TodoRepository();
@@ -11050,7 +11118,7 @@ var TodoApp = (_dec = component('todo-app'), _dec2 = event('todo-new-item'), _de
    */
 
 
-  _createClass(TodoApp, [{
+  _createClass(_class2, [{
     key: 'initEvents',
     value: function initEvents() {
       var _this = this;
@@ -11340,7 +11408,7 @@ var TodoApp = (_dec = component('todo-app'), _dec2 = event('todo-new-item'), _de
     }
   }]);
 
-  return TodoApp;
+  return _class2;
 }(), (_applyDecoratedDescriptor(_class2.prototype, 'addTodo', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'addTodo'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'toggle', [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggle'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'remove', [_dec4], Object.getOwnPropertyDescriptor(_class2.prototype, 'remove'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'editItem', [_dec5], Object.getOwnPropertyDescriptor(_class2.prototype, 'editItem'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'clearCompleted', [_dec6], Object.getOwnPropertyDescriptor(_class2.prototype, 'clearCompleted'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'uncompleteAll', [_dec7], Object.getOwnPropertyDescriptor(_class2.prototype, 'uncompleteAll'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'completeAll', [_dec8], Object.getOwnPropertyDescriptor(_class2.prototype, 'completeAll'), _class2.prototype)), _class2)) || _class);
 
-},{"../const":18,"../domain/todo-factory":20,"../domain/todo-repository":21,"jquery":9}]},{},[23]);
+},{"../const":18,"../domain/todo-factory":20,"../domain/todo-repository":21}]},{},[23]);
