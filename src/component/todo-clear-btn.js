@@ -1,9 +1,11 @@
-var $ = require('jquery')
+const $ = require('jquery')
 
-$.cc.register('todo-clear-btn', function (elem) {
-  'use strict'
+class TodoClearBtn {
+  constructor (elem) {
+    elem.on('click', () => {
+      elem.trigger('todo-clear-completed')
+    })
+  }
+}
 
-  elem.on('click', function () {
-    elem.trigger('todo-clear-completed')
-  })
-})
+$.cc.assign('todo-clear-btn', TodoClearBtn)

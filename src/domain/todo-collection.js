@@ -1,24 +1,20 @@
-var $ = require('jquery')
-
 /**
  * TodoCollection is the colleciton model of the todo model.
  */
-var TodoCollection = $.cc.subclass(function (pt) {
-  'use strict'
-
+class TodoCollection {
   /**
    * @param {Todo[]} todos The todo items
    */
-  pt.constructor = function (todos) {
+  constructor (todos) {
     todos = todos || []
 
     this.items = todos
 
     this.map = {}
 
-    this.items.forEach(function (todo) {
+    this.items.forEach(todo => {
       this.map[todo.id] = todo
-    }, this)
+    })
   }
 
   /**
@@ -27,28 +23,26 @@ var TodoCollection = $.cc.subclass(function (pt) {
    * @param {String} id The todo id
    * @return {Todo}
    */
-  pt.getById = function (id) {
+  getById (id) {
     return this.map[id]
   }
 
   /**
    * Toggles the todo's completed flag by the given id.
-   *
    * @param {String} id The todo id
    */
-  pt.toggleById = function (id) {
-    var todo = this.getById(id)
+  toggleById (id) {
+    const todo = this.getById(id)
 
     todo.completed = !todo.completed
   }
 
   /**
    * Iterates calling of func in the given context.
-   *
    * @param {Function} func The iteration function
    * @param {Object} ctx The context
    */
-  pt.forEach = function (func, ctx) {
+  forEach (func, ctx) {
     this.items.forEach(func, ctx)
   }
 
@@ -57,7 +51,7 @@ var TodoCollection = $.cc.subclass(function (pt) {
    *
    * @param {Todo} todo The todo
    */
-  pt.push = function (todo) {
+  push (todo) {
     this.items.push(todo)
 
     this.map[todo.id] = todo
@@ -65,10 +59,9 @@ var TodoCollection = $.cc.subclass(function (pt) {
 
   /**
    * Removes the todo.
-   *
    * @param {Todo} todo The todo to remvoe
    */
-  pt.remove = function (todo) {
+  remove (todo) {
     if (!this.has(todo)) {
       throw new Error('The colletion does not have the todo: ' + todo.toString())
     }
@@ -78,64 +71,58 @@ var TodoCollection = $.cc.subclass(function (pt) {
 
   /**
    * Removes the item by the id.
-   *
    * @param {String} id The todo id
    */
-  pt.removeById = function (id) {
+  removeById (id) {
     this.remove(this.getById(id))
   }
 
   /**
    * Checks if the given todo is included by the list
-   *
    * @private
    * @param {Todo} todo The todo
    */
-  pt.has = function (todo) {
+  has (todo) {
     return this.items.indexOf(todo) !== -1
   }
 
   /**
    * Returns a todo subcollection of completed items.
-   *
    * @return {TodoCollection}
    */
-  pt.completed = function () {
-    return new TodoCollection(this.items.filter(function (todo) { return todo.completed }))
+  completed () {
+    return new TodoCollection(this.items.filter(todo => todo.completed))
   }
 
   /**
    * Returns a todo subcollection of uncompleted items.
-   *
    * @return {TodoCollection}
    */
-  pt.uncompleted = function () {
-    return new TodoCollection(this.items.filter(function (todo) { return !todo.completed }))
+  uncompleted () {
+    return new TodoCollection(this.items.filter(todo => !todo.completed))
   }
 
   /**
    * Gets the array of todos
-   *
    * @return {Todo[]}
    */
-  pt.toArray = function () {
+  toArray () {
     return this.items.slice(0)
   }
 
   /**
    * Checks if the collection is empty.
-   *
    * @param {Boolean}
    */
-  pt.isEmpty = function () {
+  isEmpty () {
     return this.items.length === 0
   }
 
   /**
    * Completes all the todos.
    */
-  pt.completeAll = function () {
-    this.items.forEach(function (todo) {
+  completeAll () {
+    this.items.forEach(todo => {
       todo.completed = true
     })
   }
@@ -143,11 +130,11 @@ var TodoCollection = $.cc.subclass(function (pt) {
   /**
    * Uncompletes all the todos.
    */
-  pt.uncompleteAll = function () {
-    this.items.forEach(function (todo) {
+  uncompleteAll () {
+    this.items.forEach(todo => {
       todo.completed = false
     })
   }
-})
+}
 
 module.exports = TodoCollection

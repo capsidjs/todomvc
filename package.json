@@ -18,7 +18,7 @@
   "license": "MIT",
   "dependencies": {
     "jquery": "^2.1.4",
-    "class-component": "^5.2.0",
+    "class-component": "^5.7.8",
     "todomvc-app-css": "^1.0.4",
     "todomvc-common": "^1.0.2"
   },

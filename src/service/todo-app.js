@@ -1,66 +1,65 @@
-var $ = require('jquery')
+const $ = require('jquery')
 
-var Const = require('../const')
-var TodoFactory = require('../domain/todo-factory')
-var TodoRepository = require('../domain/todo-repository')
+const Const = require('../const')
+const TodoFactory = require('../domain/todo-factory')
+const TodoRepository = require('../domain/todo-repository')
 
 /**
  * The todo application class.
  */
-var TodoApp = $.cc.subclass(function (pt) {
-  'use strict'
-
-  pt.constructor = function (elem) {
-    this.elem = elem
-
+class TodoApp {
+  /**
+   * @param {jQuery} elem The element
+   */
+  constructor (elem) {
     this.todoFactory = new TodoFactory()
     this.todoRepository = new TodoRepository()
 
     this.todoCollection = this.todoRepository.getAll()
 
-    this.initEvents()
+    this.initEvents(elem)
+
+    this.elem = elem
 
     this.updateView()
   }
 
   /**
    * Initializes events.
-   *
    * @private
+   * @param {jQuery} elem The element
    */
-  pt.initEvents = function () {
-    var self = this
-
-    this.elem.on('todo-new-item', function (e, title) {
-      self.addTodo(title)
+  initEvents (elem) {
+    elem.on('todo-new-item', (e, title) => {
+      this.addTodo(title)
     })
 
-    this.elem.on('todo-item-toggle', function (e, id) {
-      self.toggle(id)
+    elem.on('todo-item-toggle', (e, id) => {
+      this.toggle(id)
     })
 
-    this.elem.on('todo-item-destroy', function (e, id) {
-      self.remove(id)
+    elem.on('todo-item-destroy', (e, id) => {
+      this.remove(id)
     })
 
-    this.elem.on('todo-item-edited', function (e, id, title) {
-      self.editItem(id, title)
+    elem.on('todo-item-edited', (e, id, title) => {
+      this.editItem(id, title)
     })
 
-    this.elem.on('todo-clear-completed', function () {
-      self.clearCompleted()
+    elem.on('todo-clear-completed', () => {
+      this.clearCompleted()
     })
 
-    this.elem.on('todo-complete-all', function () {
-      self.completeAll()
+    elem.on('todo-complete-all', () => {
+      this.completeAll()
     })
 
-    this.elem.on('todo-uncomplete-all', function () {
-      self.uncompleteAll()
+    elem.on('todo-uncomplete-all', () => {
+      this.uncompleteAll()
     })
 
-    $(window).on('hashchange', function () {
-      self.updateView()
+    $(window).on('hashchange', () => {
+      this.updateView()
     })
   }
 
@@ -70,8 +69,8 @@ var TodoApp = $.cc.subclass(function (pt) {
    * @private
    * @param {String} title The todo title
    */
-  pt.addTodo = function (title) {
-    var todo = this.todoFactory.createByTitle(title)
+  addTodo (title) {
+    const todo = this.todoFactory.createByTitle(title)
 
     this.todoCollection.push(todo)
 
@@ -82,10 +81,9 @@ var TodoApp = $.cc.subclass(function (pt) {
 
   /**
    * Updates the view in the todo app.
-   *
    * @private
    */
-  pt.updateView = function () {
+  updateView () {
     this.updateTodoList()
 
     this.updateControls()
@@ -93,10 +91,9 @@ var TodoApp = $.cc.subclass(function (pt) {
 
   /**
    * Updates the controls.
-   *
    * @private
    */
-  pt.updateControls = function () {
+  updateControls () {
     this.updateFilterBtns()
 
     this.updateTodoCount()
@@ -108,41 +105,37 @@ var TodoApp = $.cc.subclass(function (pt) {
 
   /**
    * Updates the todo list.
-   *
    * @private
    */
-  pt.updateTodoList = function () {
-    var todoCollection = this.getDisplayCollection()
+  updateTodoList () {
+    const todoCollection = this.getDisplayCollection()
 
     this.elem.find('.todo-list').cc.get('todo-list').update(todoCollection)
   }
 
   /**
    * Updates the filter buttons.
-   *
    * @private
    */
-  pt.updateFilterBtns = function () {
-    var filterName = this.getFilterNameFromHash()
+  updateFilterBtns () {
+    const filterName = this.getFilterNameFromHash()
 
     this.elem.find('.todo-filters').cc.get('todo-filters').setFilter(filterName)
   }
 
   /**
    * Updates the todo counter.
-   *
    * @private
    */
-  pt.updateTodoCount = function () {
+  updateTodoCount () {
     this.elem.find('.todo-count').cc.get('todo-count').setCount(this.todoCollection.uncompleted().toArray().length)
   }
 
   /**
    * Updates the visiblity of components.
-   *
    * @private
    */
-  pt.updateVisibility = function () {
+  updateVisibility () {
     if (this.todoCollection.isEmpty()) {
       this.elem.find('#main, #footer').css('display', 'none')
     } else {
@@ -152,10 +145,9 @@ var TodoApp = $.cc.subclass(function (pt) {
 
   /**
    * Updates the toggle-all button state.
-   *
    * @private
    */
-  pt.updateToggleBtnState = function () {
+  updateToggleBtnState () {
     this.elem.find('.todo-toggle-all').cc.get('todo-toggle-all').updateBtnState(
       !this.todoCollection.uncompleted().isEmpty()
     )
@@ -163,11 +155,10 @@ var TodoApp = $.cc.subclass(function (pt) {
 
   /**
    * Gets the todo collection which is displayable in the current filter.
-   *
    * @private
    */
-  pt.getDisplayCollection = function () {
-    var filterName = this.getFilterNameFromHash()
+  getDisplayCollection () {
+    const filterName = this.getFilterNameFromHash()
 
     if (filterName === Const.FILTER.ACTIVE) {
       return this.todoCollection.uncompleted()
@@ -182,11 +173,10 @@ var TodoApp = $.cc.subclass(function (pt) {
 
   /**
    * Returns if the filter is enabled.
-   *
    * @private
    */
-  pt.filterIsEnabled = function () {
-    var filterName = this.getFilterNameFromHash()
+  filterIsEnabled () {
+    const filterName = this.getFilterNameFromHash()
 
     return filterName === Const.FILTER.ACTIVE || filterName === Const.FILTER.COMPLETED
   }
@@ -194,23 +184,22 @@ var TodoApp = $.cc.subclass(function (pt) {
   /**
    * Gets the filter name from the hash string.
    */
-  pt.getFilterNameFromHash = function () {
+  getFilterNameFromHash () {
     return window.location.hash.substring(1)
   }
 
   /**
    * Saves the current todo collection state.
    */
-  pt.save = function () {
+  save () {
     this.todoRepository.saveAll(this.todoCollection)
   }
 
   /**
    * Toggles the todo state of the given id.
-   *
    * @param {String} id The todo id
    */
-  pt.toggle = function (id) {
+  toggle (id) {
     this.todoCollection.toggleById(id)
 
     if (this.filterIsEnabled()) {
@@ -224,10 +213,9 @@ var TodoApp = $.cc.subclass(function (pt) {
 
   /**
    * Removes the todo of the given id.
-   *
    * @param {String} id The todo id
    */
-  pt.remove = function (id) {
+  remove (id) {
     this.todoCollection.removeById(id)
 
     this.updateView()
@@ -237,12 +225,11 @@ var TodoApp = $.cc.subclass(function (pt) {
 
   /**
    * Edits the todo item of the given id by the given title.
-   *
    * @param {String} id The todo id
    * @param {String} title The todo title
    */
-  pt.editItem = function (id, title) {
-    var todo = this.todoCollection.getById(id)
+  editItem (id, title) {
+    const todo = this.todoCollection.getById(id)
 
     todo.body = title
 
@@ -252,7 +239,7 @@ var TodoApp = $.cc.subclass(function (pt) {
   /**
    * Clears the completed todos.
    */
-  pt.clearCompleted = function () {
+  clearCompleted () {
     this.todoCollection = this.todoCollection.uncompleted()
 
     this.updateView()
@@ -262,10 +249,9 @@ var TodoApp = $.cc.subclass(function (pt) {
 
   /**
    * Uncompletes all the todo items.
-   *
    * @private
    */
-  pt.uncompleteAll = function () {
+  uncompleteAll () {
     if (this.filterIsEnabled()) {
       this.todoCollection.uncompleteAll()
 
@@ -273,18 +259,17 @@ var TodoApp = $.cc.subclass(function (pt) {
 
       this.save()
     } else {
-      this.todoCollection.completed().forEach(function (todo) {
+      this.todoCollection.completed().forEach(todo => {
         this.elem.find('#' + todo.id).cc.get('todo-item').toggleCompleted()
-      }, this)
+      })
     }
   }
 
   /**
    * Completes all the todo items.
-   *
    * @private
    */
-  pt.completeAll = function () {
+  completeAll () {
     if (this.filterIsEnabled()) {
       this.todoCollection.completeAll()
 
@@ -292,11 +277,11 @@ var TodoApp = $.cc.subclass(function (pt) {
 
       this.save()
     } else {
-      this.todoCollection.uncompleted().forEach(function (todo) {
+      this.todoCollection.uncompleted().forEach(todo => {
         this.elem.find('#' + todo.id).cc.get('todo-item').toggleCompleted()
-      }, this)
+      })
     }
   }
-})
+}
 
 $.cc.assign('todo-app', TodoApp)

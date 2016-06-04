@@ -1,18 +1,15 @@
-var $ = require('jquery')
+const $ = require('jquery')
 
-var TodoFilters = $.cc.subclass(function (pt) {
-  'use strict'
-
-  pt.constructor = function (elem) {
+class TodoFilters {
+  constructor (elem) {
     this.elem = elem
   }
 
   /**
    * Sets the given filter button active.
-   *
    * @param {String} name The name of the filter
    */
-  pt.setFilter = function (name) {
+  setFilter (name) {
     this.elem.find('a').removeClass('selected')
 
     if (name === '/active') {
@@ -23,6 +20,6 @@ var TodoFilters = $.cc.subclass(function (pt) {
       this.elem.find('a[name="all"]').addClass('selected')
     }
   }
-})
+}
 
 $.cc.assign('todo-filters', TodoFilters)

@@ -4,7 +4,7 @@ const {expect} = require('chai')
 describe('TodoCount', () => {
   describe('setCount', () => {
     it('sets label properly', () => {
-      var dom = $('<span />')
+      const dom = $('<span />')
 
       dom.cc.init('todo-count').setCount(0)
 

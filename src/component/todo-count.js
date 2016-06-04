@@ -1,13 +1,10 @@
-var $ = require('jquery')
+const $ = require('jquery')
 
-var TodoCount = $.cc.subclass(function (pt) {
-  'use strict'
-
-  pt.constructor = function (elem) {
+class TodoCount {
+  constructor (elem) {
     this.elem = elem
   }
-
-  pt.setCount = function (count) {
+  setCount (count) {
     this.elem.empty()
 
     if (count === 1) {
@@ -18,6 +15,6 @@ var TodoCount = $.cc.subclass(function (pt) {
 
     $('<strong />').text(count).prependTo(this.elem)
   }
-})
+}
 
 $.cc.assign('todo-count', TodoCount)

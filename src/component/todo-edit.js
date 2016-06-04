@@ -1,14 +1,12 @@
-var $ = require('jquery')
+const $ = require('jquery')
 
-var Const = require('../const')
+const Const = require('../const')
 
 /**
  * TodoEdit controls the edit area of each todo item.
  */
-var TodoEdit = $.cc.subclass(function (pt) {
-  'use strict'
-
-  pt.constructor = function (elem) {
+class TodoEdit {
+  constructor (elem) {
     this.elem = elem
 
     this.initEvents()
@@ -19,15 +17,13 @@ var TodoEdit = $.cc.subclass(function (pt) {
    *
    * @private
    */
-  pt.initEvents = function () {
-    var self = this
-
-    this.elem.on('keypress', function (e) {
-      self.onKeypress(e)
+  initEvents () {
+    this.elem.on('keypress', e => {
+      this.onKeypress(e)
     })
 
-    this.elem.on('blur', function () {
-      self.stopEditing()
+    this.elem.on('blur', () => {
+      this.stopEditing()
     })
   }
 
@@ -36,7 +32,7 @@ var TodoEdit = $.cc.subclass(function (pt) {
    *
    * @param {Event} e The event
    */
-  pt.onKeypress = function (e) {
+  onKeypress (e) {
     if (e.which === Const.KEYCODE.ENTER) {
       this.stopEditing()
     }
@@ -45,9 +41,9 @@ var TodoEdit = $.cc.subclass(function (pt) {
   /**
    * Stops editing with current value.
    */
-  pt.stopEditing = function () {
+  stopEditing () {
     this.elem.trigger('todo-edited', this.elem.val())
   }
-})
+}
 
 $.cc.assign('todo-edit', TodoEdit)

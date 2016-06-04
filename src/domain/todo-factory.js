@@ -1,22 +1,16 @@
-var $ = require('jquery')
-
-var Todo = require('./todo')
+const Todo = require('./todo')
 
 /**
  * TodoFactory is the factory for todo.
- *
- * @class
  */
-var TodoFactory = $.cc.subclass(function (pt) {
-  'use strict'
-
+class TodoFactory {
   /**
    * Creates a todo model from the given todo title.
    *
    * @param {String} title The todo title
    * @return {Todo}
    */
-  pt.createByTitle = function (title) {
+  createByTitle (title) {
     return this.createFromObject({
       id: this.generateId(),
       title: title,
@@ -26,22 +20,20 @@ var TodoFactory = $.cc.subclass(function (pt) {
 
   /**
    * Creates Todo model from the object
-   *
    * @param {Object} obj The source object
    * @return {Todo}
    */
-  pt.createFromObject = function (obj) {
+  createFromObject (obj) {
     return new Todo(obj.id, obj.title, obj.completed)
   }
 
   /**
    * Generates a random id.
-   *
    * @private
    */
-  pt.generateId = function () {
+  generateId () {
     return Math.floor(Math.random() * 1000000000).toString()
   }
-})
+}
 
 module.exports = TodoFactory
