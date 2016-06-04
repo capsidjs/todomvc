@@ -8,4 +8,4 @@ class TodoClearBtn {
   }
 }
 
-$.cc.assign('todo-clear-btn', TodoClearBtn)
+$.cc('todo-clear-btn', TodoClearBtn)

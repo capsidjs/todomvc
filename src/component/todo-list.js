@@ -18,4 +18,4 @@ class TodoList {
   }
 }
 
-$.cc.assign('todo-list', TodoList)
+$.cc('todo-list', TodoList)

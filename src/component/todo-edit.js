@@ -46,4 +46,4 @@ class TodoEdit {
   }
 }
 
-$.cc.assign('todo-edit', TodoEdit)
+$.cc('todo-edit', TodoEdit)

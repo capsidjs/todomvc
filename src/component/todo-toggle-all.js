@@ -38,4 +38,4 @@ class TodoToggleAll {
   }
 }
 
-$.cc.assign('todo-toggle-all', TodoToggleAll)
+$.cc('todo-toggle-all', TodoToggleAll)

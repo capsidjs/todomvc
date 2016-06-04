@@ -284,4 +284,4 @@ class TodoApp {
   }
 }
 
-$.cc.assign('todo-app', TodoApp)
+$.cc('todo-app', TodoApp)

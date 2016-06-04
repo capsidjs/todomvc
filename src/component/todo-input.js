@@ -34,4 +34,4 @@ class TodoInput {
   }
 }
 
-$.cc.assign('todo-input', TodoInput)
+$.cc('todo-input', TodoInput)

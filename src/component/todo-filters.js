@@ -22,4 +22,4 @@ class TodoFilters {
   }
 }
 
-$.cc.assign('todo-filters', TodoFilters)
+$.cc('todo-filters', TodoFilters)

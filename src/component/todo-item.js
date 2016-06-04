@@ -142,4 +142,4 @@ class TodoItem {
   }
 }
 
-$.cc.assign('todo-item', TodoItem)
+$.cc('todo-item', TodoItem)

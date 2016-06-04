@@ -17,4 +17,4 @@ class TodoCount {
   }
 }
 
-$.cc.assign('todo-count', TodoCount)
+$.cc('todo-count', TodoCount)
