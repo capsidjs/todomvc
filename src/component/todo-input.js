@@ -1,29 +1,24 @@
-var $ = require('jquery')
+const $ = require('jquery')
 
-var Const = require('../const')
+const Const = require('../const')
 
 /**
  * TodoInput class controls the input for adding todos.
  */
-var TodoInput = $.cc.subclass(function (pt) {
-  'use strict'
-
-  pt.constructor = function (elem) {
+class TodoInput {
+  constructor (elem) {
     this.elem = elem
 
-    var self = this
-
-    this.elem.on('keypress', function (e) {
-      self.onKeypress(e)
+    this.elem.on('keypress', e => {
+      this.onKeypress(e)
     })
   }
 
   /**
    * Handler for key presses.
-   *
    * @param {Event}
    */
-  pt.onKeypress = function (e) {
+  onKeypress (e) {
     if (e.which !== Const.KEYCODE.ENTER) {
       return
     }
@@ -32,11 +27,11 @@ var TodoInput = $.cc.subclass(function (pt) {
       return
     }
 
-    var title = this.elem.val().trim()
+    const title = this.elem.val().trim()
     this.elem.val('')
 
     this.elem.trigger('todo-new-item', title)
   }
-})
+}
 
 $.cc.assign('todo-input', TodoInput)

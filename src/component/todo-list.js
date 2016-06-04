@@ -1,24 +1,21 @@
-var $ = require('jquery')
+const $ = require('jquery')
 
-var TodoList = $.cc.subclass(function (pt) {
-  'use strict'
-
-  pt.constructor = function (elem) {
+class TodoList {
+  constructor (elem) {
     this.elem = elem
   }
 
   /**
    * Updates the todo items by the given todo model list.
-   *
    * @param {TodoCollection} todoList The todo list
    */
-  pt.update = function (todoList) {
+  update (todoList) {
     this.elem.empty()
 
-    todoList.forEach(function (todo) {
+    todoList.forEach(todo => {
       $('<li />').appendTo(this.elem).cc.init('todo-item').update(todo)
-    }, this)
+    })
   }
-})
+}
 
 $.cc.assign('todo-list', TodoList)
