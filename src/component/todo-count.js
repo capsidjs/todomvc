@@ -1,19 +1,17 @@
 const $ = require('jquery')
+const {strong} = require('dom-gen')
 
 class TodoCount {
   constructor (elem) {
     this.elem = elem
   }
+  /**
+   * @param {number} count The number of todos
+   */
   setCount (count) {
     this.elem.empty()
 
-    if (count === 1) {
-      this.elem.text(' item left')
-    } else {
-      this.elem.text(' items left')
-    }
-
-    $('<strong />').text(count).prependTo(this.elem)
+    this.elem.append(strong(count), ` item${ count !== 1 ? 's' : '' } left`)
   }
 }
 

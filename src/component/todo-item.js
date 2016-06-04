@@ -1,4 +1,5 @@
 const $ = require('jquery')
+const {div, input, label, button} = require('dom-gen')
 
 /**
  * TodoItem class controls todo item in a list.
@@ -17,12 +18,14 @@ class TodoItem {
    * @private
    */
   initElems () {
-    const view = $('<div class="view" />').appendTo(this.elem)
-
-    $('<input class="toggle" type="checkbox" />').appendTo(view)
-    $('<label />').appendTo(view)
-    $('<button class="destroy" />').appendTo(view)
-    $('<input class="edit" />').appendTo(this.elem).cc.init('todo-edit')
+    this.elem.append(
+      div(
+        input({attr: {type: 'checkbox'}}).addClass('toggle'),
+        label(),
+        button().addClass('destroy')
+      ).addClass('view'),
+      input().addClass('edit').cc('todo-edit')
+    )
   }
 
   /**

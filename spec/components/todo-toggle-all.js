@@ -1,12 +1,13 @@
 var $ = require('jquery')
 const {expect} = require('chai')
+const {div} = require('dom-gen')
 
 var elem
 var toggleAll
 
 describe('todo-toggle-all', function () {
   beforeEach(function () {
-    elem = $('<div />')
+    elem = div()
 
     toggleAll = elem.cc.init('todo-toggle-all')
   })

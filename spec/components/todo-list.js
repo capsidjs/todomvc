@@ -4,12 +4,13 @@ const todoFactory = new TodoFactory()
 
 const $ = require('jquery')
 const {expect} = require('chai')
+const {div} = require('dom-gen')
 
 let todoList
 
 describe('todo-list', () => {
   beforeEach(() => {
-    todoList = $('<div />').cc.init('todo-list')
+    todoList = div().cc.init('todo-list')
   })
 
   describe('update', () => {

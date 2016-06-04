@@ -1,5 +1,6 @@
 const $ = require('jquery')
 const {expect} = require('chai')
+const {ul, li} = require('dom-gen')
 
 let todoItem
 let elem
@@ -7,9 +8,9 @@ let parentElem
 
 describe('todo-edit', () => {
   beforeEach(() => {
-    parentElem = $('<ul />')
+    parentElem = ul()
 
-    elem = $('<li />').appendTo(parentElem)
+    elem = li().appendTo(parentElem)
 
     todoItem = elem.cc.init('todo-item')
 

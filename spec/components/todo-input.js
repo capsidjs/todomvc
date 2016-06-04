@@ -2,12 +2,13 @@ const Const = require('../../src/const')
 
 const $ = require('jquery')
 const {expect} = require('chai')
+const {input} = require('dom-gen')
 
 let elem
 
 describe('TodoInput', () => {
   beforeEach(() => {
-    elem = $('<input />').val('abc')
+    elem = input().val('abc')
 
     elem.cc.init('todo-input')
   })

@@ -1,4 +1,5 @@
 const $ = require('jquery')
+const {li} = require('dom-gen')
 
 class TodoList {
   constructor (elem) {
@@ -13,7 +14,7 @@ class TodoList {
     this.elem.empty()
 
     todoList.forEach(todo => {
-      $('<li />').appendTo(this.elem).cc.init('todo-item').update(todo)
+      li().appendTo(this.elem).cc.init('todo-item').update(todo)
     })
   }
 }

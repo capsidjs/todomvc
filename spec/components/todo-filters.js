@@ -1,17 +1,18 @@
 const $ = require('jquery')
 const {expect} = require('chai')
+const {div, li} = require('dom-gen')
 
 let filterControl
 let elem
 
 describe('TodoFilters', () => {
   beforeEach(() => {
-    elem = $('<div />')
+    elem = div()
     filterControl = elem.cc.init('todo-filters')
 
-    $('<li><a name="all" /></li>').appendTo(elem)
-    $('<li><a name="active" /></li>').appendTo(elem)
-    $('<li><a name="completed" /></li>').appendTo(elem)
+    li('<a name="all" />').appendTo(elem)
+    li('<a name="active" />').appendTo(elem)
+    li('<a name="completed" />').appendTo(elem)
   })
 
   describe('setFilter', () => {

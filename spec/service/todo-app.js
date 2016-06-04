@@ -1,22 +1,22 @@
 const $ = require('jquery')
 const {expect} = require('chai')
+const {div, ul, button, footer} = require('dom-gen')
 
 let elem
 let todoApp
 
 describe('todo-app', () => {
   beforeEach(() => {
-    elem = $('<div />')
-
-    var main = $('<div id="main">').appendTo(elem)
-
-    $('<ul class="todo-list" />').appendTo(main)
-    $('<button class="todo-toggle-all" />').appendTo(main)
-
-    var footer = $('<footer id="footer" />').appendTo(elem)
-
-    $('<ul class="todo-filters" />').appendTo(footer)
-    $('<div class="todo-count" />').appendTo(footer)
+    elem = div(
+      div({attr: {id: 'main'}},
+        ul().addClass('todo-list'),
+        button().addClass('todo-toggle-all')
+      ),
+      footer({attr: {id: 'footer'}},
+        ul().addClass('todo-filters'),
+        div().addClass('todo-count')
+      )
+    )
 
     $.cc.init(null, elem)
 

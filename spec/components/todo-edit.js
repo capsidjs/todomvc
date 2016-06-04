@@ -2,12 +2,13 @@ const Const = require('../../src/const')
 
 const $ = require('jquery')
 const {expect} = require('chai')
+const {input} = require('dom-gen')
 
 let todoEdit
 
 describe('TodoEdit', () => {
   beforeEach(() => {
-    todoEdit = $('<input />').cc.init('todo-edit')
+    todoEdit = input().cc.init('todo-edit')
   })
 
   it('stops editing when the elem is blurred', done => {
