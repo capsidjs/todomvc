@@ -1,6 +1,5 @@
 const Const = require('../../src/const')
 
-const $ = require('jquery')
 const {expect} = require('chai')
 const {input} = require('dom-gen')
 

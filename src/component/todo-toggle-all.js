@@ -1,17 +1,15 @@
-const $ = require('jquery')
+const {event, component} = $.cc
 
-class TodoToggleAll {
-  constructor (elem) {
-    this.elem = elem
-
-    this.elem.on('click', () => {
-      this.toggleAll()
-    })
-  }
-
+/**
+ * The toggle all button
+ */
+void
+@component('todo-toggle-all')
+class {
   /**
    * Toggles the all items.
    */
+  @event('click')
   toggleAll () {
     if (this.checked) {
       this.elem.trigger('todo-uncomplete-all')
@@ -24,7 +22,6 @@ class TodoToggleAll {
 
   /**
    * Updates the button state by the given active items' condition.
-   *
    * @param {Boolean} activeItemExists true if any active item exists, false otherwise
    */
   updateBtnState (activeItemExists) {
@@ -37,5 +34,3 @@ class TodoToggleAll {
     }
   }
 }
-
-$.cc('todo-toggle-all', TodoToggleAll)

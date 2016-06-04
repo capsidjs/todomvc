@@ -1,11 +1,13 @@
-const $ = require('jquery')
+const {component, event} = $.cc
 
-class TodoClearBtn {
-  constructor (elem) {
-    elem.on('click', () => {
-      elem.trigger('todo-clear-completed')
-    })
+void
+@component('todo-clear-btn')
+class {
+  /**
+   * Handles the click event. Triggers the todo-clear-completed event.
+   */
+  @event('click')
+  onClick () {
+    this.elem.trigger('todo-clear-completed')
   }
 }
-
-$.cc('todo-clear-btn', TodoClearBtn)

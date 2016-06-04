@@ -1,4 +1,3 @@
-const $ = require('jquery')
 const {expect} = require('chai')
 const {ul, li} = require('dom-gen')
 

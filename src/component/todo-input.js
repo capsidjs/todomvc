@@ -1,23 +1,18 @@
-const $ = require('jquery')
-
 const Const = require('../const')
+
+const {event, component} = $.cc
 
 /**
  * TodoInput class controls the input for adding todos.
  */
-class TodoInput {
-  constructor (elem) {
-    this.elem = elem
-
-    this.elem.on('keypress', e => {
-      this.onKeypress(e)
-    })
-  }
-
+void
+@component('todo-input')
+class {
   /**
    * Handler for key presses.
    * @param {Event}
    */
+  @event('keypress')
   onKeypress (e) {
     if (e.which !== Const.KEYCODE.ENTER) {
       return
@@ -33,5 +28,3 @@ class TodoInput {
     this.elem.trigger('todo-new-item', title)
   }
 }
-
-$.cc('todo-input', TodoInput)

@@ -1,9 +1,11 @@
-const $ = require('jquery')
+const {component} = $.cc
 
-class TodoFilters {
-  constructor (elem) {
-    this.elem = elem
-  }
+/**
+ * The todo filter controls.
+ */
+void
+@component('todo-filters')
+class {
 
   /**
    * Sets the given filter button active.
@@ -21,5 +23,3 @@ class TodoFilters {
     }
   }
 }
-
-$.cc('todo-filters', TodoFilters)

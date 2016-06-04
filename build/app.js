@@ -1,931 +1,816 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-(function (global){
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function __cc_init__(elem) {
+  // eslint-disable-line
+  this.elem = elem;
+}
+
 /**
- * class-component.js v5.2.0
+ * ClassComponentConfiguration is the utility class for class component initialization.
+ */
+
+var ClassComponentConfiguration = function () {
+  /**
+   * @param {String} className The class name
+   * @param {Function} Constructor The constructor of the coelement of the class component
+   */
+
+  function ClassComponentConfiguration(className, Constructor) {
+    _classCallCheck(this, ClassComponentConfiguration);
+
+    this.className = className;
+    this.Constructor = Constructor;
+    this.initClass = this.className + '-initialized';
+  }
+
+  /**
+   * Returns the selector for uninitialized class component.
+   * @public
+   * @return {String}
+   */
+
+
+  _createClass(ClassComponentConfiguration, [{
+    key: 'selector',
+    value: function selector() {
+      return '.' + this.className + ':not(.' + this.initClass + ')';
+    }
+  }, {
+    key: 'isInitialized',
+    value: function isInitialized(elem) {
+      return elem.hasClass(this.initClass);
+    }
+
+    /**
+     * Marks the given element as initialized as this class component.
+     * @private
+     * @param {jQuery} elem
+     */
+
+  }, {
+    key: 'markInitialized',
+    value: function markInitialized(elem) {
+      elem.addClass(this.initClass);
+    }
+
+    /**
+     * Applies the defining function to the element.
+     * @private
+     * @param {jQuery} elem
+     */
+
+  }, {
+    key: 'applyCustomDefinition',
+    value: function applyCustomDefinition(elem) {
+      var coelem = new this.Constructor(elem);
+
+      if (typeof coelem.__cc_init__ === 'function') {
+        coelem.__cc_init__(elem);
+      } else {
+        __cc_init__.call(coelem, elem);
+      }
+
+      this.getAllListenerInfo().forEach(function (listenerInfo) {
+        return listenerInfo.bindTo(elem, coelem);
+      });
+
+      elem.data('__coelement:' + this.className, coelem);
+    }
+
+    /**
+     * Gets the list of the event-decorated handlers.
+     * @private
+     * @return {Function[]}
+     */
+
+  }, {
+    key: 'getHandlers',
+    value: function getHandlers() {
+      var prototype = this.Constructor.prototype;
+
+      return Object.getOwnPropertyNames(prototype).map(function (key) {
+        return prototype[key];
+      }).filter(ClassComponentConfiguration.isHandler);
+    }
+
+    /**
+     * Gets all the listener info of the coelement.
+     * @private
+     * @return {ListenerInfo[]}
+     */
+
+  }, {
+    key: 'getAllListenerInfo',
+    value: function getAllListenerInfo() {
+      return [].concat.apply([], this.getHandlers().map(function (handler) {
+        return handler.__events__;
+      }));
+    }
+
+    /**
+     * Returns true when the given property is an event handler.
+     * @private
+     * @param {object} property The property
+     * @return {boolean}
+     */
+
+  }, {
+    key: 'initElem',
+
+
+    /**
+     * Initialize the element by the configuration.
+     * @public
+     * @param {jQuery} elem The element
+     */
+    value: function initElem(elem) {
+      if (this.isInitialized(elem)) {
+        return;
+      }
+
+      this.markInitialized(elem);
+      this.applyCustomDefinition(elem);
+    }
+  }], [{
+    key: 'isHandler',
+    value: function isHandler(property) {
+      return typeof property === 'function' && property.__events__ != null;
+    }
+  }]);
+
+  return ClassComponentConfiguration;
+}();
+
+module.exports = ClassComponentConfiguration;
+},{}],2:[function(require,module,exports){
+(function (global){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var $ = global.jQuery;
+
+/**
+ * This is class component contenxt manager. This help to initialize or get colements.
+ */
+
+var ClassComponentContext = function () {
+  function ClassComponentContext(jqObj) {
+    _classCallCheck(this, ClassComponentContext);
+
+    this.jqObj = jqObj;
+  }
+
+  /**
+   * Inserts the class name, initializes as the class component and returns the coelement if exists.
+   *
+   * @param {String} className The class name
+   * @return {Object}
+   */
+
+
+  _createClass(ClassComponentContext, [{
+    key: 'init',
+    value: function init(className) {
+      this.up(className);
+
+      return this.get(className);
+    }
+
+    /**
+     * Initializes the element if it has registered class component names. Returns the jquery object itself.
+     *
+     * @param {string} [classNames] The class name.
+     * @return {jQuery}
+     */
+
+  }, {
+    key: 'up',
+    value: function up(classNames) {
+      var _this = this;
+
+      if (classNames != null) {
+        classNames.split(/\s+/).forEach(function (className) {
+          _this.jqObj.addClass(className); // adds the class name
+
+          $.cc.__manager__.initAt(className, _this.jqObj); // init as the class-component
+        });
+      } else {
+          // Initializes anything it already has.
+          $.cc.__manager__.initAllAtElem(this.jqObj);
+        }
+
+      return this.jqObj;
+    }
+
+    /**
+     * Gets the coelement of the given name.
+     *
+     * @param {String} coelementName The name of the coelement
+     * @return {Object}
+     */
+
+  }, {
+    key: 'get',
+    value: function get(coelementName) {
+      var coelement = this.jqObj.data('__coelement:' + coelementName);
+
+      if (coelement) {
+        return coelement;
+      }
+
+      if (this.jqObj.length === 0) {
+        throw new Error('coelement "' + coelementName + '" unavailable at empty dom selection');
+      }
+
+      throw new Error('no coelement named: ' + coelementName + ', on the dom: ' + this.jqObj.get(0).tagName);
+    }
+  }]);
+
+  return ClassComponentContext;
+}();
+
+module.exports = ClassComponentContext;
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],3:[function(require,module,exports){
+(function (global){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var $ = global.jQuery;
+
+var ClassComponentConfiguration = require('./class-component-configuration');
+
+/**
+ * ClassComponentManger handles the registration and initialization of the class compoents.
+ */
+
+var ClassComponentManager = function () {
+  function ClassComponentManager() {
+    _classCallCheck(this, ClassComponentManager);
+
+    /**
+     * @property {Object<ClassComponentConfiguration>} ccc
+     */
+    this.ccc = {};
+  }
+
+  /**
+   * Registers the class component configuration for the given name.
+   *
+   * @param {String} name The name
+   * @param {Function} Constructor The constructor of the class component
+   */
+
+
+  _createClass(ClassComponentManager, [{
+    key: 'register',
+    value: function register(name, Constructor) {
+      Constructor.coelementName = name;
+
+      this.ccc[name] = new ClassComponentConfiguration(name, Constructor);
+    }
+
+    /**
+     * Initializes the class components of the given name in the given element.
+     *
+     * @param {String} className The class name
+     * @param {jQuery|HTMLElement|String} elem The dom where class componets are initialized
+     * @return {Array<HTMLElement>} The elements which are initialized in this initialization
+     * @throw {Error}
+     */
+
+  }, {
+    key: 'init',
+    value: function init(className, elem) {
+      var ccc = this.getConfiguration(className);
+
+      return $(ccc.selector(), elem).each(function () {
+
+        ccc.initElem($(this));
+      }).toArray();
+    }
+
+    /**
+     * Initializes the class component of the give name at the given element.
+     * @param {String} className The class name
+     * @param {jQuery|HTMLElement|String} elem The element
+     */
+
+  }, {
+    key: 'initAt',
+    value: function initAt(className, elem) {
+      this.getConfiguration(className).initElem($(elem));
+    }
+
+    /**
+     * Initializes all the class component at the element.
+     *
+     * @param {HTMLElement}
+     */
+
+  }, {
+    key: 'initAllAtElem',
+    value: function initAllAtElem(elem) {
+      var _this = this;
+
+      var classes = $(elem).attr('class');
+
+      if (!classes) {
+        return;
+      }
+
+      classes.split(/\s+/).filter(function (className) {
+        return _this.ccc[className];
+      }).forEach(function (className) {
+        return _this.initAt(className, elem);
+      });
+    }
+
+    /**
+     * @param {jQuery|HTMLElement|String} elem The element
+     */
+
+  }, {
+    key: 'initAll',
+    value: function initAll(elem) {
+      var _this2 = this;
+
+      Object.keys(this.ccc).forEach(function (className) {
+        _this2.init(className, elem);
+      });
+    }
+
+    /**
+     * Gets the configuration of the given class name.
+     *
+     * @param {String} className The class name
+     * @return {ClassComponentConfiguration}
+     * @throw {Error}
+     */
+
+  }, {
+    key: 'getConfiguration',
+    value: function getConfiguration(className) {
+      var ccc = this.ccc[className];
+
+      if (ccc == null) {
+        throw new Error('Class componet "' + className + '" is not defined.');
+      }
+
+      return ccc;
+    }
+  }]);
+
+  return ClassComponentManager;
+}();
+
+module.exports = ClassComponentManager;
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./class-component-configuration":1}],4:[function(require,module,exports){
+'use strict';
+
+/**
+ * class-component.js v8.1.0
  * author: Yoshiya Hinosawa ( http://github.com/kt3k )
  * license: MIT
  */
+var $ = jQuery;
 
+var reSpaces = / +/;
 
-(function ($) {
-    'use strict';
+var ClassComponentManager = require('./class-component-manager');
+var decorators = require('./decorators');
 
-    var reSpaces = / +/;
+/**
+ * Initializes the module object.
+ *
+ * @return {Object}
+ */
+function initializeModule() {
 
-    var Actor = require('./lib/Actor');
-    var subclass = require('subclassjs');
+  require('./fn.cc');
 
-    var ClassComponentManager = require('./lib/ClassComponentManager');
-    var ClassComponentContext = require('./lib/ClassComponentContext');
-    var ClassComponentConfiguration = require('./lib/ClassComponentConfiguration');
+  var __manager__ = new ClassComponentManager();
 
-    /**
-     * The main namespace for class component module.
-     */
-    var cc = {};
+  /**
+   * The main namespace for class component module.
+   * Registers a class component of the given name using the given defining function.
+   * @param {String} name The class name
+   * @param {Function} Constructor The class definition
+   */
+  var cc = function cc(name, Constructor) {
+    if (typeof name !== 'string') {
 
-    cc.__manager__ = new ClassComponentManager();
+      throw new Error('`name` of a class component has to be a string');
+    }
 
-    /**
-     Registers a class component of the given name using the given defining function.
+    if (typeof Constructor !== 'function') {
 
-     See README.md for details.
+      throw new Error('`Constructor` of a class component has to be a function');
+    }
 
-     @param {String} className The class name
-     @param {Function} definition The class definition
-     */
-    cc.register = function (name, definingFunction) {
+    __manager__.register(name, Constructor);
 
-        if (typeof name !== 'string') {
+    $(document).ready(function () {
 
-            throw new Error('`name` of a class component has to be a string');
-
-        }
-
-        if (typeof definingFunction !== 'function') {
-
-            throw new Error('`definingFunction` of a class component has to be a function');
-
-        }
-
-        cc.__manager__.register(name, new ClassComponentConfiguration(name, definingFunction));
-
-
-        $(document).ready(function () {
-
-            cc.__manager__.init(name);
-
-        });
-
-    };
-
-
-    /**
-     * Initialized the all class components of the given names and returns of the promise of all initialization.
-     *
-     * @param {String[]|String} arguments
-     * @return {HTMLElement[]}
-     */
-    cc.init = function (classNames, elem) {
-
-        if (classNames == null) {
-
-            cc.__manager__.initAll(elem);
-
-            return;
-
-        }
-
-        if (typeof classNames === 'string') {
-
-            classNames = classNames.split(reSpaces);
-
-        }
-
-        classNames.map(function (className) {
-
-            return cc.__manager__.init(className, elem);
-
-        });
-
-    };
-
-
-    /**
-     * Assign a class as the accompanying coelement of the class component
-     *
-     * @param {String} className
-     * @param {Function} DefiningClass
-     */
-    cc.assign = function (className, DefiningClass) {
-
-        DefiningClass.coelementName = className;
-
-        cc.register(className, function (elem) {
-
-            var coelement = new DefiningClass(elem);
-
-            elem.data('__coelement:' + DefiningClass.coelementName, coelement);
-
-        });
-
-    };
-
-
-    // Defines the special property cc on a jquery property.
-    Object.defineProperty($.fn, 'cc', {
-
-        get: function () {
-
-            var ctx = this.data('__class_component_context__');
-
-            if (!ctx) {
-
-                ctx = new ClassComponentContext(this);
-
-                this.data('__class_component_context__', ctx);
-
-            }
-
-            return ctx;
-
-        },
-
-        enumerable: false,
-        configurable: false
-
+      __manager__.init(name);
     });
+  };
 
-    // Exports subclass.
-    cc.subclass = subclass;
+  /**
+   * Initialized the all class components of the given names and returns of the promise of all initialization.
+   *
+   * @param {String[]|String} arguments
+   * @return {Object<HTMLElement[]>}
+   */
+  cc.init = function (classNames, elem) {
 
-    // Exports Actor.
-    cc.Actor = Actor;
+    if (classNames == null) {
 
-    // Exports the main namespace
-    $.cc = cc;
+      __manager__.initAll(elem);
 
-}(jQuery));
-
-},{"./lib/Actor":2,"./lib/ClassComponentConfiguration":3,"./lib/ClassComponentContext":4,"./lib/ClassComponentManager":5,"subclassjs":6}],2:[function(require,module,exports){
-
-
-var subclass = require('subclassjs');
-
-/**
- * Actor is the primary coelement on a dom. A dom is able to have only one actor.
- */
-var Actor = subclass(function (pt) {
-
-    pt.constructor = function (elem) {
-
-        if (elem.data('__primary_coelement') != null) {
-
-            throw new Error('actor is already set: ' + elem.data('__primary_coelement').constructor.coelementName);
-
-        };
-
-        elem.data('__primary_coelement', this);
-
-    };
-
-});
-
-
-module.exports = Actor;
-
-},{"subclassjs":6}],3:[function(require,module,exports){
-(function (global){
-
-
-var $ = global.jQuery;
-var subclass = require('subclassjs');
-
-/**
- ClassComponentConfiguration is the utility class for class component initialization.
-
- @class
- */
-var ClassComponentConfiguration = subclass(function (pt) {
-
-    /**
-     * @param {String} className The class name
-     * @param {Function} definingFunction The defining function
-     */
-    pt.constructor = function (className, definingFunction) {
-
-        this.className = className;
-        this.definingFunction = definingFunction;
-
-    };
-
-    /**
-     @private
-     @return {String}
-     */
-    pt.initializedClass = function () {
-
-        return this.className + '-initialized';
-
-    };
-
-    /**
-     Returns the selector for uninitialized class component.
-
-     @return {String}
-     */
-    pt.selector = function () {
-
-        return '.' + this.className + ':not(.' + this.initializedClass() + ')';
-
-    };
-
-    /**
-     Marks the given element as initialized as this class component.
-
-     @param {HTMLElement} elem
-     */
-    pt.markInitialized = function (elem) {
-
-        $(elem).addClass(this.initializedClass());
-
-    };
-
-    /**
-     Applies the defining function to the element.
-
-     @param {HTMLElement} elem
-     */
-    pt.applyCustomDefinition = function (elem) {
-
-        this.definingFunction.call(elem, $(elem));
-
-    };
-
-});
-
-module.exports = ClassComponentConfiguration;
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"subclassjs":6}],4:[function(require,module,exports){
-(function (global){
-
-
-var $ = global.jQuery;
-var subclass = require('subclassjs');
-
-
-/**
- * This is class component contenxt manager. This help to initialize or get colements.
- */
-var ClassComponentContext = subclass(function (pt) {
-
-    pt.constructor = function (jqObj) {
-
-        this.jqObj = jqObj;
-
-    };
-
-    /**
-     * Inserts the class name, initializes as the class component and returns the coelement if exists.
-     *
-     * @param {String} className The class name
-     * @return {Object}
-     */
-    pt.init = function (className) {
-
-        this.jqObj.addClass(className);
-
-        $.cc.__manager__.initAt(className, this.jqObj);
-
-        return this.jqObj.data('__coelement:' + className); // Could be undefined
-    };
-
-    /**
-     * Gets the coelement of the given name.
-     *
-     * @param {String} coelementName The name of the coelement
-     * @return {Object}
-     */
-    pt.get = function (coelementName) {
-
-        var coelement = this.jqObj.data('__coelement:' + coelementName);
-
-        if (!coelement) {
-
-            throw new Error('no coelement named: ' + coelementName);// + ', on the dom: ' + this.jqObj.get(0).tagName);
-
-        }
-
-        return coelement;
-
-    };
-
-    pt.getActor = function () {
-
-        var actor = this.jqObj.data('__primary_coelement');
-
-        if (!actor) {
-
-            throw new Error('no actor on the dom: ' + this.jqObj.get(0).tagName);
-
-        }
-
-        return actor;
-
-    };
-
-});
-
-module.exports = ClassComponentContext;
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"subclassjs":6}],5:[function(require,module,exports){
-(function (global){
-
-
-var $ = global.jQuery;
-var subclass = require('subclassjs');
-
-/**
- * ClassComponentManger handles the registration and initialization of the class compoents.
- *
- * @class
- */
-var ClassComponentManager = subclass(function (pt) {
-
-    pt.constructor = function () {
-
-        /**
-         * @property {Object<ClassComponentConfiguration>} ccc
-         */
-        this.ccc = {};
-
-    };
-
-    /**
-     * Registers the class component configuration for the given name.
-     *
-     * @param {String} name The name
-     * @param {ClassComponentConfiguration} ccc The class component configuration
-     */
-    pt.register = function (name, ccc) {
-
-        this.ccc[name] = ccc;
-
-    };
-
-    /**
-     * Initializes the class components of the given name in the given element.
-     *
-     * @param {String} className The class name
-     * @param {HTMLElement|String} elem The dom where class componets are initialized
-     * @return {Array<HTMLElement>} The elements which are initialized in this initialization
-     * @throw {Error}
-     */
-    pt.init = function (className, elem) {
-
-        var ccc = this.getConfiguration(className);
-
-        return $(ccc.selector(), elem).each(function () {
-
-            pt.constructor.initElemByCCC(this, ccc);
-
-        }).toArray();
-
-    };
-
-    /**
-     * Initializes the class component of the give name at the given element.
-     *
-     * @param {String} className The class name
-     * @param {HTMLElement} eleme The element
-     */
-    pt.initAt = function (className, elem) {
-
-        var ccc = this.getConfiguration(className);
-
-        this.constructor.initElemByCCC(elem, ccc);
-
-    };
-
-
-    /**
-     * @param {HTMLElement} elem The element
-     */
-    pt.initAll = function (elem) {
-
-        Object.keys(this.ccc).forEach(function (className) {
-
-            this.init(className, elem);
-
-        }, this);
-
-    };
-
-    /**
-     * @static
-     * @private
-     * @param {HTMLElement} elem The element
-     * @param {ClassComponentConfiguration}
-     */
-    pt.constructor.initElemByCCC = function (elem, ccc) {
-
-        ccc.markInitialized(elem);
-        ccc.applyCustomDefinition(elem);
-
-    };
-
-
-    /**
-     * Gets the configuration of the given class name.
-     *
-     * @param {String} className The class name
-     * @return {ClassComponentConfiguration}
-     * @throw {Error}
-     */
-    pt.getConfiguration = function (className) {
-
-        var ccc = this.ccc[className];
-
-        if (ccc == null) {
-
-            throw new Error('Class componet "' + name + '" is not defined.');
-
-        }
-
-        return ccc;
-
-    };
-
-});
-
-module.exports = ClassComponentManager;
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"subclassjs":6}],6:[function(require,module,exports){
-/**
- * subclassjs v1.3.0
- */
-
-
-(function () {
-    'use strict';
-
-    /**
-     * Generates a subclass with given parent class and additional class definition.
-     *
-     * @param {Function} parent The parent class constructor
-     * @param {Function<(pt: Object, super: Object) => void>} classDefinition
-     * @returns {Function}
-     */
-    var subclass = function (parent, classDefinition) {
-
-        if (classDefinition == null) {
-
-            // if there's no second argument
-            // then use the first argument as class definition
-            // and suppose parent is Object
-
-            classDefinition = parent;
-            parent = Object;
-
-        }
-
-        if (parent == null) {
-
-            throw new Error('parent cannot be null: definingFunction=' + classDefinition.toString());
-
-        }
-
-        // create proxy constructor for inheritance
-        var proxy = function () {};
-
-        proxy.prototype = parent.prototype;
-
-        var prototype = new proxy();
-
-
-        // creates child's default constructor
-        // this can be overwritten in classDefinition
-        prototype.constructor = function () {
-
-            proxy.prototype.constructor.apply(this, arguments);
-
-        };
-
-
-        if (typeof classDefinition === 'function') {
-
-            // apply the given class definition
-            classDefinition(prototype, parent.prototype);
-
-        } else if (classDefinition == null) {
-
-            // do nothing
-
-        } else {
-
-            throw new Error('the type of classDefinition is wrong: ' + typeof classDefinition);
-
-        }
-
-
-
-        // set prototype to constructor
-        prototype.constructor.prototype = prototype;
-
-
-        return prototype.constructor;
-
-    };
-
-
-    if (typeof module !== 'undefined' && module.exports) {
-
-        // CommonJS
-        module.exports = subclass;
-
-    } else {
-
-        // window export
-        window.subclass = subclass;
+      return;
     }
 
-}());
+    if (typeof classNames === 'string') {
 
-},{}]},{},[1]);
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./lib/Actor":2,"./lib/ClassComponentConfiguration":3,"./lib/ClassComponentContext":4,"./lib/ClassComponentManager":5,"subclassjs":6}],2:[function(require,module,exports){
-
-
-var subclass = require('subclassjs');
-
-/**
- * Actor is the primary coelement on a dom. A dom is able to have only one actor.
- */
-var Actor = subclass(function (pt) {
-
-    pt.constructor = function (elem) {
-
-        if (elem.data('__primary_coelement') != null) {
-
-            throw new Error('actor is already set: ' + elem.data('__primary_coelement').constructor.coelementName);
-
-        };
-
-        elem.data('__primary_coelement', this);
-
-    };
-
-});
-
-
-module.exports = Actor;
-
-},{"subclassjs":6}],3:[function(require,module,exports){
-(function (global){
-
-
-var $ = global.jQuery;
-var subclass = require('subclassjs');
-
-/**
- ClassComponentConfiguration is the utility class for class component initialization.
-
- @class
- */
-var ClassComponentConfiguration = subclass(function (pt) {
-
-    /**
-     * @param {String} className The class name
-     * @param {Function} definingFunction The defining function
-     */
-    pt.constructor = function (className, definingFunction) {
-
-        this.className = className;
-        this.definingFunction = definingFunction;
-
-    };
-
-    /**
-     @private
-     @return {String}
-     */
-    pt.initializedClass = function () {
-
-        return this.className + '-initialized';
-
-    };
-
-    /**
-     Returns the selector for uninitialized class component.
-
-     @return {String}
-     */
-    pt.selector = function () {
-
-        return '.' + this.className + ':not(.' + this.initializedClass() + ')';
-
-    };
-
-    /**
-     Marks the given element as initialized as this class component.
-
-     @param {HTMLElement} elem
-     */
-    pt.markInitialized = function (elem) {
-
-        $(elem).addClass(this.initializedClass());
-
-    };
-
-    /**
-     Applies the defining function to the element.
-
-     @param {HTMLElement} elem
-     */
-    pt.applyCustomDefinition = function (elem) {
-
-        this.definingFunction.call(elem, $(elem));
-
-    };
-
-});
-
-module.exports = ClassComponentConfiguration;
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"subclassjs":6}],4:[function(require,module,exports){
-(function (global){
-
-
-var $ = global.jQuery;
-var subclass = require('subclassjs');
-
-
-/**
- * This is class component contenxt manager. This help to initialize or get colements.
- */
-var ClassComponentContext = subclass(function (pt) {
-
-    pt.constructor = function (jqObj) {
-
-        this.jqObj = jqObj;
-
-    };
-
-    /**
-     * Inserts the class name, initializes as the class component and returns the coelement if exists.
-     *
-     * @param {String} className The class name
-     * @return {Object}
-     */
-    pt.init = function (className) {
-
-        this.jqObj.addClass(className);
-
-        $.cc.__manager__.initAt(className, this.jqObj);
-
-        return this.jqObj.data('__coelement:' + className); // Could be undefined
-    };
-
-    /**
-     * Gets the coelement of the given name.
-     *
-     * @param {String} coelementName The name of the coelement
-     * @return {Object}
-     */
-    pt.get = function (coelementName) {
-
-        var coelement = this.jqObj.data('__coelement:' + coelementName);
-
-        if (!coelement) {
-
-            throw new Error('no coelement named: ' + coelementName + ', on the dom: ' + this.jqObj.get(0).tagName);
-
-        }
-
-        return coelement;
-
-    };
-
-    pt.getActor = function () {
-
-        var actor = this.jqObj.data('__primary_coelement');
-
-        if (!actor) {
-
-            throw new Error('no actor on the dom: ' + this.jqObj.get(0).tagName);
-
-        }
-
-        return actor;
-
-    };
-
-});
-
-module.exports = ClassComponentContext;
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"subclassjs":6}],5:[function(require,module,exports){
-(function (global){
-
-
-var $ = global.jQuery;
-var subclass = require('subclassjs');
-
-/**
- * ClassComponentManger handles the registration and initialization of the class compoents.
- *
- * @class
- */
-var ClassComponentManager = subclass(function (pt) {
-
-    pt.constructor = function () {
-
-        /**
-         * @property {Object<ClassComponentConfiguration>} ccc
-         */
-        this.ccc = {};
-
-    };
-
-    /**
-     * Registers the class component configuration for the given name.
-     *
-     * @param {String} name The name
-     * @param {ClassComponentConfiguration} ccc The class component configuration
-     */
-    pt.register = function (name, ccc) {
-
-        this.ccc[name] = ccc;
-
-    };
-
-    /**
-     * Initializes the class components of the given name in the given element.
-     *
-     * @param {String} className The class name
-     * @param {HTMLElement|String} elem The dom where class componets are initialized
-     * @return {Array<HTMLElement>} The elements which are initialized in this initialization
-     * @throw {Error}
-     */
-    pt.init = function (className, elem) {
-
-        var ccc = this.getConfiguration(className);
-
-        return $(ccc.selector(), elem).each(function () {
-
-            pt.constructor.initElemByCCC(this, ccc);
-
-        }).toArray();
-
-    };
-
-    /**
-     * Initializes the class component of the give name at the given element.
-     *
-     * @param {String} className The class name
-     * @param {HTMLElement} eleme The element
-     */
-    pt.initAt = function (className, elem) {
-
-        var ccc = this.getConfiguration(className);
-
-        this.constructor.initElemByCCC(elem, ccc);
-
-    };
-
-
-    /**
-     * @param {HTMLElement} elem The element
-     */
-    pt.initAll = function (elem) {
-
-        Object.keys(this.ccc).forEach(function (className) {
-
-            this.init(className, elem);
-
-        }, this);
-
-    };
-
-    /**
-     * @static
-     * @private
-     * @param {HTMLElement} elem The element
-     * @param {ClassComponentConfiguration}
-     */
-    pt.constructor.initElemByCCC = function (elem, ccc) {
-
-        ccc.markInitialized(elem);
-        ccc.applyCustomDefinition(elem);
-
-    };
-
-
-    /**
-     * Gets the configuration of the given class name.
-     *
-     * @param {String} className The class name
-     * @return {ClassComponentConfiguration}
-     * @throw {Error}
-     */
-    pt.getConfiguration = function (className) {
-
-        var ccc = this.ccc[className];
-
-        if (ccc == null) {
-
-            throw new Error('Class componet "' + name + '" is not defined.');
-
-        }
-
-        return ccc;
-
-    };
-
-});
-
-module.exports = ClassComponentManager;
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"subclassjs":6}],6:[function(require,module,exports){
-/**
- * subclassjs v1.3.0
- */
-
-
-(function () {
-    'use strict';
-
-    /**
-     * Generates a subclass with given parent class and additional class definition.
-     *
-     * @param {Function} parent The parent class constructor
-     * @param {Function<(pt: Object, super: Object) => void>} classDefinition
-     * @returns {Function}
-     */
-    var subclass = function (parent, classDefinition) {
-
-        if (classDefinition == null) {
-
-            // if there's no second argument
-            // then use the first argument as class definition
-            // and suppose parent is Object
-
-            classDefinition = parent;
-            parent = Object;
-
-        }
-
-        if (parent == null) {
-
-            throw new Error('parent cannot be null: definingFunction=' + classDefinition.toString());
-
-        }
-
-        // create proxy constructor for inheritance
-        var proxy = function () {};
-
-        proxy.prototype = parent.prototype;
-
-        var prototype = new proxy();
-
-
-        // creates child's default constructor
-        // this can be overwritten in classDefinition
-        prototype.constructor = function () {
-
-            proxy.prototype.constructor.apply(this, arguments);
-
-        };
-
-
-        if (typeof classDefinition === 'function') {
-
-            // apply the given class definition
-            classDefinition(prototype, parent.prototype);
-
-        } else if (classDefinition == null) {
-
-            // do nothing
-
-        } else {
-
-            throw new Error('the type of classDefinition is wrong: ' + typeof classDefinition);
-
-        }
-
-
-
-        // set prototype to constructor
-        prototype.constructor.prototype = prototype;
-
-
-        return prototype.constructor;
-
-    };
-
-
-    if (typeof module !== 'undefined' && module.exports) {
-
-        // CommonJS
-        module.exports = subclass;
-
-    } else {
-
-        // window export
-        window.subclass = subclass;
+      classNames = classNames.split(reSpaces);
     }
 
-}());
+    return classNames.map(function (className) {
+      return __manager__.init(className, elem);
+    });
+  };
 
-},{}],7:[function(require,module,exports){
+  /**
+   * The decorator for class assignment.
+   *
+   * @example
+   *   @$.cc.component('foo')
+   *   class Foo extends Bar {
+   *     ...
+   *   }
+   *
+   * The above is the same as `$.cc.assign('foo', Foo)`
+   *
+   * @param {String} className The class name
+   * @return {Function}
+   */
+  cc.component = function (className) {
+    return function (Cls) {
+      return cc(className, Cls);
+    };
+  };
+
+  // Exports __manager__
+  cc.__manager__ = __manager__;
+
+  // Exports event decorator
+  cc.event = decorators.event;
+
+  // Exports trigger decorator
+  cc.trigger = decorators.trigger;
+
+  return cc;
+}
+
+// If the cc is not set, then create one.
+if ($.cc == null) {
+  $.cc = initializeModule();
+}
+
+module.exports = $.cc;
+},{"./class-component-manager":3,"./decorators":5,"./fn.cc":6}],5:[function(require,module,exports){
+'use strict';
+
+var ListenerInfo = require('./listener-info');
+
+/**
+ * The decorator for registering event listener info to the method.
+ * @param {string} event The event name
+ * @param {string} selector The selector for listening. When null is passed, the listener listens on the root element of the component.
+ * @param {object} prototype The prototype of the coelement class
+ * @param {string} name The name of the method
+ */
+var event = function event(_event, selector) {
+  return function (target, key, descriptor) {
+    var method = descriptor.value;
+
+    method.__events__ = method.__events__ || [];
+
+    method.__events__.push(new ListenerInfo(_event, selector, method));
+  };
+};
+
+/**
+ * The decorator to prepend and append event trigger.
+ * @param {string} start The event name when the method started
+ * @param {string} end The event name when the method finished
+ * @param {string} error the event name when the method errored
+ */
+var trigger = function trigger(start, end, error) {
+  return function (target, key, descriptor) {
+    var method = descriptor.value;
+
+    var decorated = function decorated() {
+      var _this = this;
+
+      if (start != null) {
+        this.elem.trigger(start);
+      }
+
+      var result = method.apply(this, arguments);
+
+      var promise = Promise.resolve(result);
+
+      if (end != null) {
+        promise.then(function () {
+          return _this.elem.trigger(end);
+        });
+      }
+
+      if (error != null) {
+        promise.catch(function () {
+          return _this.elem.trigger(error);
+        });
+      }
+
+      return result;
+    };
+
+    descriptor.value = decorated;
+  };
+};
+
+exports.event = event;
+exports.trigger = trigger;
+},{"./listener-info":7}],6:[function(require,module,exports){
+'use strict';
+
+var ClassComponentContext = require('./class-component-context');
+
+var CLASS_COMPONENT_DATA_KEY = '__class_component_data__';
+
+// Defines the special property cc on a jquery property.
+Object.defineProperty(jQuery.fn, 'cc', {
+  get: function get() {
+    var cc = this.data(CLASS_COMPONENT_DATA_KEY);
+
+    if (cc) {
+      return cc;
+    }
+
+    var ctx = new ClassComponentContext(this);
+
+    cc = function cc(classNames) {
+      return ctx.up(classNames);
+    };
+
+    cc.get = function (className) {
+      return ctx.get(className);
+    };
+    cc.init = function (className) {
+      return ctx.init(className);
+    };
+
+    this.data(CLASS_COMPONENT_DATA_KEY, cc);
+
+    return cc;
+  },
+
+
+  enumerable: false,
+  configurable: false
+
+});
+},{"./class-component-context":2}],7:[function(require,module,exports){
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * The event listener's information.
+ */
+
+var ListenerInfo = function () {
+  /**
+   * @param {string} event The event name to bind
+   * @param {string} selector The selector to bind the listener
+   * @param {Function} handler The handler for the event
+   */
+
+  function ListenerInfo(event, selector, handler) {
+    _classCallCheck(this, ListenerInfo);
+
+    this.event = event;
+    this.selector = selector;
+    this.handler = handler;
+  }
+
+  /**
+   * Binds the listener to the given element with the given coelement.
+   * @param {jQuery} elem The jquery element
+   * @param {object} coelem The coelement which is bound to the element
+   */
+
+
+  _createClass(ListenerInfo, [{
+    key: "bindTo",
+    value: function bindTo(elem, coelem) {
+      var handler = this.handler;
+
+      elem.on(this.event, this.selector, function () {
+        handler.apply(coelem, arguments);
+      });
+    }
+  }]);
+
+  return ListenerInfo;
+}();
+
+module.exports = ListenerInfo;
+},{}],8:[function(require,module,exports){
+(function (global){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.domGen = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = domGen;
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+/**
+ * Returns a generator of the doms of the given tag name.
+ * @param {string} tagName The tag name of the dom to create
+ * @return {Function}
+ */
+function domGen(tagName) {
+
+  /**
+   * Generates a dom with the given params.
+   * @param {object} [opts] The options to pass as the second arg of $('<tag/>', arg)
+   * @param {object[]} args The objects to append to the element
+   * @return {jQuery}
+   */
+  return function (opts) {
+    var _$, _ref;
+
+    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      args[_key - 1] = arguments[_key];
+    }
+
+    if (!seemLikePlainObject(opts)) {
+      args.unshift(opts);
+      opts = undefined;
+    }
+
+    return (_$ = $('<' + tagName + '/>', opts)).append.apply(_$, _toConsumableArray((_ref = []).concat.apply(_ref, args)));
+  };
+}
+
+/**
+ * Checkes if the object is plain.
+ * @param {object} o The object
+ * @return {boolean}
+ */
+function seemLikePlainObject(o) {
+  return o instanceof Object && Object.getPrototypeOf(o).hasOwnProperty('isPrototypeOf');
+}
+var a = exports.a = domGen('a');
+var abbr = exports.abbr = domGen('abbr');
+var address = exports.address = domGen('address');
+var area = exports.area = domGen('area');
+var article = exports.article = domGen('article');
+var aside = exports.aside = domGen('aside');
+var audio = exports.audio = domGen('audio');
+var b = exports.b = domGen('b');
+var base = exports.base = domGen('base');
+var bdi = exports.bdi = domGen('bdi');
+var bdo = exports.bdo = domGen('bdo');
+var blockquote = exports.blockquote = domGen('blockquote');
+var body = exports.body = domGen('body');
+var br = exports.br = domGen('br');
+var button = exports.button = domGen('button');
+var canvas = exports.canvas = domGen('canvas');
+var caption = exports.caption = domGen('caption');
+var cite = exports.cite = domGen('cite');
+var code = exports.code = domGen('code');
+var col = exports.col = domGen('col');
+var colgroup = exports.colgroup = domGen('colgroup');
+var data = exports.data = domGen('data');
+var datalist = exports.datalist = domGen('datalist');
+var dd = exports.dd = domGen('dd');
+var del = exports.del = domGen('del');
+var details = exports.details = domGen('details');
+var dfn = exports.dfn = domGen('dfn');
+var dialog = exports.dialog = domGen('dialog');
+var div = exports.div = domGen('div');
+var dl = exports.dl = domGen('dl');
+var dt = exports.dt = domGen('dt');
+var em = exports.em = domGen('em');
+var embed = exports.embed = domGen('embed');
+var fieldset = exports.fieldset = domGen('fieldset');
+var figcaption = exports.figcaption = domGen('figcaption');
+var figure = exports.figure = domGen('figure');
+var footer = exports.footer = domGen('footer');
+var form = exports.form = domGen('form');
+var h1 = exports.h1 = domGen('h1');
+var h2 = exports.h2 = domGen('h2');
+var h3 = exports.h3 = domGen('h3');
+var h4 = exports.h4 = domGen('h4');
+var h5 = exports.h5 = domGen('h5');
+var h6 = exports.h6 = domGen('h6');
+var head = exports.head = domGen('head');
+var header = exports.header = domGen('header');
+var hr = exports.hr = domGen('hr');
+var html = exports.html = domGen('html');
+var i = exports.i = domGen('i');
+var iframe = exports.iframe = domGen('iframe');
+var img = exports.img = domGen('img');
+var input = exports.input = domGen('input');
+var ins = exports.ins = domGen('ins');
+var kbd = exports.kbd = domGen('kbd');
+var keygen = exports.keygen = domGen('keygen');
+var label = exports.label = domGen('label');
+var legend = exports.legend = domGen('legend');
+var li = exports.li = domGen('li');
+var link = exports.link = domGen('link');
+var main = exports.main = domGen('main');
+var map = exports.map = domGen('map');
+var mark = exports.mark = domGen('mark');
+var math = exports.math = domGen('math');
+var menu = exports.menu = domGen('menu');
+var menuitem = exports.menuitem = domGen('menuitem');
+var meta = exports.meta = domGen('meta');
+var meter = exports.meter = domGen('meter');
+var nav = exports.nav = domGen('nav');
+var noscript = exports.noscript = domGen('noscript');
+var object = exports.object = domGen('object');
+var ol = exports.ol = domGen('ol');
+var optgroup = exports.optgroup = domGen('optgroup');
+var option = exports.option = domGen('option');
+var output = exports.output = domGen('output');
+var p = exports.p = domGen('p');
+var param = exports.param = domGen('param');
+var picture = exports.picture = domGen('picture');
+var pre = exports.pre = domGen('pre');
+var progress = exports.progress = domGen('progress');
+var q = exports.q = domGen('q');
+var rb = exports.rb = domGen('rb');
+var rp = exports.rp = domGen('rp');
+var rt = exports.rt = domGen('rt');
+var rtc = exports.rtc = domGen('rtc');
+var ruby = exports.ruby = domGen('ruby');
+var s = exports.s = domGen('s');
+var samp = exports.samp = domGen('samp');
+var script = exports.script = domGen('script');
+var section = exports.section = domGen('section');
+var select = exports.select = domGen('select');
+var small = exports.small = domGen('small');
+var source = exports.source = domGen('source');
+var span = exports.span = domGen('span');
+var strong = exports.strong = domGen('strong');
+var style = exports.style = domGen('style');
+var sub = exports.sub = domGen('sub');
+var summary = exports.summary = domGen('summary');
+var sup = exports.sup = domGen('sup');
+var svg = exports.svg = domGen('svg');
+var table = exports.table = domGen('table');
+var tbody = exports.tbody = domGen('tbody');
+var td = exports.td = domGen('td');
+var template = exports.template = domGen('template');
+var textarea = exports.textarea = domGen('textarea');
+var tfoot = exports.tfoot = domGen('tfoot');
+var th = exports.th = domGen('th');
+var thead = exports.thead = domGen('thead');
+var time = exports.time = domGen('time');
+var title = exports.title = domGen('title');
+var tr = exports.tr = domGen('tr');
+var track = exports.track = domGen('track');
+var u = exports.u = domGen('u');
+var ul = exports.ul = domGen('ul');
+var video = exports.video = domGen('video');
+var wbr = exports.wbr = domGen('wbr');
+
+},{}]},{},[1])(1)
+});
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],9:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v2.1.4
  * http://jquery.com/
@@ -10137,48 +10022,67 @@ return jQuery;
 
 }));
 
-},{}],8:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 'use strict';
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var $ = require('jquery');
 
-$.cc.register('todo-clear-btn', function (elem) {
-  'use strict';
+var TodoClearBtn = function TodoClearBtn(elem) {
+  _classCallCheck(this, TodoClearBtn);
 
   elem.on('click', function () {
     elem.trigger('todo-clear-completed');
   });
-});
+};
 
-},{"jquery":7}],9:[function(require,module,exports){
+$.cc('todo-clear-btn', TodoClearBtn);
+
+},{"jquery":9}],11:[function(require,module,exports){
 'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var $ = require('jquery');
 
-var TodoCount = $.cc.subclass(function (pt) {
-  'use strict';
+var _require = require('dom-gen');
 
-  pt.constructor = function (elem) {
+var strong = _require.strong;
+
+var TodoCount = function () {
+  function TodoCount(elem) {
+    _classCallCheck(this, TodoCount);
+
     this.elem = elem;
-  };
+  }
+  /**
+   * @param {number} count The number of todos
+   */
 
-  pt.setCount = function (count) {
-    this.elem.empty();
 
-    if (count === 1) {
-      this.elem.text(' item left');
-    } else {
-      this.elem.text(' items left');
+  _createClass(TodoCount, [{
+    key: 'setCount',
+    value: function setCount(count) {
+      this.elem.empty();
+
+      this.elem.append(strong(count), ' item' + (count !== 1 ? 's' : '') + ' left');
     }
+  }]);
 
-    $('<strong />').text(count).prependTo(this.elem);
-  };
-});
+  return TodoCount;
+}();
 
-$.cc.assign('todo-count', TodoCount);
+$.cc('todo-count', TodoCount);
 
-},{"jquery":7}],10:[function(require,module,exports){
+},{"dom-gen":8,"jquery":9}],12:[function(require,module,exports){
 'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var $ = require('jquery');
 
@@ -10187,87 +10091,115 @@ var Const = require('../const');
 /**
  * TodoEdit controls the edit area of each todo item.
  */
-var TodoEdit = $.cc.subclass(function (pt) {
-  'use strict';
 
-  pt.constructor = function (elem) {
+var TodoEdit = function () {
+  function TodoEdit(elem) {
+    _classCallCheck(this, TodoEdit);
+
     this.elem = elem;
 
     this.initEvents();
-  };
+  }
 
   /**
    * Initializes the events
    *
    * @private
    */
-  pt.initEvents = function () {
-    var self = this;
 
-    this.elem.on('keypress', function (e) {
-      self.onKeypress(e);
-    });
 
-    this.elem.on('blur', function () {
-      self.stopEditing();
-    });
-  };
+  _createClass(TodoEdit, [{
+    key: 'initEvents',
+    value: function initEvents() {
+      var _this = this;
 
-  /**
-   * Handler for the key press events.
-   *
-   * @param {Event} e The event
-   */
-  pt.onKeypress = function (e) {
-    if (e.which === Const.KEYCODE.ENTER) {
-      this.stopEditing();
+      this.elem.on('keypress', function (e) {
+        _this.onKeypress(e);
+      });
+
+      this.elem.on('blur', function () {
+        _this.stopEditing();
+      });
     }
-  };
 
-  /**
-   * Stops editing with current value.
-   */
-  pt.stopEditing = function () {
-    this.elem.trigger('todo-edited', this.elem.val());
-  };
-});
+    /**
+     * Handler for the key press events.
+     *
+     * @param {Event} e The event
+     */
 
-$.cc.assign('todo-edit', TodoEdit);
+  }, {
+    key: 'onKeypress',
+    value: function onKeypress(e) {
+      if (e.which === Const.KEYCODE.ENTER) {
+        this.stopEditing();
+      }
+    }
 
-},{"../const":16,"jquery":7}],11:[function(require,module,exports){
+    /**
+     * Stops editing with current value.
+     */
+
+  }, {
+    key: 'stopEditing',
+    value: function stopEditing() {
+      this.elem.trigger('todo-edited', this.elem.val());
+    }
+  }]);
+
+  return TodoEdit;
+}();
+
+$.cc('todo-edit', TodoEdit);
+
+},{"../const":18,"jquery":9}],13:[function(require,module,exports){
 'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var $ = require('jquery');
 
-var TodoFilters = $.cc.subclass(function (pt) {
-  'use strict';
+var TodoFilters = function () {
+  function TodoFilters(elem) {
+    _classCallCheck(this, TodoFilters);
 
-  pt.constructor = function (elem) {
     this.elem = elem;
-  };
+  }
 
   /**
    * Sets the given filter button active.
-   *
    * @param {String} name The name of the filter
    */
-  pt.setFilter = function (name) {
-    this.elem.find('a').removeClass('selected');
 
-    if (name === '/active') {
-      this.elem.find('a[name="active"]').addClass('selected');
-    } else if (name === '/completed') {
-      this.elem.find('a[name="completed"]').addClass('selected');
-    } else {
-      this.elem.find('a[name="all"]').addClass('selected');
+
+  _createClass(TodoFilters, [{
+    key: 'setFilter',
+    value: function setFilter(name) {
+      this.elem.find('a').removeClass('selected');
+
+      if (name === '/active') {
+        this.elem.find('a[name="active"]').addClass('selected');
+      } else if (name === '/completed') {
+        this.elem.find('a[name="completed"]').addClass('selected');
+      } else {
+        this.elem.find('a[name="all"]').addClass('selected');
+      }
     }
-  };
-});
+  }]);
 
-$.cc.assign('todo-filters', TodoFilters);
+  return TodoFilters;
+}();
 
-},{"jquery":7}],12:[function(require,module,exports){
+$.cc('todo-filters', TodoFilters);
+
+},{"jquery":9}],14:[function(require,module,exports){
 'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var $ = require('jquery');
 
@@ -10276,281 +10208,351 @@ var Const = require('../const');
 /**
  * TodoInput class controls the input for adding todos.
  */
-var TodoInput = $.cc.subclass(function (pt) {
-  'use strict';
 
-  pt.constructor = function (elem) {
+var TodoInput = function () {
+  function TodoInput(elem) {
+    var _this = this;
+
+    _classCallCheck(this, TodoInput);
+
     this.elem = elem;
 
-    var self = this;
-
     this.elem.on('keypress', function (e) {
-      self.onKeypress(e);
+      _this.onKeypress(e);
     });
-  };
+  }
 
   /**
    * Handler for key presses.
-   *
    * @param {Event}
    */
-  pt.onKeypress = function (e) {
-    if (e.which !== Const.KEYCODE.ENTER) {
-      return;
+
+
+  _createClass(TodoInput, [{
+    key: 'onKeypress',
+    value: function onKeypress(e) {
+      if (e.which !== Const.KEYCODE.ENTER) {
+        return;
+      }
+
+      if (!this.elem.val() || !this.elem.val().trim()) {
+        return;
+      }
+
+      var title = this.elem.val().trim();
+      this.elem.val('');
+
+      this.elem.trigger('todo-new-item', title);
     }
+  }]);
 
-    if (!this.elem.val() || !this.elem.val().trim()) {
-      return;
-    }
+  return TodoInput;
+}();
 
-    var title = this.elem.val().trim();
-    this.elem.val('');
+$.cc('todo-input', TodoInput);
 
-    this.elem.trigger('todo-new-item', title);
-  };
-});
-
-$.cc.assign('todo-input', TodoInput);
-
-},{"../const":16,"jquery":7}],13:[function(require,module,exports){
+},{"../const":18,"jquery":9}],15:[function(require,module,exports){
 'use strict';
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 var $ = require('jquery');
+
+var _require = require('dom-gen');
+
+var div = _require.div;
+var input = _require.input;
+var label = _require.label;
+var button = _require.button;
 
 /**
  * TodoItem class controls todo item in a list.
  */
-var TodoItem = $.cc.subclass(function (pt) {
-  'use strict';
 
-  pt.constructor = function (elem) {
+var TodoItem = function () {
+  function TodoItem(elem) {
+    _classCallCheck(this, TodoItem);
+
     this.elem = elem;
 
     this.initElems();
     this.initEvents();
-  };
+  }
 
   /**
    * Inits elements
    *
    * @private
    */
-  pt.initElems = function () {
-    var view = $('<div class="view" />').appendTo(this.elem);
 
-    $('<input class="toggle" type="checkbox" />').appendTo(view);
-    $('<label />').appendTo(view);
-    $('<button class="destroy" />').appendTo(view);
-    $('<input class="edit" />').appendTo(this.elem).cc.init('todo-edit');
-  };
 
-  /**
-   * Inits events.
-   *
-   * @private
-   */
-  pt.initEvents = function () {
-    var self = this;
-
-    this.elem.find('.toggle').on('click', function () {
-      self.toggleCompleted();
-    });
-
-    this.elem.find('.destroy').on('click', function () {
-      self.destroy();
-    });
-
-    this.elem.find('label').on('dblclick', function () {
-      self.startEditing();
-    });
-
-    this.elem.on('todo-edited', function (e, title) {
-      self.stopEditing(title);
-    });
-  };
-
-  /**
-   * Updates the todo title by todo model
-   *
-   * @param {Object} todo The todo
-   * @param {String} todo.id The id
-   * @param {String} todo.title The title
-   * @param {Boolean} todo.completed If completed or not
-   */
-  pt.update = function (todo) {
-    this.elem.attr('id', todo.id);
-    this.elem.find('label').text(todo.title);
-    this.elem.find('.edit').val(todo.title);
-
-    this.completed = todo.completed;
-    this.updateView();
-  };
-
-  /**
-   * Toggles the completed state of the item.
-   *
-   * @private
-   */
-  pt.toggleCompleted = function () {
-    this.elem.trigger('todo-item-toggle', this.elem.attr('id'));
-
-    this.completed = !this.completed;
-    this.updateView();
-  };
-
-  /**
-   * Destroys the item.
-   *
-   * @private
-   */
-  pt.destroy = function () {
-    this.elem.parent().trigger('todo-item-destroy', this.elem.attr('id'));
-
-    this.elem.remove();
-  };
-
-  /**
-   * Updates the view state according to the current completed state.
-   *
-   * @private
-   */
-  pt.updateView = function () {
-    if (this.completed) {
-      this.complete();
-    } else {
-      this.uncomplete();
-    }
-  };
-
-  /**
-   * Completes the item state.
-   *
-   * @private
-   */
-  pt.complete = function () {
-    this.elem.find('.toggle').prop('checked', true);
-    this.elem.addClass('completed');
-  };
-
-  /**
-   * Uncompletes the item state.
-   *
-   * @private
-   */
-  pt.uncomplete = function () {
-    this.elem.find('.toggle').prop('checked', false);
-    this.elem.removeClass('completed');
-  };
-
-  /**
-   * Starts editing.
-   *
-   * @private
-   */
-  pt.startEditing = function () {
-    this.elem.addClass('editing');
-  };
-
-  /**
-   * Stops editing.
-   *
-   * @private
-   */
-  pt.stopEditing = function (title) {
-    this.elem.removeClass('editing');
-
-    if (!title) {
-      this.destroy();
-
-      return;
+  _createClass(TodoItem, [{
+    key: 'initElems',
+    value: function initElems() {
+      this.elem.append(div(input({ attr: { type: 'checkbox' } }).addClass('toggle'), label(), button().addClass('destroy')).addClass('view'), input().addClass('edit').cc('todo-edit'));
     }
 
-    this.elem.find('label').text(title);
+    /**
+     * Inits events.
+     * @private
+     */
 
-    this.elem.trigger('todo-item-edited', [this.elem.attr('id'), title]);
-  };
-});
+  }, {
+    key: 'initEvents',
+    value: function initEvents() {
+      var _this = this;
 
-$.cc.assign('todo-item', TodoItem);
+      this.elem.find('.toggle').on('click', function () {
+        _this.toggleCompleted();
+      });
 
-},{"jquery":7}],14:[function(require,module,exports){
+      this.elem.find('.destroy').on('click', function () {
+        _this.destroy();
+      });
+
+      this.elem.find('label').on('dblclick', function () {
+        _this.startEditing();
+      });
+
+      this.elem.on('todo-edited', function (e, title) {
+        _this.stopEditing(title);
+      });
+    }
+
+    /**
+     * Updates the todo title by todo model
+     *
+     * @param {Object} todo The todo
+     * @param {String} todo.id The id
+     * @param {String} todo.title The title
+     * @param {Boolean} todo.completed If completed or not
+     */
+
+  }, {
+    key: 'update',
+    value: function update(todo) {
+      this.elem.attr('id', todo.id);
+      this.elem.find('label').text(todo.title);
+      this.elem.find('.edit').val(todo.title);
+
+      this.completed = todo.completed;
+      this.updateView();
+    }
+
+    /**
+     * Toggles the completed state of the item.
+     * @private
+     */
+
+  }, {
+    key: 'toggleCompleted',
+    value: function toggleCompleted() {
+      this.elem.trigger('todo-item-toggle', this.elem.attr('id'));
+
+      this.completed = !this.completed;
+      this.updateView();
+    }
+
+    /**
+     * Destroys the item.
+     * @private
+     */
+
+  }, {
+    key: 'destroy',
+    value: function destroy() {
+      this.elem.parent().trigger('todo-item-destroy', this.elem.attr('id'));
+
+      this.elem.remove();
+    }
+
+    /**
+     * Updates the view state according to the current completed state.
+     * @private
+     */
+
+  }, {
+    key: 'updateView',
+    value: function updateView() {
+      if (this.completed) {
+        this.complete();
+      } else {
+        this.uncomplete();
+      }
+    }
+
+    /**
+     * Completes the item state.
+     * @private
+     */
+
+  }, {
+    key: 'complete',
+    value: function complete() {
+      this.elem.find('.toggle').prop('checked', true);
+      this.elem.addClass('completed');
+    }
+
+    /**
+     * Uncompletes the item state.
+     * @private
+     */
+
+  }, {
+    key: 'uncomplete',
+    value: function uncomplete() {
+      this.elem.find('.toggle').prop('checked', false);
+      this.elem.removeClass('completed');
+    }
+
+    /**
+     * Starts editing.
+     * @private
+     */
+
+  }, {
+    key: 'startEditing',
+    value: function startEditing() {
+      this.elem.addClass('editing');
+    }
+
+    /**
+     * Stops editing.
+     * @private
+     */
+
+  }, {
+    key: 'stopEditing',
+    value: function stopEditing(title) {
+      this.elem.removeClass('editing');
+
+      if (!title) {
+        this.destroy();
+
+        return;
+      }
+
+      this.elem.find('label').text(title);
+
+      this.elem.trigger('todo-item-edited', [this.elem.attr('id'), title]);
+    }
+  }]);
+
+  return TodoItem;
+}();
+
+$.cc('todo-item', TodoItem);
+
+},{"dom-gen":8,"jquery":9}],16:[function(require,module,exports){
 'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var $ = require('jquery');
 
-var TodoList = $.cc.subclass(function (pt) {
-  'use strict';
+var _require = require('dom-gen');
 
-  pt.constructor = function (elem) {
+var li = _require.li;
+
+var TodoList = function () {
+  function TodoList(elem) {
+    _classCallCheck(this, TodoList);
+
     this.elem = elem;
-  };
+  }
 
   /**
    * Updates the todo items by the given todo model list.
-   *
    * @param {TodoCollection} todoList The todo list
    */
-  pt.update = function (todoList) {
-    this.elem.empty();
 
-    todoList.forEach(function (todo) {
-      $('<li />').appendTo(this.elem).cc.init('todo-item').update(todo);
-    }, this);
-  };
-});
 
-$.cc.assign('todo-list', TodoList);
+  _createClass(TodoList, [{
+    key: 'update',
+    value: function update(todoList) {
+      var _this = this;
 
-},{"jquery":7}],15:[function(require,module,exports){
+      this.elem.empty();
+
+      todoList.forEach(function (todo) {
+        li().appendTo(_this.elem).cc.init('todo-item').update(todo);
+      });
+    }
+  }]);
+
+  return TodoList;
+}();
+
+$.cc('todo-list', TodoList);
+
+},{"dom-gen":8,"jquery":9}],17:[function(require,module,exports){
 'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var $ = require('jquery');
 
-var TodoToggleAll = $.cc.subclass(function (pt) {
-  'use strict';
+var TodoToggleAll = function () {
+  function TodoToggleAll(elem) {
+    var _this = this;
 
-  pt.constructor = function (elem) {
+    _classCallCheck(this, TodoToggleAll);
+
     this.elem = elem;
 
-    var self = this;
-
     this.elem.on('click', function () {
-      self.toggleAll();
+      _this.toggleAll();
     });
-  };
+  }
 
   /**
    * Toggles the all items.
    */
-  pt.toggleAll = function () {
-    if (this.checked) {
-      this.elem.trigger('todo-uncomplete-all');
-    } else {
-      this.elem.trigger('todo-complete-all');
+
+
+  _createClass(TodoToggleAll, [{
+    key: 'toggleAll',
+    value: function toggleAll() {
+      if (this.checked) {
+        this.elem.trigger('todo-uncomplete-all');
+      } else {
+        this.elem.trigger('todo-complete-all');
+      }
+
+      this.check = !this.check;
     }
 
-    this.check = !this.check;
-  };
+    /**
+     * Updates the button state by the given active items' condition.
+     *
+     * @param {Boolean} activeItemExists true if any active item exists, false otherwise
+     */
 
-  /**
-   * Updates the button state by the given active items' condition.
-   *
-   * @param {Boolean} activeItemExists true if any active item exists, false otherwise
-   */
-  pt.updateBtnState = function (activeItemExists) {
-    this.checked = !activeItemExists;
+  }, {
+    key: 'updateBtnState',
+    value: function updateBtnState(activeItemExists) {
+      this.checked = !activeItemExists;
 
-    if (this.checked) {
-      this.elem.prop('checked', true);
-    } else {
-      this.elem.prop('checked', false);
+      if (this.checked) {
+        this.elem.prop('checked', true);
+      } else {
+        this.elem.prop('checked', false);
+      }
     }
-  };
-});
+  }]);
 
-$.cc.assign('todo-toggle-all', TodoToggleAll);
+  return TodoToggleAll;
+}();
 
-},{"jquery":7}],16:[function(require,module,exports){
+$.cc('todo-toggle-all', TodoToggleAll);
+
+},{"jquery":9}],18:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -10569,22 +10571,27 @@ module.exports = {
   }
 };
 
-},{}],17:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 'use strict';
 
-var $ = require('jquery');
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /**
  * TodoCollection is the colleciton model of the todo model.
  */
-var TodoCollection = $.cc.subclass(function (pt) {
-  'use strict';
 
+var TodoCollection = function () {
   /**
    * @param {Todo[]} todos The todo items
    */
 
-  pt.constructor = function (todos) {
+  function TodoCollection(todos) {
+    var _this = this;
+
+    _classCallCheck(this, TodoCollection);
+
     todos = todos || [];
 
     this.items = todos;
@@ -10592,9 +10599,9 @@ var TodoCollection = $.cc.subclass(function (pt) {
     this.map = {};
 
     this.items.forEach(function (todo) {
-      this.map[todo.id] = todo;
-    }, this);
-  };
+      _this.map[todo.id] = todo;
+    });
+  }
 
   /**
    * Gets the todo by the id.
@@ -10602,291 +10609,353 @@ var TodoCollection = $.cc.subclass(function (pt) {
    * @param {String} id The todo id
    * @return {Todo}
    */
-  pt.getById = function (id) {
-    return this.map[id];
-  };
 
-  /**
-   * Toggles the todo's completed flag by the given id.
-   *
-   * @param {String} id The todo id
-   */
-  pt.toggleById = function (id) {
-    var todo = this.getById(id);
 
-    todo.completed = !todo.completed;
-  };
-
-  /**
-   * Iterates calling of func in the given context.
-   *
-   * @param {Function} func The iteration function
-   * @param {Object} ctx The context
-   */
-  pt.forEach = function (func, ctx) {
-    this.items.forEach(func, ctx);
-  };
-
-  /**
-   * Pushes (appends) the given todo at the end of the list
-   *
-   * @param {Todo} todo The todo
-   */
-  pt.push = function (todo) {
-    this.items.push(todo);
-
-    this.map[todo.id] = todo;
-  };
-
-  /**
-   * Removes the todo.
-   *
-   * @param {Todo} todo The todo to remvoe
-   */
-  pt.remove = function (todo) {
-    if (!this.has(todo)) {
-      throw new Error('The colletion does not have the todo: ' + todo.toString());
+  _createClass(TodoCollection, [{
+    key: 'getById',
+    value: function getById(id) {
+      return this.map[id];
     }
 
-    this.items.splice(this.items.indexOf(todo), 1);
-  };
+    /**
+     * Toggles the todo's completed flag by the given id.
+     * @param {String} id The todo id
+     */
 
-  /**
-   * Removes the item by the id.
-   *
-   * @param {String} id The todo id
-   */
-  pt.removeById = function (id) {
-    this.remove(this.getById(id));
-  };
+  }, {
+    key: 'toggleById',
+    value: function toggleById(id) {
+      var todo = this.getById(id);
 
-  /**
-   * Checks if the given todo is included by the list
-   *
-   * @private
-   * @param {Todo} todo The todo
-   */
-  pt.has = function (todo) {
-    return this.items.indexOf(todo) !== -1;
-  };
+      todo.completed = !todo.completed;
+    }
 
-  /**
-   * Returns a todo subcollection of completed items.
-   *
-   * @return {TodoCollection}
-   */
-  pt.completed = function () {
-    return new TodoCollection(this.items.filter(function (todo) {
-      return todo.completed;
-    }));
-  };
+    /**
+     * Iterates calling of func in the given context.
+     * @param {Function} func The iteration function
+     * @param {Object} ctx The context
+     */
 
-  /**
-   * Returns a todo subcollection of uncompleted items.
-   *
-   * @return {TodoCollection}
-   */
-  pt.uncompleted = function () {
-    return new TodoCollection(this.items.filter(function (todo) {
-      return !todo.completed;
-    }));
-  };
+  }, {
+    key: 'forEach',
+    value: function forEach(func, ctx) {
+      this.items.forEach(func, ctx);
+    }
 
-  /**
-   * Gets the array of todos
-   *
-   * @return {Todo[]}
-   */
-  pt.toArray = function () {
-    return this.items.slice(0);
-  };
+    /**
+     * Pushes (appends) the given todo at the end of the list
+     *
+     * @param {Todo} todo The todo
+     */
 
-  /**
-   * Checks if the collection is empty.
-   *
-   * @param {Boolean}
-   */
-  pt.isEmpty = function () {
-    return this.items.length === 0;
-  };
+  }, {
+    key: 'push',
+    value: function push(todo) {
+      this.items.push(todo);
 
-  /**
-   * Completes all the todos.
-   */
-  pt.completeAll = function () {
-    this.items.forEach(function (todo) {
-      todo.completed = true;
-    });
-  };
+      this.map[todo.id] = todo;
+    }
 
-  /**
-   * Uncompletes all the todos.
-   */
-  pt.uncompleteAll = function () {
-    this.items.forEach(function (todo) {
-      todo.completed = false;
-    });
-  };
-});
+    /**
+     * Removes the todo.
+     * @param {Todo} todo The todo to remvoe
+     */
+
+  }, {
+    key: 'remove',
+    value: function remove(todo) {
+      if (!this.has(todo)) {
+        throw new Error('The colletion does not have the todo: ' + todo.toString());
+      }
+
+      this.items.splice(this.items.indexOf(todo), 1);
+    }
+
+    /**
+     * Removes the item by the id.
+     * @param {String} id The todo id
+     */
+
+  }, {
+    key: 'removeById',
+    value: function removeById(id) {
+      this.remove(this.getById(id));
+    }
+
+    /**
+     * Checks if the given todo is included by the list
+     * @private
+     * @param {Todo} todo The todo
+     */
+
+  }, {
+    key: 'has',
+    value: function has(todo) {
+      return this.items.indexOf(todo) !== -1;
+    }
+
+    /**
+     * Returns a todo subcollection of completed items.
+     * @return {TodoCollection}
+     */
+
+  }, {
+    key: 'completed',
+    value: function completed() {
+      return new TodoCollection(this.items.filter(function (todo) {
+        return todo.completed;
+      }));
+    }
+
+    /**
+     * Returns a todo subcollection of uncompleted items.
+     * @return {TodoCollection}
+     */
+
+  }, {
+    key: 'uncompleted',
+    value: function uncompleted() {
+      return new TodoCollection(this.items.filter(function (todo) {
+        return !todo.completed;
+      }));
+    }
+
+    /**
+     * Gets the array of todos
+     * @return {Todo[]}
+     */
+
+  }, {
+    key: 'toArray',
+    value: function toArray() {
+      return this.items.slice(0);
+    }
+
+    /**
+     * Checks if the collection is empty.
+     * @param {Boolean}
+     */
+
+  }, {
+    key: 'isEmpty',
+    value: function isEmpty() {
+      return this.items.length === 0;
+    }
+
+    /**
+     * Completes all the todos.
+     */
+
+  }, {
+    key: 'completeAll',
+    value: function completeAll() {
+      this.items.forEach(function (todo) {
+        todo.completed = true;
+      });
+    }
+
+    /**
+     * Uncompletes all the todos.
+     */
+
+  }, {
+    key: 'uncompleteAll',
+    value: function uncompleteAll() {
+      this.items.forEach(function (todo) {
+        todo.completed = false;
+      });
+    }
+  }]);
+
+  return TodoCollection;
+}();
 
 module.exports = TodoCollection;
 
-},{"jquery":7}],18:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 'use strict';
 
-var $ = require('jquery');
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Todo = require('./todo');
 
 /**
  * TodoFactory is the factory for todo.
- *
- * @class
  */
-var TodoFactory = $.cc.subclass(function (pt) {
-  'use strict';
 
-  /**
-   * Creates a todo model from the given todo title.
-   *
-   * @param {String} title The todo title
-   * @return {Todo}
-   */
+var TodoFactory = function () {
+  function TodoFactory() {
+    _classCallCheck(this, TodoFactory);
+  }
 
-  pt.createByTitle = function (title) {
-    return this.createFromObject({
-      id: this.generateId(),
-      title: title,
-      completed: false
-    });
-  };
+  _createClass(TodoFactory, [{
+    key: 'createByTitle',
 
-  /**
-   * Creates Todo model from the object
-   *
-   * @param {Object} obj The source object
-   * @return {Todo}
-   */
-  pt.createFromObject = function (obj) {
-    return new Todo(obj.id, obj.title, obj.completed);
-  };
+    /**
+     * Creates a todo model from the given todo title.
+     *
+     * @param {String} title The todo title
+     * @return {Todo}
+     */
+    value: function createByTitle(title) {
+      return this.createFromObject({
+        id: this.generateId(),
+        title: title,
+        completed: false
+      });
+    }
 
-  /**
-   * Generates a random id.
-   *
-   * @private
-   */
-  pt.generateId = function () {
-    return Math.floor(Math.random() * 1000000000).toString();
-  };
-});
+    /**
+     * Creates Todo model from the object
+     * @param {Object} obj The source object
+     * @return {Todo}
+     */
+
+  }, {
+    key: 'createFromObject',
+    value: function createFromObject(obj) {
+      return new Todo(obj.id, obj.title, obj.completed);
+    }
+
+    /**
+     * Generates a random id.
+     * @private
+     */
+
+  }, {
+    key: 'generateId',
+    value: function generateId() {
+      return Math.floor(Math.random() * 1000000000).toString();
+    }
+  }]);
+
+  return TodoFactory;
+}();
 
 module.exports = TodoFactory;
 
-},{"./todo":20,"jquery":7}],19:[function(require,module,exports){
+},{"./todo":22}],21:[function(require,module,exports){
 'use strict';
 
-var $ = require('jquery');
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Const = require('../const');
 var TodoCollection = require('./todo-collection');
 
-var TodoRepository = $.cc.subclass(function (pt) {
-  'use strict';
+var TodoRepository = function () {
+  function TodoRepository() {
+    _classCallCheck(this, TodoRepository);
+  }
 
-  /**
-   * Gets all the todo items.
-   *
-   * @return {TodoList}
-   */
+  _createClass(TodoRepository, [{
+    key: 'getAll',
 
-  pt.getAll = function () {
-    var json = window.localStorage[Const.STORAGE_KEY.TODO_LIST];
+    /**
+     * Gets all the todo items.
+     *
+     * @return {TodoList}
+     */
+    value: function getAll() {
+      var json = window.localStorage[Const.STORAGE_KEY.TODO_LIST];
 
-    if (!json) {
-      return new TodoCollection([]);
+      if (!json) {
+        return new TodoCollection([]);
+      }
+
+      var array = void 0;
+
+      try {
+        array = JSON.parse(json);
+      } catch (e) {
+        array = [];
+      }
+
+      return new TodoCollection(array);
     }
 
-    var array;
+    /**
+     * Saves all the todo items.
+     * @param {domain.TodoCollection} todos
+     */
 
-    try {
-      array = JSON.parse(json);
-    } catch (e) {
-      array = [];
+  }, {
+    key: 'saveAll',
+    value: function saveAll(todos) {
+      var json = JSON.stringify(this.collectionToArray(todos));
+
+      window.localStorage[Const.STORAGE_KEY.TODO_LIST] = json;
     }
 
-    return new TodoCollection(array);
-  };
+    /**
+     * Converts the todo collections into js array of objects.
+     * @private
+     * @param {TodoCollection} todos The todo collection
+     * @return {Array<Object>}
+     */
 
-  /**
-   * Saves all the todo items.
-   *
-   * @param {domain.TodoCollection} todos
-   */
-  pt.saveAll = function (todos) {
-    var json = JSON.stringify(this.collectionToArray(todos));
+  }, {
+    key: 'collectionToArray',
+    value: function collectionToArray(todos) {
+      var _this = this;
 
-    window.localStorage[Const.STORAGE_KEY.TODO_LIST] = json;
-  };
+      return todos.toArray().map(function (todo) {
+        return _this.toObject(todo);
+      });
+    }
 
-  /**
-   * Converts the todo collections into js array of objects.
-   *
-   * @private
-   * @param {TodoCollection} todos The todo collection
-   * @return {Array<Object>}
-   */
-  pt.collectionToArray = function (todos) {
-    return todos.toArray().map(function (todo) {
-      return this.toObject(todo);
-    }, this);
-  };
+    /**
+     * Converts the todo item into js object.
+     * @private
+     * @param {Todo} todo The todo item
+     * @return {Object}
+     */
 
-  /**
-   * Converts the todo item into js object.
-   *
-   * @private
-   * @param {Todo} todo The todo item
-   * @return {Object}
-   */
-  pt.toObject = function (todo) {
-    return {
-      id: todo.id,
-      title: todo.title,
-      completed: todo.completed
-    };
-  };
-});
+  }, {
+    key: 'toObject',
+    value: function toObject(todo) {
+      return {
+        id: todo.id,
+        title: todo.title,
+        completed: todo.completed
+      };
+    }
+  }]);
+
+  return TodoRepository;
+}();
 
 module.exports = TodoRepository;
 
-},{"../const":16,"./todo-collection":17,"jquery":7}],20:[function(require,module,exports){
-'use strict';
+},{"../const":18,"./todo-collection":19}],22:[function(require,module,exports){
+"use strict";
 
-var $ = require('jquery');
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /**
  * Todo class is the model of single todo item.
  */
-var Todo = $.cc.subclass(function (pt) {
-  'use strict';
 
-  /**
-   * @param {String} id The todo's id
-   * @param {String} title The todo's title
-   * @param {Boolean} completed The flag indicates if it's done or not
-   */
+var Todo =
+/**
+ * @param {String} id The todo's id
+ * @param {String} title The todo's title
+ * @param {Boolean} completed The flag indicates if it's done or not
+ */
+function Todo(id, title, completed) {
+  _classCallCheck(this, Todo);
 
-  pt.constructor = function (id, title, completed) {
-    this.id = id;
-    this.title = title;
-    this.completed = completed;
-  };
-});
+  this.id = id;
+  this.title = title;
+  this.completed = completed;
+};
 
 module.exports = Todo;
 
-},{"jquery":7}],21:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -10904,8 +10973,43 @@ require('./component/todo-toggle-all');
 require('./service/todo-app');
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./component/todo-clear-btn":8,"./component/todo-count":9,"./component/todo-edit":10,"./component/todo-filters":11,"./component/todo-input":12,"./component/todo-item":13,"./component/todo-list":14,"./component/todo-toggle-all":15,"./service/todo-app":22,"class-component":1,"jquery":7}],22:[function(require,module,exports){
+},{"./component/todo-clear-btn":10,"./component/todo-count":11,"./component/todo-edit":12,"./component/todo-filters":13,"./component/todo-input":14,"./component/todo-item":15,"./component/todo-list":16,"./component/todo-toggle-all":17,"./service/todo-app":24,"class-component":4,"jquery":9}],24:[function(require,module,exports){
 'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _class, _desc, _value, _class2;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
+  var desc = {};
+  Object['ke' + 'ys'](descriptor).forEach(function (key) {
+    desc[key] = descriptor[key];
+  });
+  desc.enumerable = !!desc.enumerable;
+  desc.configurable = !!desc.configurable;
+
+  if ('value' in desc || desc.initializer) {
+    desc.writable = true;
+  }
+
+  desc = decorators.slice().reverse().reduce(function (desc, decorator) {
+    return decorator(target, property, desc) || desc;
+  }, desc);
+
+  if (context && desc.initializer !== void 0) {
+    desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
+    desc.initializer = undefined;
+  }
+
+  if (desc.initializer === void 0) {
+    Object['define' + 'Property'](target, property, desc);
+    desc = null;
+  }
+
+  return desc;
+}
 
 var $ = require('jquery');
 
@@ -10913,299 +11017,330 @@ var Const = require('../const');
 var TodoFactory = require('../domain/todo-factory');
 var TodoRepository = require('../domain/todo-repository');
 
+var _$$cc = $.cc;
+var event = _$$cc.event;
+var component = _$$cc.component;
+
 /**
  * The todo application class.
  */
-var TodoApp = $.cc.subclass(function (pt) {
-  'use strict';
 
-  pt.constructor = function (elem) {
-    this.elem = elem;
+var TodoApp = (_dec = component('todo-app'), _dec2 = event('todo-new-item'), _dec3 = event('todo-item-toggle'), _dec4 = event('todo-item-destroy'), _dec5 = event('todo-item-edited'), _dec6 = event('todo-clear-completed'), _dec7 = event('todo-uncomplete-all'), _dec8 = event('todo-complete-all'), _dec(_class = (_class2 = function () {
+  /**
+   * @param {jQuery} elem The element
+   */
+
+  function TodoApp(elem) {
+    _classCallCheck(this, TodoApp);
 
     this.todoFactory = new TodoFactory();
     this.todoRepository = new TodoRepository();
 
     this.todoCollection = this.todoRepository.getAll();
 
-    this.initEvents();
+    this.elem = elem;
 
+    this.initEvents();
     this.updateView();
-  };
+  }
 
   /**
    * Initializes events.
-   *
    * @private
    */
-  pt.initEvents = function () {
-    var self = this;
 
-    this.elem.on('todo-new-item', function (e, title) {
-      self.addTodo(title);
-    });
 
-    this.elem.on('todo-item-toggle', function (e, id) {
-      self.toggle(id);
-    });
+  _createClass(TodoApp, [{
+    key: 'initEvents',
+    value: function initEvents() {
+      var _this = this;
 
-    this.elem.on('todo-item-destroy', function (e, id) {
-      self.remove(id);
-    });
-
-    this.elem.on('todo-item-edited', function (e, id, title) {
-      self.editItem(id, title);
-    });
-
-    this.elem.on('todo-clear-completed', function () {
-      self.clearCompleted();
-    });
-
-    this.elem.on('todo-complete-all', function () {
-      self.completeAll();
-    });
-
-    this.elem.on('todo-uncomplete-all', function () {
-      self.uncompleteAll();
-    });
-
-    $(window).on('hashchange', function () {
-      self.updateView();
-    });
-  };
-
-  /**
-   * Adds new item by the given title.
-   *
-   * @private
-   * @param {String} title The todo title
-   */
-  pt.addTodo = function (title) {
-    var todo = this.todoFactory.createByTitle(title);
-
-    this.todoCollection.push(todo);
-
-    this.updateView();
-
-    this.save();
-  };
-
-  /**
-   * Updates the view in the todo app.
-   *
-   * @private
-   */
-  pt.updateView = function () {
-    this.updateTodoList();
-
-    this.updateControls();
-  };
-
-  /**
-   * Updates the controls.
-   *
-   * @private
-   */
-  pt.updateControls = function () {
-    this.updateFilterBtns();
-
-    this.updateTodoCount();
-
-    this.updateVisibility();
-
-    this.updateToggleBtnState();
-  };
-
-  /**
-   * Updates the todo list.
-   *
-   * @private
-   */
-  pt.updateTodoList = function () {
-    var todoCollection = this.getDisplayCollection();
-
-    this.elem.find('.todo-list').cc.get('todo-list').update(todoCollection);
-  };
-
-  /**
-   * Updates the filter buttons.
-   *
-   * @private
-   */
-  pt.updateFilterBtns = function () {
-    var filterName = this.getFilterNameFromHash();
-
-    this.elem.find('.todo-filters').cc.get('todo-filters').setFilter(filterName);
-  };
-
-  /**
-   * Updates the todo counter.
-   *
-   * @private
-   */
-  pt.updateTodoCount = function () {
-    this.elem.find('.todo-count').cc.get('todo-count').setCount(this.todoCollection.uncompleted().toArray().length);
-  };
-
-  /**
-   * Updates the visiblity of components.
-   *
-   * @private
-   */
-  pt.updateVisibility = function () {
-    if (this.todoCollection.isEmpty()) {
-      this.elem.find('#main, #footer').css('display', 'none');
-    } else {
-      this.elem.find('#main, #footer').css('display', 'block');
-    }
-  };
-
-  /**
-   * Updates the toggle-all button state.
-   *
-   * @private
-   */
-  pt.updateToggleBtnState = function () {
-    this.elem.find('.todo-toggle-all').cc.get('todo-toggle-all').updateBtnState(!this.todoCollection.uncompleted().isEmpty());
-  };
-
-  /**
-   * Gets the todo collection which is displayable in the current filter.
-   *
-   * @private
-   */
-  pt.getDisplayCollection = function () {
-    var filterName = this.getFilterNameFromHash();
-
-    if (filterName === Const.FILTER.ACTIVE) {
-      return this.todoCollection.uncompleted();
+      $(window).on('hashchange', function () {
+        _this.updateView();
+      });
     }
 
-    if (filterName === Const.FILTER.COMPLETED) {
-      return this.todoCollection.completed();
+    /**
+     * Adds new item by the given title.
+     * @private
+     * @param {Object} e The event object
+     * @param {String} title The todo title
+     */
+
+  }, {
+    key: 'addTodo',
+    value: function addTodo(e, title) {
+      var todo = this.todoFactory.createByTitle(title);
+
+      this.todoCollection.push(todo);
+
+      this.updateView();
+
+      this.save();
     }
 
-    return this.todoCollection;
-  };
+    /**
+     * Updates the view in the todo app.
+     * @private
+     */
 
-  /**
-   * Returns if the filter is enabled.
-   *
-   * @private
-   */
-  pt.filterIsEnabled = function () {
-    var filterName = this.getFilterNameFromHash();
-
-    return filterName === Const.FILTER.ACTIVE || filterName === Const.FILTER.COMPLETED;
-  };
-
-  /**
-   * Gets the filter name from the hash string.
-   */
-  pt.getFilterNameFromHash = function () {
-    return window.location.hash.substring(1);
-  };
-
-  /**
-   * Saves the current todo collection state.
-   */
-  pt.save = function () {
-    this.todoRepository.saveAll(this.todoCollection);
-  };
-
-  /**
-   * Toggles the todo state of the given id.
-   *
-   * @param {String} id The todo id
-   */
-  pt.toggle = function (id) {
-    this.todoCollection.toggleById(id);
-
-    if (this.filterIsEnabled()) {
+  }, {
+    key: 'updateView',
+    value: function updateView() {
       this.updateTodoList();
+
+      this.updateControls();
     }
 
-    this.updateControls();
+    /**
+     * Updates the controls.
+     * @private
+     */
 
-    this.save();
-  };
+  }, {
+    key: 'updateControls',
+    value: function updateControls() {
+      this.updateFilterBtns();
 
-  /**
-   * Removes the todo of the given id.
-   *
-   * @param {String} id The todo id
-   */
-  pt.remove = function (id) {
-    this.todoCollection.removeById(id);
+      this.updateTodoCount();
 
-    this.updateView();
+      this.updateVisibility();
 
-    this.save();
-  };
+      this.updateToggleBtnState();
+    }
 
-  /**
-   * Edits the todo item of the given id by the given title.
-   *
-   * @param {String} id The todo id
-   * @param {String} title The todo title
-   */
-  pt.editItem = function (id, title) {
-    var todo = this.todoCollection.getById(id);
+    /**
+     * Updates the todo list.
+     * @private
+     */
 
-    todo.body = title;
+  }, {
+    key: 'updateTodoList',
+    value: function updateTodoList() {
+      var todoCollection = this.getDisplayCollection();
 
-    this.save();
-  };
+      this.elem.find('.todo-list').cc.get('todo-list').update(todoCollection);
+    }
 
-  /**
-   * Clears the completed todos.
-   */
-  pt.clearCompleted = function () {
-    this.todoCollection = this.todoCollection.uncompleted();
+    /**
+     * Updates the filter buttons.
+     * @private
+     */
 
-    this.updateView();
+  }, {
+    key: 'updateFilterBtns',
+    value: function updateFilterBtns() {
+      var filterName = this.getFilterNameFromHash();
 
-    this.save();
-  };
+      this.elem.find('.todo-filters').cc.get('todo-filters').setFilter(filterName);
+    }
 
-  /**
-   * Uncompletes all the todo items.
-   *
-   * @private
-   */
-  pt.uncompleteAll = function () {
-    if (this.filterIsEnabled()) {
-      this.todoCollection.uncompleteAll();
+    /**
+     * Updates the todo counter.
+     * @private
+     */
+
+  }, {
+    key: 'updateTodoCount',
+    value: function updateTodoCount() {
+      this.elem.find('.todo-count').cc.get('todo-count').setCount(this.todoCollection.uncompleted().toArray().length);
+    }
+
+    /**
+     * Updates the visiblity of components.
+     * @private
+     */
+
+  }, {
+    key: 'updateVisibility',
+    value: function updateVisibility() {
+      if (this.todoCollection.isEmpty()) {
+        this.elem.find('#main, #footer').css('display', 'none');
+      } else {
+        this.elem.find('#main, #footer').css('display', 'block');
+      }
+    }
+
+    /**
+     * Updates the toggle-all button state.
+     * @private
+     */
+
+  }, {
+    key: 'updateToggleBtnState',
+    value: function updateToggleBtnState() {
+      this.elem.find('.todo-toggle-all').cc.get('todo-toggle-all').updateBtnState(!this.todoCollection.uncompleted().isEmpty());
+    }
+
+    /**
+     * Gets the todo collection which is displayable in the current filter.
+     * @private
+     */
+
+  }, {
+    key: 'getDisplayCollection',
+    value: function getDisplayCollection() {
+      var filterName = this.getFilterNameFromHash();
+
+      if (filterName === Const.FILTER.ACTIVE) {
+        return this.todoCollection.uncompleted();
+      }
+
+      if (filterName === Const.FILTER.COMPLETED) {
+        return this.todoCollection.completed();
+      }
+
+      return this.todoCollection;
+    }
+
+    /**
+     * Returns if the filter is enabled.
+     * @private
+     */
+
+  }, {
+    key: 'filterIsEnabled',
+    value: function filterIsEnabled() {
+      var filterName = this.getFilterNameFromHash();
+
+      return filterName === Const.FILTER.ACTIVE || filterName === Const.FILTER.COMPLETED;
+    }
+
+    /**
+     * Gets the filter name from the hash string.
+     */
+
+  }, {
+    key: 'getFilterNameFromHash',
+    value: function getFilterNameFromHash() {
+      return window.location.hash.substring(1);
+    }
+
+    /**
+     * Saves the current todo collection state.
+     */
+
+  }, {
+    key: 'save',
+    value: function save() {
+      this.todoRepository.saveAll(this.todoCollection);
+    }
+
+    /**
+     * Toggles the todo state of the given id.
+     * @param {object} e The event object
+     * @param {String} id The todo id
+     */
+
+  }, {
+    key: 'toggle',
+    value: function toggle(e, id) {
+      this.todoCollection.toggleById(id);
+
+      if (this.filterIsEnabled()) {
+        this.updateTodoList();
+      }
+
+      this.updateControls();
+
+      this.save();
+    }
+
+    /**
+     * Removes the todo of the given id.
+     * @param {object} e The event object
+     * @param {String} id The todo id
+     */
+
+  }, {
+    key: 'remove',
+    value: function remove(e, id) {
+      this.todoCollection.removeById(id);
 
       this.updateView();
 
       this.save();
-    } else {
-      this.todoCollection.completed().forEach(function (todo) {
-        this.elem.find('#' + todo.id).cc.get('todo-item').toggleCompleted();
-      }, this);
     }
-  };
 
-  /**
-   * Completes all the todo items.
-   *
-   * @private
-   */
-  pt.completeAll = function () {
-    if (this.filterIsEnabled()) {
-      this.todoCollection.completeAll();
+    /**
+     * Edits the todo item of the given id by the given title.
+     * @param {object} e The event object
+     * @param {string} id The todo id
+     * @param {string} title The todo title
+     */
+
+  }, {
+    key: 'editItem',
+    value: function editItem(e, id, title) {
+      var todo = this.todoCollection.getById(id);
+
+      todo.body = title;
+
+      this.save();
+    }
+
+    /**
+     * Clears the completed todos.
+     */
+
+  }, {
+    key: 'clearCompleted',
+    value: function clearCompleted() {
+      this.todoCollection = this.todoCollection.uncompleted();
 
       this.updateView();
 
       this.save();
-    } else {
-      this.todoCollection.uncompleted().forEach(function (todo) {
-        this.elem.find('#' + todo.id).cc.get('todo-item').toggleCompleted();
-      }, this);
     }
-  };
-});
 
-$.cc.assign('todo-app', TodoApp);
+    /**
+     * Uncompletes all the todo items.
+     * @private
+     */
 
-},{"../const":16,"../domain/todo-factory":18,"../domain/todo-repository":19,"jquery":7}]},{},[21]);
+  }, {
+    key: 'uncompleteAll',
+    value: function uncompleteAll() {
+      var _this2 = this;
+
+      if (this.filterIsEnabled()) {
+        this.todoCollection.uncompleteAll();
+
+        this.updateView();
+
+        this.save();
+      } else {
+        this.todoCollection.completed().forEach(function (todo) {
+          _this2.elem.find('#' + todo.id).cc.get('todo-item').toggleCompleted();
+        });
+      }
+    }
+
+    /**
+     * Completes all the todo items.
+     * @private
+     */
+
+  }, {
+    key: 'completeAll',
+    value: function completeAll() {
+      var _this3 = this;
+
+      if (this.filterIsEnabled()) {
+        this.todoCollection.completeAll();
+
+        this.updateView();
+
+        this.save();
+      } else {
+        this.todoCollection.uncompleted().forEach(function (todo) {
+          _this3.elem.find('#' + todo.id).cc.get('todo-item').toggleCompleted();
+        });
+      }
+    }
+  }]);
+
+  return TodoApp;
+}(), (_applyDecoratedDescriptor(_class2.prototype, 'addTodo', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'addTodo'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'toggle', [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggle'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'remove', [_dec4], Object.getOwnPropertyDescriptor(_class2.prototype, 'remove'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'editItem', [_dec5], Object.getOwnPropertyDescriptor(_class2.prototype, 'editItem'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'clearCompleted', [_dec6], Object.getOwnPropertyDescriptor(_class2.prototype, 'clearCompleted'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'uncompleteAll', [_dec7], Object.getOwnPropertyDescriptor(_class2.prototype, 'uncompleteAll'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'completeAll', [_dec8], Object.getOwnPropertyDescriptor(_class2.prototype, 'completeAll'), _class2.prototype)), _class2)) || _class);
+
+},{"../const":18,"../domain/todo-factory":20,"../domain/todo-repository":21,"jquery":9}]},{},[23]);

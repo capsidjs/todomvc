@@ -1,11 +1,13 @@
-const $ = require('jquery')
 const {li} = require('dom-gen')
 
-class TodoList {
-  constructor (elem) {
-    this.elem = elem
-  }
+const {component} = $.cc
 
+/**
+ * The todo list component.
+ */
+void
+@component('todo-list')
+class {
   /**
    * Updates the todo items by the given todo model list.
    * @param {TodoCollection} todoList The todo list
@@ -18,5 +20,3 @@ class TodoList {
     })
   }
 }
-
-$.cc('todo-list', TodoList)

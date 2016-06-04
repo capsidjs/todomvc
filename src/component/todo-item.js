@@ -1,24 +1,14 @@
-const $ = require('jquery')
 const {div, input, label, button} = require('dom-gen')
+const {event, component} = $.cc
 
 /**
  * TodoItem class controls todo item in a list.
  */
-class TodoItem {
+void
+@component('todo-item')
+class {
   constructor (elem) {
-    this.elem = elem
-
-    this.initElems()
-    this.initEvents()
-  }
-
-  /**
-   * Inits elements
-   *
-   * @private
-   */
-  initElems () {
-    this.elem.append(
+    elem.append(
       div(
         input({attr: {type: 'checkbox'}}).addClass('toggle'),
         label(),
@@ -26,28 +16,6 @@ class TodoItem {
       ).addClass('view'),
       input().addClass('edit').cc('todo-edit')
     )
-  }
-
-  /**
-   * Inits events.
-   * @private
-   */
-  initEvents () {
-    this.elem.find('.toggle').on('click', () => {
-      this.toggleCompleted()
-    })
-
-    this.elem.find('.destroy').on('click', () => {
-      this.destroy()
-    })
-
-    this.elem.find('label').on('dblclick', () => {
-      this.startEditing()
-    })
-
-    this.elem.on('todo-edited', (e, title) => {
-      this.stopEditing(title)
-    })
   }
 
   /**
@@ -71,6 +39,7 @@ class TodoItem {
    * Toggles the completed state of the item.
    * @private
    */
+  @event('click', '.toggle')
   toggleCompleted () {
     this.elem.trigger('todo-item-toggle', this.elem.attr('id'))
 
@@ -82,6 +51,7 @@ class TodoItem {
    * Destroys the item.
    * @private
    */
+  @event('click', '.destroy')
   destroy () {
     this.elem.parent().trigger('todo-item-destroy', this.elem.attr('id'))
 
@@ -122,6 +92,7 @@ class TodoItem {
    * Starts editing.
    * @private
    */
+  @event('dblclick', 'label')
   startEditing () {
     this.elem.addClass('editing')
   }
@@ -130,7 +101,8 @@ class TodoItem {
    * Stops editing.
    * @private
    */
-  stopEditing (title) {
+  @event('todo-edited')
+  stopEditing (e, title) {
     this.elem.removeClass('editing')
 
     if (!title) {
@@ -144,5 +116,3 @@ class TodoItem {
     this.elem.trigger('todo-item-edited', [this.elem.attr('id'), title])
   }
 }
-
-$.cc('todo-item', TodoItem)

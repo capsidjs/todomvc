@@ -2,7 +2,6 @@ const TodoCollection = require('../../src/domain/todo-collection')
 const TodoFactory = require('../../src/domain/todo-factory')
 const todoFactory = new TodoFactory()
 
-const $ = require('jquery')
 const {expect} = require('chai')
 const {div} = require('dom-gen')
 

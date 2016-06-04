@@ -1,37 +1,19 @@
-const $ = require('jquery')
-
 const Const = require('../const')
+
+const {event, component} = $.cc
 
 /**
  * TodoEdit controls the edit area of each todo item.
  */
-class TodoEdit {
-  constructor (elem) {
-    this.elem = elem
-
-    this.initEvents()
-  }
-
-  /**
-   * Initializes the events
-   *
-   * @private
-   */
-  initEvents () {
-    this.elem.on('keypress', e => {
-      this.onKeypress(e)
-    })
-
-    this.elem.on('blur', () => {
-      this.stopEditing()
-    })
-  }
-
+void
+@component('todo-edit')
+class {
   /**
    * Handler for the key press events.
    *
    * @param {Event} e The event
    */
+  @event('keypress')
   onKeypress (e) {
     if (e.which === Const.KEYCODE.ENTER) {
       this.stopEditing()
@@ -41,9 +23,8 @@ class TodoEdit {
   /**
    * Stops editing with current value.
    */
+  @event('blur')
   stopEditing () {
     this.elem.trigger('todo-edited', this.elem.val())
   }
 }
-
-$.cc('todo-edit', TodoEdit)

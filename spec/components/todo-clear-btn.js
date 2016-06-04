@@ -1,4 +1,3 @@
-const $ = require('jquery')
 const {button} = require('dom-gen')
 
 describe('TodoClearBtn', () => {

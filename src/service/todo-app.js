@@ -1,13 +1,15 @@
-const $ = require('jquery')
-
 const Const = require('../const')
 const TodoFactory = require('../domain/todo-factory')
 const TodoRepository = require('../domain/todo-repository')
 
+const {event, component} = $.cc
+
 /**
  * The todo application class.
  */
-class TodoApp {
+void
+@component('todo-app')
+class {
   /**
    * @param {jQuery} elem The element
    */
@@ -17,47 +19,17 @@ class TodoApp {
 
     this.todoCollection = this.todoRepository.getAll()
 
-    this.initEvents(elem)
-
     this.elem = elem
 
+    this.initEvents()
     this.updateView()
   }
 
   /**
    * Initializes events.
    * @private
-   * @param {jQuery} elem The element
    */
-  initEvents (elem) {
-    elem.on('todo-new-item', (e, title) => {
-      this.addTodo(title)
-    })
-
-    elem.on('todo-item-toggle', (e, id) => {
-      this.toggle(id)
-    })
-
-    elem.on('todo-item-destroy', (e, id) => {
-      this.remove(id)
-    })
-
-    elem.on('todo-item-edited', (e, id, title) => {
-      this.editItem(id, title)
-    })
-
-    elem.on('todo-clear-completed', () => {
-      this.clearCompleted()
-    })
-
-    elem.on('todo-complete-all', () => {
-      this.completeAll()
-    })
-
-    elem.on('todo-uncomplete-all', () => {
-      this.uncompleteAll()
-    })
-
+  initEvents () {
     $(window).on('hashchange', () => {
       this.updateView()
     })
@@ -65,11 +37,12 @@ class TodoApp {
 
   /**
    * Adds new item by the given title.
-   *
    * @private
+   * @param {Object} e The event object
    * @param {String} title The todo title
    */
-  addTodo (title) {
+  @event('todo-new-item')
+  addTodo (e, title) {
     const todo = this.todoFactory.createByTitle(title)
 
     this.todoCollection.push(todo)
@@ -197,9 +170,11 @@ class TodoApp {
 
   /**
    * Toggles the todo state of the given id.
+   * @param {object} e The event object
    * @param {String} id The todo id
    */
-  toggle (id) {
+  @event('todo-item-toggle')
+  toggle (e, id) {
     this.todoCollection.toggleById(id)
 
     if (this.filterIsEnabled()) {
@@ -213,9 +188,11 @@ class TodoApp {
 
   /**
    * Removes the todo of the given id.
+   * @param {object} e The event object
    * @param {String} id The todo id
    */
-  remove (id) {
+  @event('todo-item-destroy')
+  remove (e, id) {
     this.todoCollection.removeById(id)
 
     this.updateView()
@@ -225,10 +202,12 @@ class TodoApp {
 
   /**
    * Edits the todo item of the given id by the given title.
-   * @param {String} id The todo id
-   * @param {String} title The todo title
+   * @param {object} e The event object
+   * @param {string} id The todo id
+   * @param {string} title The todo title
    */
-  editItem (id, title) {
+  @event('todo-item-edited')
+  editItem (e, id, title) {
     const todo = this.todoCollection.getById(id)
 
     todo.body = title
@@ -239,6 +218,7 @@ class TodoApp {
   /**
    * Clears the completed todos.
    */
+  @event('todo-clear-completed')
   clearCompleted () {
     this.todoCollection = this.todoCollection.uncompleted()
 
@@ -251,6 +231,7 @@ class TodoApp {
    * Uncompletes all the todo items.
    * @private
    */
+  @event('todo-uncomplete-all')
   uncompleteAll () {
     if (this.filterIsEnabled()) {
       this.todoCollection.uncompleteAll()
@@ -269,6 +250,7 @@ class TodoApp {
    * Completes all the todo items.
    * @private
    */
+  @event('todo-complete-all')
   completeAll () {
     if (this.filterIsEnabled()) {
       this.todoCollection.completeAll()
@@ -283,5 +265,3 @@ class TodoApp {
     }
   }
 }
-
-$.cc('todo-app', TodoApp)

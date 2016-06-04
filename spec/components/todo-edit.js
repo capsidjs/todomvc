@@ -1,34 +1,34 @@
 const Const = require('../../src/const')
 
-const $ = require('jquery')
 const {expect} = require('chai')
 const {input} = require('dom-gen')
 
-let todoEdit
+let elem, todoEdit
 
 describe('TodoEdit', () => {
   beforeEach(() => {
-    todoEdit = input().cc.init('todo-edit')
+    elem = input()
+    todoEdit = elem.cc.init('todo-edit')
   })
 
-  it('stops editing when the elem is blurred', done => {
-    todoEdit.stopEditing = () => done()
+  it('triggers todo-edited event when the elem is blurred', done => {
+    elem.on('todo-edited', () => done())
 
-    todoEdit.elem.trigger('blur')
+    elem.trigger('blur')
   })
 
   describe('onKeypress', () => {
-    it('stops editing when the pressed key is ENTER', done => {
-      todoEdit.stopEditing = () => done()
+    it('triggers todo-edited event when the pressed key is ENTER', done => {
+      elem.on('todo-edited', () => done())
 
       const e = $.Event('keypress')
       e.which = Const.KEYCODE.ENTER
 
-      todoEdit.elem.trigger(e)
+      elem.trigger(e)
     })
 
     it('does nothing when the pressed key is not ENTER', done => {
-      todoEdit.stopEditing = () => done(new Error('stopEditing should not be called'))
+      elem.on('todo-edited', () => done(new Error('stopEditing should not be called')))
 
       const e = $.Event('keypress')
       e.which = 32
