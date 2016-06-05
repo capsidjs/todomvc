@@ -1,3 +1,5 @@
+const Filter = require('./filter')
+
 /**
  * TodoCollection is the colleciton model of the todo model.
  */
@@ -134,6 +136,21 @@ class TodoCollection {
     this.items.forEach(todo => {
       todo.completed = false
     })
+  }
+
+  /**
+   * Returns the filtered todos by the given filter object.
+   * @param {Filter} filter The filter
+   * @return {TodoCollection}
+   */
+  filterBy(filter) {
+    if (filter === Filter.ACTIVE) {
+      return this.uncompleted()
+    } else if (filter === Filter.COMPLETED) {
+      return this.completed()
+    } else {
+      return this
+    }
   }
 }
 

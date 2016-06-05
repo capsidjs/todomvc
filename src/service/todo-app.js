@@ -1,4 +1,4 @@
-const Const = require('../const')
+const Filter = require('../domain/filter')
 const TodoFactory = require('../domain/todo-factory')
 const TodoRepository = require('../domain/todo-repository')
 
@@ -16,23 +16,14 @@ class {
   constructor (elem) {
     this.todoFactory = new TodoFactory()
     this.todoRepository = new TodoRepository()
-
     this.todoCollection = this.todoRepository.getAll()
-
-    this.elem = elem
-
-    this.initEvents()
-    this.updateView()
   }
 
-  /**
-   * Initializes events.
-   * @private
-   */
-  initEvents () {
-    $(window).on('hashchange', () => {
-      this.updateView()
-    })
+  @event('filterchange')
+  onFilterchange (e, filter) {
+    this.filter = filter
+
+    this.updateView()
   }
 
   /**
@@ -46,10 +37,9 @@ class {
     const todo = this.todoFactory.createByTitle(title)
 
     this.todoCollection.push(todo)
+    this.save()
 
     this.updateView()
-
-    this.save()
   }
 
   /**
@@ -81,9 +71,7 @@ class {
    * @private
    */
   updateTodoList () {
-    const todoCollection = this.getDisplayCollection()
-
-    this.elem.find('.todo-list').cc.get('todo-list').update(todoCollection)
+    this.elem.find('.todo-list').cc.get('todo-list').update(this.getDisplayCollection())
   }
 
   /**
@@ -91,9 +79,7 @@ class {
    * @private
    */
   updateFilterBtns () {
-    const filterName = this.getFilterNameFromHash()
-
-    this.elem.find('.todo-filters').cc.get('todo-filters').setFilter(filterName)
+    this.elem.find('.todo-filters').cc.get('todo-filters').setFilter(this.filter.name)
   }
 
   /**
@@ -131,34 +117,7 @@ class {
    * @private
    */
   getDisplayCollection () {
-    const filterName = this.getFilterNameFromHash()
-
-    if (filterName === Const.FILTER.ACTIVE) {
-      return this.todoCollection.uncompleted()
-    }
-
-    if (filterName === Const.FILTER.COMPLETED) {
-      return this.todoCollection.completed()
-    }
-
-    return this.todoCollection
-  }
-
-  /**
-   * Returns if the filter is enabled.
-   * @private
-   */
-  filterIsEnabled () {
-    const filterName = this.getFilterNameFromHash()
-
-    return filterName === Const.FILTER.ACTIVE || filterName === Const.FILTER.COMPLETED
-  }
-
-  /**
-   * Gets the filter name from the hash string.
-   */
-  getFilterNameFromHash () {
-    return window.location.hash.substring(1)
+    return this.todoCollection.filterBy(this.filter)
   }
 
   /**
@@ -176,14 +135,13 @@ class {
   @event('todo-item-toggle')
   toggle (e, id) {
     this.todoCollection.toggleById(id)
+    this.save()
 
-    if (this.filterIsEnabled()) {
+    if (!this.filter.isAll()) {
       this.updateTodoList()
     }
 
     this.updateControls()
-
-    this.save()
   }
 
   /**
@@ -194,10 +152,9 @@ class {
   @event('todo-item-destroy')
   remove (e, id) {
     this.todoCollection.removeById(id)
+    this.save()
 
     this.updateView()
-
-    this.save()
   }
 
   /**
@@ -208,10 +165,7 @@ class {
    */
   @event('todo-item-edited')
   editItem (e, id, title) {
-    const todo = this.todoCollection.getById(id)
-
-    todo.body = title
-
+    this.todoCollection.getById(id).title = title
     this.save()
   }
 
@@ -221,10 +175,9 @@ class {
   @event('todo-clear-completed')
   clearCompleted () {
     this.todoCollection = this.todoCollection.uncompleted()
+    this.save()
 
     this.updateView()
-
-    this.save()
   }
 
   /**
@@ -233,16 +186,14 @@ class {
    */
   @event('todo-uncomplete-all')
   uncompleteAll () {
-    if (this.filterIsEnabled()) {
-      this.todoCollection.uncompleteAll()
-
-      this.updateView()
-
-      this.save()
-    } else {
+    if (this.filter.isAll()) {
       this.todoCollection.completed().forEach(todo => {
         this.elem.find('#' + todo.id).cc.get('todo-item').toggleCompleted()
       })
+    } else {
+      this.todoCollection.uncompleteAll()
+      this.save()
+      this.updateView()
     }
   }
 
@@ -252,16 +203,14 @@ class {
    */
   @event('todo-complete-all')
   completeAll () {
-    if (this.filterIsEnabled()) {
-      this.todoCollection.completeAll()
-
-      this.updateView()
-
-      this.save()
-    } else {
+    if (this.filter.isAll()) {
       this.todoCollection.uncompleted().forEach(todo => {
         this.elem.find('#' + todo.id).cc.get('todo-item').toggleCompleted()
       })
+    } else {
+      this.todoCollection.completeAll()
+      this.save()
+      this.updateView()
     }
   }
 }

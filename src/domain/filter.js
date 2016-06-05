@@ -3,11 +3,14 @@ const Const = require('../const')
 class Filter {
   /**
    */
-  constructor(name, isAll) {
+  constructor (name, isAll) {
     this.name = name
   }
 
-  isAll() {
+  /**
+   * @return {boolean}
+   */
+  isAll () {
     return this.name === Const.FILTER.ALL
   }
 }

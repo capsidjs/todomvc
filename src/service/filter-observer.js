@@ -8,13 +8,20 @@ const {component} = require('class-component')
 void
 @component('filter-observer')
 class {
-  constructor(elem) {
-    $(window).on('hashchange', () => {
-      elem.trigger('filterchange', this.getCurrentFilter())
-    })
+  constructor () {
+    $(window).on('hashchange', () => this.triggerFilterchange())
+
+    setTimeout(() => this.triggerFilterchange())
   }
 
-  getCurrentFilter() {
+  /**
+   * Triggers the filterchange event.
+   */
+  triggerFilterchange () {
+    this.elem.trigger('filterchange', this.getCurrentFilter())
+  }
+
+  getCurrentFilter () {
     const name = window.location.hash.substring(1)
 
     if (name === Filter.ACTIVE.name) {

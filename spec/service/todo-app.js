@@ -3,6 +3,7 @@ const {div, ul, button, footer} = require('dom-gen')
 
 let elem
 let todoApp
+let filterObserver
 
 describe('todo-app', () => {
   beforeEach(() => {
@@ -20,6 +21,16 @@ describe('todo-app', () => {
     $.cc.init(null, elem)
 
     todoApp = elem.cc.init('todo-app')
+    filterObserver = elem.cc.init('filter-observer')
+    filterObserver.triggerFilterchange()
+  })
+
+  describe('on hashchange', () => {
+    it('updates view', done => {
+      todoApp.updateView = () => done()
+
+      window.location.href = '#foo'
+    })
   })
 
   describe('on todo-new-item', () => {

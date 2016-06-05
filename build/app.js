@@ -10637,7 +10637,8 @@ module.exports = {
 
   FILTER: {
     ACTIVE: '/active',
-    COMPLETED: '/completed'
+    COMPLETED: '/completed',
+    ALL: '/all'
   }
 };
 
@@ -10647,6 +10648,48 @@ module.exports = {
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Const = require('../const');
+
+var Filter = function () {
+  /**
+   */
+
+  function Filter(name, isAll) {
+    _classCallCheck(this, Filter);
+
+    this.name = name;
+  }
+
+  /**
+   * @return {boolean}
+   */
+
+
+  _createClass(Filter, [{
+    key: 'isAll',
+    value: function isAll() {
+      return this.name === Const.FILTER.ALL;
+    }
+  }]);
+
+  return Filter;
+}();
+
+Filter.ALL = new Filter(Const.FILTER.ALL);
+Filter.ACTIVE = new Filter(Const.FILTER.ACTIVE);
+Filter.COMPLETED = new Filter(Const.FILTER.COMPLETED);
+
+module.exports = Filter;
+
+},{"../const":18}],20:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Filter = require('./filter');
 
 /**
  * TodoCollection is the colleciton model of the todo model.
@@ -10835,6 +10878,24 @@ var TodoCollection = function () {
         todo.completed = false;
       });
     }
+
+    /**
+     * Returns the filtered todos by the given filter object.
+     * @param {Filter} filter The filter
+     * @return {TodoCollection}
+     */
+
+  }, {
+    key: 'filterBy',
+    value: function filterBy(filter) {
+      if (filter === Filter.ACTIVE) {
+        return this.uncompleted();
+      } else if (filter === Filter.COMPLETED) {
+        return this.completed();
+      } else {
+        return this;
+      }
+    }
   }]);
 
   return TodoCollection;
@@ -10842,7 +10903,7 @@ var TodoCollection = function () {
 
 module.exports = TodoCollection;
 
-},{}],20:[function(require,module,exports){
+},{"./filter":19}],21:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -10906,7 +10967,7 @@ var TodoFactory = function () {
 
 module.exports = TodoFactory;
 
-},{"./todo":22}],21:[function(require,module,exports){
+},{"./todo":23}],22:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -11000,7 +11061,7 @@ var TodoRepository = function () {
 
 module.exports = TodoRepository;
 
-},{"../const":18,"./todo-collection":19}],22:[function(require,module,exports){
+},{"../const":18,"./todo-collection":20}],23:[function(require,module,exports){
 "use strict";
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -11025,7 +11086,7 @@ function Todo(id, title, completed) {
 
 module.exports = Todo;
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -11040,15 +11101,78 @@ require('./component/todo-filters');
 require('./component/todo-edit');
 require('./component/todo-count');
 require('./component/todo-toggle-all');
+require('./service/filter-observer');
 require('./service/todo-app');
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./component/todo-clear-btn":10,"./component/todo-count":11,"./component/todo-edit":12,"./component/todo-filters":13,"./component/todo-input":14,"./component/todo-item":15,"./component/todo-list":16,"./component/todo-toggle-all":17,"./service/todo-app":24,"class-component":4,"jquery":9}],24:[function(require,module,exports){
+},{"./component/todo-clear-btn":10,"./component/todo-count":11,"./component/todo-edit":12,"./component/todo-filters":13,"./component/todo-input":14,"./component/todo-item":15,"./component/todo-list":16,"./component/todo-toggle-all":17,"./service/filter-observer":25,"./service/todo-app":26,"class-component":4,"jquery":9}],25:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _class, _desc, _value, _class2;
+var _dec, _class;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Filter = require('../domain/filter');
+
+var _require = require('class-component');
+
+var component = _require.component;
+
+/**
+ * The observer of the filter and invokes filterchange event when it's changed.
+ */
+
+void (_dec = component('filter-observer'), _dec(_class = function () {
+  function _class() {
+    var _this = this;
+
+    _classCallCheck(this, _class);
+
+    $(window).on('hashchange', function () {
+      return _this.triggerFilterchange();
+    });
+
+    setTimeout(function () {
+      return _this.triggerFilterchange();
+    });
+  }
+
+  /**
+   * Triggers the filterchange event.
+   */
+
+
+  _createClass(_class, [{
+    key: 'triggerFilterchange',
+    value: function triggerFilterchange() {
+      this.elem.trigger('filterchange', this.getCurrentFilter());
+    }
+  }, {
+    key: 'getCurrentFilter',
+    value: function getCurrentFilter() {
+      var name = window.location.hash.substring(1);
+
+      if (name === Filter.ACTIVE.name) {
+        return Filter.ACTIVE;
+      } else if (name === Filter.COMPLETED.name) {
+        return Filter.COMPLETED;
+      } else {
+        return Filter.ALL;
+      }
+    }
+  }]);
+
+  return _class;
+}()) || _class);
+
+},{"../domain/filter":19,"class-component":4}],26:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _class, _desc, _value, _class2;
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -11081,7 +11205,7 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
   return desc;
 }
 
-var Const = require('../const');
+var Filter = require('../domain/filter');
 var TodoFactory = require('../domain/todo-factory');
 var TodoRepository = require('../domain/todo-repository');
 
@@ -11093,7 +11217,7 @@ var component = _$$cc.component;
  * The todo application class.
  */
 
-void (_dec = component('todo-app'), _dec2 = event('todo-new-item'), _dec3 = event('todo-item-toggle'), _dec4 = event('todo-item-destroy'), _dec5 = event('todo-item-edited'), _dec6 = event('todo-clear-completed'), _dec7 = event('todo-uncomplete-all'), _dec8 = event('todo-complete-all'), _dec(_class = (_class2 = function () {
+void (_dec = component('todo-app'), _dec2 = event('filterchange'), _dec3 = event('todo-new-item'), _dec4 = event('todo-item-toggle'), _dec5 = event('todo-item-destroy'), _dec6 = event('todo-item-edited'), _dec7 = event('todo-clear-completed'), _dec8 = event('todo-uncomplete-all'), _dec9 = event('todo-complete-all'), _dec(_class = (_class2 = function () {
   /**
    * @param {jQuery} elem The element
    */
@@ -11103,29 +11227,15 @@ void (_dec = component('todo-app'), _dec2 = event('todo-new-item'), _dec3 = even
 
     this.todoFactory = new TodoFactory();
     this.todoRepository = new TodoRepository();
-
     this.todoCollection = this.todoRepository.getAll();
-
-    this.elem = elem;
-
-    this.initEvents();
-    this.updateView();
   }
 
-  /**
-   * Initializes events.
-   * @private
-   */
-
-
   _createClass(_class2, [{
-    key: 'initEvents',
-    value: function initEvents() {
-      var _this = this;
+    key: 'onFilterchange',
+    value: function onFilterchange(e, filter) {
+      this.filter = filter;
 
-      $(window).on('hashchange', function () {
-        _this.updateView();
-      });
+      this.updateView();
     }
 
     /**
@@ -11141,10 +11251,9 @@ void (_dec = component('todo-app'), _dec2 = event('todo-new-item'), _dec3 = even
       var todo = this.todoFactory.createByTitle(title);
 
       this.todoCollection.push(todo);
+      this.save();
 
       this.updateView();
-
-      this.save();
     }
 
     /**
@@ -11185,9 +11294,7 @@ void (_dec = component('todo-app'), _dec2 = event('todo-new-item'), _dec3 = even
   }, {
     key: 'updateTodoList',
     value: function updateTodoList() {
-      var todoCollection = this.getDisplayCollection();
-
-      this.elem.find('.todo-list').cc.get('todo-list').update(todoCollection);
+      this.elem.find('.todo-list').cc.get('todo-list').update(this.getDisplayCollection());
     }
 
     /**
@@ -11198,9 +11305,7 @@ void (_dec = component('todo-app'), _dec2 = event('todo-new-item'), _dec3 = even
   }, {
     key: 'updateFilterBtns',
     value: function updateFilterBtns() {
-      var filterName = this.getFilterNameFromHash();
-
-      this.elem.find('.todo-filters').cc.get('todo-filters').setFilter(filterName);
+      this.elem.find('.todo-filters').cc.get('todo-filters').setFilter(this.filter.name);
     }
 
     /**
@@ -11248,40 +11353,7 @@ void (_dec = component('todo-app'), _dec2 = event('todo-new-item'), _dec3 = even
   }, {
     key: 'getDisplayCollection',
     value: function getDisplayCollection() {
-      var filterName = this.getFilterNameFromHash();
-
-      if (filterName === Const.FILTER.ACTIVE) {
-        return this.todoCollection.uncompleted();
-      }
-
-      if (filterName === Const.FILTER.COMPLETED) {
-        return this.todoCollection.completed();
-      }
-
-      return this.todoCollection;
-    }
-
-    /**
-     * Returns if the filter is enabled.
-     * @private
-     */
-
-  }, {
-    key: 'filterIsEnabled',
-    value: function filterIsEnabled() {
-      var filterName = this.getFilterNameFromHash();
-
-      return filterName === Const.FILTER.ACTIVE || filterName === Const.FILTER.COMPLETED;
-    }
-
-    /**
-     * Gets the filter name from the hash string.
-     */
-
-  }, {
-    key: 'getFilterNameFromHash',
-    value: function getFilterNameFromHash() {
-      return window.location.hash.substring(1);
+      return this.todoCollection.filterBy(this.filter);
     }
 
     /**
@@ -11304,14 +11376,13 @@ void (_dec = component('todo-app'), _dec2 = event('todo-new-item'), _dec3 = even
     key: 'toggle',
     value: function toggle(e, id) {
       this.todoCollection.toggleById(id);
+      this.save();
 
-      if (this.filterIsEnabled()) {
+      if (!this.filter.isAll()) {
         this.updateTodoList();
       }
 
       this.updateControls();
-
-      this.save();
     }
 
     /**
@@ -11324,10 +11395,9 @@ void (_dec = component('todo-app'), _dec2 = event('todo-new-item'), _dec3 = even
     key: 'remove',
     value: function remove(e, id) {
       this.todoCollection.removeById(id);
+      this.save();
 
       this.updateView();
-
-      this.save();
     }
 
     /**
@@ -11340,10 +11410,7 @@ void (_dec = component('todo-app'), _dec2 = event('todo-new-item'), _dec3 = even
   }, {
     key: 'editItem',
     value: function editItem(e, id, title) {
-      var todo = this.todoCollection.getById(id);
-
-      todo.body = title;
-
+      this.todoCollection.getById(id).title = title;
       this.save();
     }
 
@@ -11355,10 +11422,9 @@ void (_dec = component('todo-app'), _dec2 = event('todo-new-item'), _dec3 = even
     key: 'clearCompleted',
     value: function clearCompleted() {
       this.todoCollection = this.todoCollection.uncompleted();
+      this.save();
 
       this.updateView();
-
-      this.save();
     }
 
     /**
@@ -11369,18 +11435,16 @@ void (_dec = component('todo-app'), _dec2 = event('todo-new-item'), _dec3 = even
   }, {
     key: 'uncompleteAll',
     value: function uncompleteAll() {
-      var _this2 = this;
+      var _this = this;
 
-      if (this.filterIsEnabled()) {
-        this.todoCollection.uncompleteAll();
-
-        this.updateView();
-
-        this.save();
-      } else {
+      if (this.filter.isAll()) {
         this.todoCollection.completed().forEach(function (todo) {
-          _this2.elem.find('#' + todo.id).cc.get('todo-item').toggleCompleted();
+          _this.elem.find('#' + todo.id).cc.get('todo-item').toggleCompleted();
         });
+      } else {
+        this.todoCollection.uncompleteAll();
+        this.save();
+        this.updateView();
       }
     }
 
@@ -11392,23 +11456,21 @@ void (_dec = component('todo-app'), _dec2 = event('todo-new-item'), _dec3 = even
   }, {
     key: 'completeAll',
     value: function completeAll() {
-      var _this3 = this;
+      var _this2 = this;
 
-      if (this.filterIsEnabled()) {
-        this.todoCollection.completeAll();
-
-        this.updateView();
-
-        this.save();
-      } else {
+      if (this.filter.isAll()) {
         this.todoCollection.uncompleted().forEach(function (todo) {
-          _this3.elem.find('#' + todo.id).cc.get('todo-item').toggleCompleted();
+          _this2.elem.find('#' + todo.id).cc.get('todo-item').toggleCompleted();
         });
+      } else {
+        this.todoCollection.completeAll();
+        this.save();
+        this.updateView();
       }
     }
   }]);
 
   return _class2;
-}(), (_applyDecoratedDescriptor(_class2.prototype, 'addTodo', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'addTodo'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'toggle', [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggle'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'remove', [_dec4], Object.getOwnPropertyDescriptor(_class2.prototype, 'remove'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'editItem', [_dec5], Object.getOwnPropertyDescriptor(_class2.prototype, 'editItem'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'clearCompleted', [_dec6], Object.getOwnPropertyDescriptor(_class2.prototype, 'clearCompleted'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'uncompleteAll', [_dec7], Object.getOwnPropertyDescriptor(_class2.prototype, 'uncompleteAll'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'completeAll', [_dec8], Object.getOwnPropertyDescriptor(_class2.prototype, 'completeAll'), _class2.prototype)), _class2)) || _class);
+}(), (_applyDecoratedDescriptor(_class2.prototype, 'onFilterchange', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'onFilterchange'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'addTodo', [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, 'addTodo'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'toggle', [_dec4], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggle'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'remove', [_dec5], Object.getOwnPropertyDescriptor(_class2.prototype, 'remove'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'editItem', [_dec6], Object.getOwnPropertyDescriptor(_class2.prototype, 'editItem'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'clearCompleted', [_dec7], Object.getOwnPropertyDescriptor(_class2.prototype, 'clearCompleted'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'uncompleteAll', [_dec8], Object.getOwnPropertyDescriptor(_class2.prototype, 'uncompleteAll'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'completeAll', [_dec9], Object.getOwnPropertyDescriptor(_class2.prototype, 'completeAll'), _class2.prototype)), _class2)) || _class);
 
-},{"../const":18,"../domain/todo-factory":20,"../domain/todo-repository":21}]},{},[23]);
+},{"../domain/filter":19,"../domain/todo-factory":21,"../domain/todo-repository":22}]},{},[24]);
