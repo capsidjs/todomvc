@@ -10,6 +10,7 @@ module.exports = {
 
   FILTER: {
     ACTIVE: '/active',
-    COMPLETED: '/completed'
+    COMPLETED: '/completed',
+    ALL: '/all'
   }
 }
