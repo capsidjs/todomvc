@@ -39,8 +39,8 @@
     "karma-chrome-launcher": "^0.2.0",
     "karma-coverage": "^0.5.2",
     "karma-coveralls": "^1.1.2",
+    "karma-firefox-launcher": "^1.0.0",
     "karma-mocha": "^0.2.0",
-    "karma-phantomjs-launcher": "^0.2.1",
     "mocha": "^2.2.5",
     "todomvc-app-css": "^1.0.4",
     "todomvc-common": "^1.0.2"
