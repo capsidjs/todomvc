@@ -1,5 +1,6 @@
 const Todo = require('../../src/domain/todo')
 const TodoCollection = require('../../src/domain/todo-collection')
+const Filter = require('../../src/domain/filter')
 
 const {expect} = require('chai')
 
@@ -133,6 +134,14 @@ describe('TodoCollection', () => {
       collection.uncompleteAll()
 
       expect(collection.completed().toArray()).to.have.length(0)
+    })
+  })
+
+  describe('filterBy', () => {
+    it('filters the todos by the given filter', () => {
+      expect(collection.filterBy(Filter.All).toArray()).to.have.length(3)
+      expect(collection.filterBy(Filter.ACTIVE).toArray()).to.have.length(1)
+      expect(collection.filterBy(Filter.COMPLETED).toArray()).to.have.length(2)
     })
   })
 })

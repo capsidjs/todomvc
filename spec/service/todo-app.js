@@ -125,8 +125,56 @@ describe('todo-app', () => {
   })
 
   describe('on todo-complete-all', () => {
+    it('completes all the todos when the filter is `/all`', () => {
+      elem.trigger('todo-new-item', 'foo')
+      elem.trigger('todo-new-item', 'bar')
+
+      elem.trigger('todo-complete-all')
+
+      todoApp.todoCollection.toArray().forEach(todo => {
+        expect(todo.completed).to.be.true
+      })
+    })
+
+    it('completes all the todos when the filter is not `/all`', () => {
+      elem.trigger('filterchange', Filter.ACTIVE)
+
+      elem.trigger('todo-new-item', 'foo')
+      elem.trigger('todo-new-item', 'bar')
+
+      elem.trigger('todo-complete-all')
+
+      todoApp.todoCollection.toArray().forEach(todo => {
+        expect(todo.completed).to.be.true
+      })
+    })
   })
 
   describe('on todo-uncomplete-all', () => {
+    it('uncompletes all the todos when the filter is `/all`', () => {
+      elem.trigger('todo-new-item', 'foo')
+      elem.trigger('todo-new-item', 'bar')
+
+      elem.trigger('todo-complete-all')
+      elem.trigger('todo-uncomplete-all')
+
+      todoApp.todoCollection.toArray().forEach(todo => {
+        expect(todo.completed).to.be.false
+      })
+    })
+
+    it('uncompletes all the todos when the filter is not `/all`', () => {
+      elem.trigger('filterchange', Filter.ACTIVE)
+
+      elem.trigger('todo-new-item', 'foo')
+      elem.trigger('todo-new-item', 'bar')
+
+      elem.trigger('todo-complete-all')
+      elem.trigger('todo-uncomplete-all')
+
+      todoApp.todoCollection.toArray().forEach(todo => {
+        expect(todo.completed).to.be.false
+      })
+    })
   })
 })
