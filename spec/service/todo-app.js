@@ -11,6 +11,8 @@ let filterObserver
 
 describe('todo-app', () => {
   beforeEach(() => {
+    localStorage.clear()
+
     elem = div(
       div({attr: {id: 'main'}},
         ul().cc('todo-list'),
@@ -55,15 +57,76 @@ describe('todo-app', () => {
 
       expect(todo.completed).to.be.true
     })
+
+    it('updates the todo list when the filter is not `/all`', done => {
+      elem.trigger('todo-new-item', 'foo')
+      elem.trigger('filterchange', Filter.ACTIVE)
+
+      todoApp.updateTodoList = () => done()
+
+      const id = elem.find('.todo-item').attr('id')
+
+      elem.trigger('todo-item-toggle', id)
+    })
   })
 
-  describe('on todo-item-destroy', () => {})
+  describe('on todo-item-destroy', () => {
+    it('removes the item', () => {
+      elem.trigger('todo-new-item', 'foo')
+      elem.trigger('todo-new-item', 'bar')
 
-  describe('on todo-item-edited', () => {})
+      expect(todoApp.todoCollection.toArray().length).to.equal(2)
 
-  describe('on todo-clear-completed', () => {})
+      let id = elem.find('.todo-item').attr('id')
 
-  describe('on todo-complete-all', () => {})
+      elem.trigger('todo-item-destroy', id)
 
-  describe('on todo-uncomplete-all', () => {})
+      expect(todoApp.todoCollection.toArray().length).to.equal(1)
+
+      id = elem.find('.todo-item').attr('id')
+
+      elem.trigger('todo-item-destroy', id)
+
+      expect(todoApp.todoCollection.toArray().length).to.equal(0)
+    })
+  })
+
+  describe('on todo-item-edited', () => {
+    it('saves the edited title', () => {
+      elem.trigger('todo-new-item', 'foo')
+
+      const id = elem.find('.todo-item').attr('id')
+
+      elem.trigger('todo-item-edited', [id, 'foobar'])
+
+      expect(todoApp.todoCollection.getById(id).title).to.equal('foobar')
+    })
+  })
+
+  describe('on todo-clear-completed', () => {
+    it('clears the completed todos', () => {
+      elem.trigger('todo-new-item', 'foo')
+      elem.trigger('todo-new-item', 'bar')
+
+      let id = elem.find('.todo-item').attr('id')
+
+      elem.trigger('todo-item-toggle', id)
+
+      elem.trigger('todo-clear-completed')
+
+      expect(todoApp.todoCollection.toArray().length).to.equal(1)
+
+      id = elem.find('.todo-item').attr('id')
+
+      const todo = todoApp.todoCollection.getById(id)
+
+      expect(todo.title).to.equal('bar')
+    })
+  })
+
+  describe('on todo-complete-all', () => {
+  })
+
+  describe('on todo-uncomplete-all', () => {
+  })
 })
