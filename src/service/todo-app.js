@@ -1,4 +1,3 @@
-const Filter = require('../domain/filter')
 const TodoFactory = require('../domain/todo-factory')
 const TodoRepository = require('../domain/todo-repository')
 
@@ -13,7 +12,7 @@ class {
   /**
    * @param {jQuery} elem The element
    */
-  constructor (elem) {
+  constructor () {
     this.todoFactory = new TodoFactory()
     this.todoRepository = new TodoRepository()
     this.todoCollection = this.todoRepository.getAll()

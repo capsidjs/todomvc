@@ -143,7 +143,7 @@ class TodoCollection {
    * @param {Filter} filter The filter
    * @return {TodoCollection}
    */
-  filterBy(filter) {
+  filterBy (filter) {
     if (filter === Filter.ACTIVE) {
       return this.uncompleted()
     } else if (filter === Filter.COMPLETED) {

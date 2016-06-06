@@ -1,13 +1,11 @@
 const {div} = require('dom-gen')
 const {expect} = require('chai')
 
-let elem, filterObserver
+let elem
 
 describe('filter-observer', () => {
   beforeEach(() => {
-    elem = div()
-
-    filterObserver = elem.cc.init('filter-observer')
+    elem = div().cc('filter-observer')
   })
 
   it('triggers the filterchange event when constructed', done => {

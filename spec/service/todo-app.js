@@ -1,17 +1,14 @@
 const Filter = require('../../src/domain/filter')
-const Todo = require('../../src/domain/todo')
-const TodoCollection = require('../../src/domain/todo-collection')
 
 const {expect} = require('chai')
 const {div, ul, button, footer} = require('dom-gen')
 
 let elem
 let todoApp
-let filterObserver
 
 describe('todo-app', () => {
   beforeEach(() => {
-    localStorage.clear()
+    window.localStorage.clear()
 
     elem = div(
       div({attr: {id: 'main'}},
