@@ -1,6 +1,6 @@
 const Const = require('../const')
 
-const {event, component} = $.cc
+const {on, component} = $.cc
 
 /**
  * TodoInput class controls the input for adding todos.
@@ -12,7 +12,7 @@ class {
    * Handler for key presses.
    * @param {Event}
    */
-  @event('keypress')
+  @on('keypress')
   onKeypress (e) {
     if (e.which !== Const.KEYCODE.ENTER) {
       return

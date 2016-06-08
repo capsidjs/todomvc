@@ -1,5 +1,5 @@
 const {div, input, label, button} = require('dom-gen')
-const {event, component} = $.cc
+const {on, component} = $.cc
 
 /**
  * TodoItem class controls todo item in a list.
@@ -39,7 +39,7 @@ class {
    * Toggles the completed state of the item.
    * @private
    */
-  @event('click', '.toggle')
+  @on('click').at('.toggle')
   toggleCompleted () {
     this.elem.trigger('todo-item-toggle', this.elem.attr('id'))
 
@@ -51,7 +51,7 @@ class {
    * Destroys the item.
    * @private
    */
-  @event('click', '.destroy')
+  @on('click').at('.destroy')
   destroy () {
     this.elem.parent().trigger('todo-item-destroy', this.elem.attr('id'))
 
@@ -92,7 +92,7 @@ class {
    * Starts editing.
    * @private
    */
-  @event('dblclick', 'label')
+  @on('dblclick').at('label')
   startEditing () {
     this.elem.addClass('editing')
   }
@@ -101,7 +101,7 @@ class {
    * Stops editing.
    * @private
    */
-  @event('todo-edited')
+  @on('todo-edited')
   stopEditing (e, title) {
     this.elem.removeClass('editing')
 

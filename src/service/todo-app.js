@@ -1,7 +1,7 @@
 const TodoFactory = require('../domain/todo-factory')
 const TodoRepository = require('../domain/todo-repository')
 
-const {event, component} = $.cc
+const {on, component} = $.cc
 
 /**
  * The todo application class.
@@ -18,7 +18,7 @@ class {
     this.todoCollection = this.todoRepository.getAll()
   }
 
-  @event('filterchange')
+  @on('filterchange')
   onFilterchange (e, filter) {
     this.filter = filter
 
@@ -31,7 +31,7 @@ class {
    * @param {Object} e The event object
    * @param {String} title The todo title
    */
-  @event('todo-new-item')
+  @on('todo-new-item')
   addTodo (e, title) {
     const todo = this.todoFactory.createByTitle(title)
 
@@ -131,7 +131,7 @@ class {
    * @param {object} e The event object
    * @param {String} id The todo id
    */
-  @event('todo-item-toggle')
+  @on('todo-item-toggle')
   toggle (e, id) {
     this.todoCollection.toggleById(id)
     this.save()
@@ -148,7 +148,7 @@ class {
    * @param {object} e The event object
    * @param {String} id The todo id
    */
-  @event('todo-item-destroy')
+  @on('todo-item-destroy')
   remove (e, id) {
     this.todoCollection.removeById(id)
     this.save()
@@ -162,7 +162,7 @@ class {
    * @param {string} id The todo id
    * @param {string} title The todo title
    */
-  @event('todo-item-edited')
+  @on('todo-item-edited')
   editItem (e, id, title) {
     this.todoCollection.getById(id).title = title
     this.save()
@@ -171,7 +171,7 @@ class {
   /**
    * Clears the completed todos.
    */
-  @event('todo-clear-completed')
+  @on('todo-clear-completed')
   clearCompleted () {
     this.todoCollection = this.todoCollection.uncompleted()
     this.save()
@@ -183,7 +183,7 @@ class {
    * Uncompletes all the todo items.
    * @private
    */
-  @event('todo-uncomplete-all')
+  @on('todo-uncomplete-all')
   uncompleteAll () {
     if (this.filter.isAll()) {
       this.todoCollection.completed().forEach(todo => {
@@ -200,7 +200,7 @@ class {
    * Completes all the todo items.
    * @private
    */
-  @event('todo-complete-all')
+  @on('todo-complete-all')
   completeAll () {
     if (this.filter.isAll()) {
       this.todoCollection.uncompleted().forEach(todo => {

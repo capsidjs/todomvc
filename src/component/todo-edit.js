@@ -1,6 +1,6 @@
 const Const = require('../const')
 
-const {event, component} = $.cc
+const {on, component} = $.cc
 
 /**
  * TodoEdit controls the edit area of each todo item.
@@ -13,7 +13,7 @@ class {
    *
    * @param {Event} e The event
    */
-  @event('keypress')
+  @on('keypress')
   onKeypress (e) {
     if (e.which === Const.KEYCODE.ENTER) {
       this.stopEditing()
@@ -23,7 +23,7 @@ class {
   /**
    * Stops editing with current value.
    */
-  @event('blur')
+  @on('blur')
   stopEditing () {
     this.elem.trigger('todo-edited', this.elem.val())
   }
