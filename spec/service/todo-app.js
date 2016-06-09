@@ -26,9 +26,9 @@ describe('todo-app', () => {
     elem.trigger('filterchange', Filter.ALL)
   })
 
-  describe('on hashchange', () => {
+  describe('on filterchange', () => {
     it('updates view', done => {
-      todoApp.updateView = () => done()
+      elem.on('todo-app-update', () => done())
 
       elem.trigger('filterchange', Filter.ALL)
     })
@@ -59,7 +59,7 @@ describe('todo-app', () => {
       elem.trigger('todo-new-item', 'foo')
       elem.trigger('filterchange', Filter.ACTIVE)
 
-      todoApp.updateTodoList = () => done()
+      elem.on('todo-app-update.todo-list', () => done())
 
       const id = elem.find('.todo-item').attr('id')
 

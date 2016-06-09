@@ -1,7 +1,8 @@
 const TodoFactory = require('../domain/todo-factory')
 const TodoRepository = require('../domain/todo-repository')
+require('./todo-app-presenter')
 
-const {on, component} = $.cc
+const {on, emit, component} = $.cc
 
 /**
  * The todo application class.
@@ -12,17 +13,18 @@ class {
   /**
    * @param {jQuery} elem The element
    */
-  constructor () {
+  constructor (elem) {
     this.todoFactory = new TodoFactory()
     this.todoRepository = new TodoRepository()
     this.todoCollection = this.todoRepository.getAll()
+
+    elem.cc('todo-app-presenter')
   }
 
   @on('filterchange')
+  @emit('todo-app-update').last
   onFilterchange (e, filter) {
     this.filter = filter
-
-    this.updateView()
   }
 
   /**
@@ -32,91 +34,12 @@ class {
    * @param {String} title The todo title
    */
   @on('todo-new-item')
+  @emit('todo-app-update').last
   addTodo (e, title) {
     const todo = this.todoFactory.createByTitle(title)
 
     this.todoCollection.push(todo)
     this.save()
-
-    this.updateView()
-  }
-
-  /**
-   * Updates the view in the todo app.
-   * @private
-   */
-  updateView () {
-    this.updateTodoList()
-
-    this.updateControls()
-  }
-
-  /**
-   * Updates the controls.
-   * @private
-   */
-  updateControls () {
-    this.updateFilterBtns()
-
-    this.updateTodoCount()
-
-    this.updateVisibility()
-
-    this.updateToggleBtnState()
-  }
-
-  /**
-   * Updates the todo list.
-   * @private
-   */
-  updateTodoList () {
-    this.elem.find('.todo-list').cc.get('todo-list').update(this.getDisplayCollection())
-  }
-
-  /**
-   * Updates the filter buttons.
-   * @private
-   */
-  updateFilterBtns () {
-    this.elem.find('.todo-filters').cc.get('todo-filters').setFilter(this.filter.name)
-  }
-
-  /**
-   * Updates the todo counter.
-   * @private
-   */
-  updateTodoCount () {
-    this.elem.find('.todo-count').cc.get('todo-count').setCount(this.todoCollection.uncompleted().toArray().length)
-  }
-
-  /**
-   * Updates the visiblity of components.
-   * @private
-   */
-  updateVisibility () {
-    if (this.todoCollection.isEmpty()) {
-      this.elem.find('#main, #footer').css('display', 'none')
-    } else {
-      this.elem.find('#main, #footer').css('display', 'block')
-    }
-  }
-
-  /**
-   * Updates the toggle-all button state.
-   * @private
-   */
-  updateToggleBtnState () {
-    this.elem.find('.todo-toggle-all').cc.get('todo-toggle-all').updateBtnState(
-      !this.todoCollection.uncompleted().isEmpty()
-    )
-  }
-
-  /**
-   * Gets the todo collection which is displayable in the current filter.
-   * @private
-   */
-  getDisplayCollection () {
-    return this.todoCollection.filterBy(this.filter)
   }
 
   /**
@@ -132,15 +55,14 @@ class {
    * @param {String} id The todo id
    */
   @on('todo-item-toggle')
+  @emit('todo-app-update.controls').last
   toggle (e, id) {
     this.todoCollection.toggleById(id)
     this.save()
 
     if (!this.filter.isAll()) {
-      this.updateTodoList()
+      this.elem.trigger('todo-app-update.todo-list')
     }
-
-    this.updateControls()
   }
 
   /**
@@ -149,11 +71,10 @@ class {
    * @param {String} id The todo id
    */
   @on('todo-item-destroy')
+  @emit('todo-app-update').last
   remove (e, id) {
     this.todoCollection.removeById(id)
     this.save()
-
-    this.updateView()
   }
 
   /**
@@ -172,11 +93,10 @@ class {
    * Clears the completed todos.
    */
   @on('todo-clear-completed')
+  @emit('todo-app-update').last
   clearCompleted () {
     this.todoCollection = this.todoCollection.uncompleted()
     this.save()
-
-    this.updateView()
   }
 
   /**
@@ -192,7 +112,8 @@ class {
     } else {
       this.todoCollection.uncompleteAll()
       this.save()
-      this.updateView()
+
+      this.elem.trigger('todo-app-update')
     }
   }
 
@@ -203,13 +124,29 @@ class {
   @on('todo-complete-all')
   completeAll () {
     if (this.filter.isAll()) {
-      this.todoCollection.uncompleted().forEach(todo => {
-        this.elem.find('#' + todo.id).cc.get('todo-item').toggleCompleted()
-      })
+      this.completeAllWhenFilterAll()
     } else {
-      this.todoCollection.completeAll()
-      this.save()
-      this.updateView()
+      this.completeAllWhenFilterNotAll()
     }
+  }
+
+  /**
+   * Completes all the todo items when the filter is /all.
+   * @private
+   */
+  completeAllWhenFilterAll() {
+    this.todoCollection.uncompleted().forEach(todo => {
+      this.elem.find('#' + todo.id).cc.get('todo-item').toggleCompleted()
+    })
+  }
+
+  /**
+   * Completes all the todo items when the filter is not /all.
+   * @private
+   */
+  @emit('todo-app-update').last
+  completeAllWhenFilterNotAll() {
+    this.todoCollection.completeAll()
+    this.save()
   }
 }

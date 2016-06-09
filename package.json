@@ -25,7 +25,7 @@
     "browserify": "^13.0.1",
     "browserify-istanbul": "^2.0.0",
     "chai": "^3.5.0",
-    "class-component": "^9.0.0",
+    "class-component": "^9.1.1",
     "codecov": "^1.0.1",
     "dom-gen": "^2.2.0",
     "eslint": "^2.11.1",

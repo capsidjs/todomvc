@@ -11,7 +11,7 @@ class {
   constructor () {
     $(window).on('hashchange', () => this.triggerFilterchange())
 
-    setTimeout(() => this.triggerFilterchange())
+    setTimeout(() => this.triggerFilterchange(), 100)
   }
 
   /**
