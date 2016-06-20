@@ -11811,10 +11811,10 @@ require('./component/todo-edit');
 require('./component/todo-count');
 require('./component/todo-toggle-all');
 require('./service/filter-observer');
-require('./service/todo-app');
+require('./service/todoapp');
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./component/todo-clear-btn":10,"./component/todo-count":11,"./component/todo-edit":12,"./component/todo-filters":13,"./component/todo-input":14,"./component/todo-item":15,"./component/todo-list":16,"./component/todo-toggle-all":17,"./service/filter-observer":25,"./service/todo-app":27,"class-component":4,"jquery":9}],25:[function(require,module,exports){
+},{"./component/todo-clear-btn":10,"./component/todo-count":11,"./component/todo-edit":12,"./component/todo-filters":13,"./component/todo-input":14,"./component/todo-item":15,"./component/todo-list":16,"./component/todo-toggle-all":17,"./service/filter-observer":25,"./service/todoapp":27,"class-component":4,"jquery":9}],25:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -11934,7 +11934,7 @@ void (_dec = component('todo-app-presenter'), _dec2 = on('todo-app-update.contro
      * Gets the current filter.
      */
     value: function getFilter() {
-      return this.elem.cc.get('todo-app').filter;
+      return this.elem.cc.get('todoapp').filter;
     }
 
     /**
@@ -11945,7 +11945,7 @@ void (_dec = component('todo-app-presenter'), _dec2 = on('todo-app-update.contro
   }, {
     key: 'getTodos',
     value: function getTodos() {
-      return this.elem.cc.get('todo-app').todoCollection;
+      return this.elem.cc.get('todoapp').todoCollection;
     }
     /**
      * Updates the controls.
@@ -12006,9 +12006,9 @@ void (_dec = component('todo-app-presenter'), _dec2 = on('todo-app-update.contro
     key: 'updateVisibility',
     value: function updateVisibility() {
       if (this.getTodos().isEmpty()) {
-        this.elem.find('#main, #footer').css('display', 'none');
+        this.elem.find('.main, .footer').css('display', 'none');
       } else {
-        this.elem.find('#main, #footer').css('display', 'block');
+        this.elem.find('.main, .footer').css('display', 'block');
       }
     }
 
@@ -12031,7 +12031,7 @@ void (_dec = component('todo-app-presenter'), _dec2 = on('todo-app-update.contro
   }, {
     key: 'getDisplayCollection',
     value: function getDisplayCollection() {
-      return this.getTodos().filterBy(this.filter);
+      return this.getTodos().filterBy(this.getFilter());
     }
   }]);
 
@@ -12089,7 +12089,7 @@ var component = _$$cc.component;
  * The todo application class.
  */
 
-void (_dec = component('todo-app'), _dec2 = on('filterchange'), _dec3 = emit('todo-app-update').last, _dec4 = on('todo-new-item'), _dec5 = emit('todo-app-update').last, _dec6 = on('todo-item-toggle'), _dec7 = emit('todo-app-update.controls').last, _dec8 = on('todo-item-destroy'), _dec9 = emit('todo-app-update').last, _dec10 = on('todo-item-edited'), _dec11 = on('todo-clear-completed'), _dec12 = emit('todo-app-update').last, _dec13 = on('todo-uncomplete-all'), _dec14 = on('todo-complete-all'), _dec15 = emit('todo-app-update').last, _dec(_class = (_class2 = function () {
+void (_dec = component('todoapp'), _dec2 = on('filterchange'), _dec3 = emit('todo-app-update').last, _dec4 = on('todo-new-item'), _dec5 = emit('todo-app-update').last, _dec6 = on('todo-item-toggle'), _dec7 = emit('todo-app-update.controls').last, _dec8 = on('todo-item-destroy'), _dec9 = emit('todo-app-update').last, _dec10 = on('todo-item-edited'), _dec11 = on('todo-clear-completed'), _dec12 = emit('todo-app-update').last, _dec13 = on('todo-uncomplete-all'), _dec14 = on('todo-complete-all'), _dec15 = emit('todo-app-update').last, _dec(_class = (_class2 = function () {
   /**
    * @param {jQuery} elem The element
    */

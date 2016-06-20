@@ -7,19 +7,19 @@
 		<link rel="stylesheet" href="node_modules/todomvc-app-css/index.css">
 	</head>
 	<body>
-		<section id="todoapp" class="todoapp todo-app filter-observer">
+		<section class="todoapp filter-observer">
 			<header id="header" class="header">
 				<h1>todos</h1>
-				<input id="new-todo" class="todo-input new-todo" placeholder="What needs to be done?" autofocus />
+				<input class="todo-input new-todo" placeholder="What needs to be done?" autofocus />
 			</header>
-			<section id="main" class="main">
-				<input id="toggle-all" class="todo-toggle-all toggle-all" type="checkbox" />
+			<section class="main">
+				<input class="todo-toggle-all toggle-all" type="checkbox" />
 				<label for="toggle-all">Mark all as complete</label>
-				<ul id="todo-list" class="todo-list"></ul>
+				<ul class="todo-list"></ul>
 			</section>
-			<footer id="footer" class="footer">
-				<span id="todo-count" class="todo-count"></span>
-				<ul id="filters" class="filters todo-filters">
+			<footer class="footer">
+				<span class="todo-count"></span>
+				<ul class="filters todo-filters">
 					<li>
 						<a class="todo-filter" name="all" href="#/">All</a>
 					</li>
@@ -30,10 +30,10 @@
 						<a class="todo-filter" name="completed" href="#/completed">Completed</a>
 					</li>
 				</ul>
-				<button id="clear-completed" class="clear-completed todo-clear-btn">Clear completed</button>
+				<button class="clear-completed todo-clear-btn">Clear completed</button>
 			</footer>
 		</section>
-		<footer id="info" class="info">
+		<footer class="info">
 			<p>Double-click to edit a todo</p>
 			<p>Written by <a href="https://github.com/kt3k">Yoshiya Hinosawa</a></p>
 			<p>Part of <a href="http://todomvc.com">TodoMVC</a></p>

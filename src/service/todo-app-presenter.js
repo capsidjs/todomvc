@@ -10,7 +10,7 @@ class {
    * Gets the current filter.
    */
   getFilter() {
-    return this.elem.cc.get('todo-app').filter
+    return this.elem.cc.get('todoapp').filter
   }
 
   /**
@@ -18,7 +18,7 @@ class {
    * @return {TodoCollection}
    */
   getTodos() {
-    return this.elem.cc.get('todo-app').todoCollection
+    return this.elem.cc.get('todoapp').todoCollection
   }
   /**
    * Updates the controls.
@@ -66,9 +66,9 @@ class {
    */
   updateVisibility () {
     if (this.getTodos().isEmpty()) {
-      this.elem.find('#main, #footer').css('display', 'none')
+      this.elem.find('.main, .footer').css('display', 'none')
     } else {
-      this.elem.find('#main, #footer').css('display', 'block')
+      this.elem.find('.main, .footer').css('display', 'block')
     }
   }
 
@@ -85,6 +85,6 @@ class {
    * @private
    */
   getDisplayCollection () {
-    return this.getTodos().filterBy(this.filter)
+    return this.getTodos().filterBy(this.getFilter())
   }
 }

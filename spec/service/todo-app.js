@@ -6,7 +6,7 @@ const {div, ul, button, footer} = require('dom-gen')
 let elem
 let todoApp
 
-describe('todo-app', () => {
+describe('todoapp', () => {
   beforeEach(() => {
     window.localStorage.clear()
 
@@ -21,7 +21,7 @@ describe('todo-app', () => {
       )
     )
 
-    todoApp = elem.cc.init('todo-app')
+    todoApp = elem.cc.init('todoapp')
 
     elem.trigger('filterchange', Filter.ALL)
   })

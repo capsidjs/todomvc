@@ -8,7 +8,7 @@ const {on, emit, component} = $.cc
  * The todo application class.
  */
 void
-@component('todo-app')
+@component('todoapp')
 class {
   /**
    * @param {jQuery} elem The element
