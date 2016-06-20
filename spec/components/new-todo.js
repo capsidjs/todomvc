@@ -9,7 +9,7 @@ describe('TodoInput', () => {
   beforeEach(() => {
     elem = input().val('abc')
 
-    elem.cc.init('todo-input')
+    elem.cc.init('new-todo')
   })
 
   describe('on keypress', () => {

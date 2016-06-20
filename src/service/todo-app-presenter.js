@@ -77,7 +77,7 @@ class {
    * @private
    */
   updateToggleBtnState () {
-    this.elem.find('.todo-toggle-all').cc.get('todo-toggle-all').updateBtnState(!this.getTodos().uncompleted().isEmpty())
+    this.elem.find('.toggle-all').cc.get('toggle-all').updateBtnState(!this.getTodos().uncompleted().isEmpty())
   }
 
   /**

@@ -4,7 +4,7 @@ const {event, component} = $.cc
  * The toggle all button
  */
 void
-@component('todo-toggle-all')
+@component('toggle-all')
 class {
   /**
    * Toggles the all items.

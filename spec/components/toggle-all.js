@@ -4,11 +4,11 @@ const {div} = require('dom-gen')
 var elem
 var toggleAll
 
-describe('todo-toggle-all', () => {
+describe('toggle-all', () => {
   beforeEach(() => {
     elem = div()
 
-    toggleAll = elem.cc.init('todo-toggle-all')
+    toggleAll = elem.cc.init('toggle-all')
   })
 
   afterEach(() => {

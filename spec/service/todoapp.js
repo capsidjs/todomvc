@@ -13,7 +13,7 @@ describe('todoapp', () => {
     elem = div(
       div({attr: {id: 'main'}},
         ul().cc('todo-list'),
-        button().cc('todo-toggle-all')
+        button().cc('toggle-all')
       ),
       footer({attr: {id: 'footer'}},
         ul().cc('todo-filters'),

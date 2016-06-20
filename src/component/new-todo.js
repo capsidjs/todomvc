@@ -6,7 +6,7 @@ const {on, component} = $.cc
  * TodoInput class controls the input for adding todos.
  */
 void
-@component('todo-input')
+@component('new-todo')
 class {
   /**
    * Handler for key presses.
