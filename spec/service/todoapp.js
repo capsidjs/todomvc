@@ -16,7 +16,7 @@ describe('todoapp', () => {
         button().cc('toggle-all')
       ),
       footer({attr: {id: 'footer'}},
-        ul().cc('todo-filters'),
+        ul().cc('filters'),
         div().cc('todo-count')
       )
     )

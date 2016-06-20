@@ -49,7 +49,7 @@ class {
    * @private
    */
   updateFilterBtns () {
-    this.elem.find('.todo-filters').cc.get('todo-filters').setFilter(this.getFilter().name)
+    this.elem.find('.filters').cc.get('filters').setFilter(this.getFilter().name)
   }
 
   /**

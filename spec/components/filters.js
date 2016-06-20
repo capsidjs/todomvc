@@ -4,10 +4,10 @@ const {div, li} = require('dom-gen')
 let filterControl
 let elem
 
-describe('TodoFilters', () => {
+describe('filters', () => {
   beforeEach(() => {
     elem = div()
-    filterControl = elem.cc.init('todo-filters')
+    filterControl = elem.cc.init('filters')
 
     li('<a name="all" />').appendTo(elem)
     li('<a name="active" />').appendTo(elem)
