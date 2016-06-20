@@ -1,9 +1,9 @@
 const {button} = require('dom-gen')
 
-describe('TodoClearBtn', () => {
+describe('clear-completed', () => {
   it('triggers todo-clear-completed event when clicked', done => {
     button()
-    .cc('todo-clear-btn')
+    .cc('clear-completed')
     .on('todo-clear-completed', () => done())
     .click()
   })
