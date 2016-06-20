@@ -10769,43 +10769,71 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
   return desc;
 }
 
-var Const = require('../const');
-
 var _$$cc = $.cc;
-var on = _$$cc.on;
 var component = _$$cc.component;
+var on = _$$cc.on;
 
-/**
- * TodoInput class controls the input for adding todos.
- */
 
-void (_dec = component('new-todo'), _dec2 = on('keypress'), _dec(_class = (_class2 = function () {
+void (_dec = component('clear-completed'), _dec2 = on('click'), _dec(_class = (_class2 = function () {
   function _class2() {
     _classCallCheck(this, _class2);
   }
 
   _createClass(_class2, [{
-    key: 'onKeypress',
-    value: function onKeypress(e) {
-      if (e.which !== Const.KEYCODE.ENTER) {
-        return;
-      }
-
-      if (!this.elem.val() || !this.elem.val().trim()) {
-        return;
-      }
-
-      var title = this.elem.val().trim();
-      this.elem.val('');
-
-      this.elem.trigger('todo-new-item', title);
+    key: 'onClick',
+    value: function onClick() {
+      this.elem.trigger('todo-clear-completed');
     }
   }]);
 
   return _class2;
-}(), (_applyDecoratedDescriptor(_class2.prototype, 'onKeypress', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'onKeypress'), _class2.prototype)), _class2)) || _class);
+}(), (_applyDecoratedDescriptor(_class2.prototype, 'onClick', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'onClick'), _class2.prototype)), _class2)) || _class);
 
-},{"../const":18}],11:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _dec, _class;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var component = $.cc.component;
+
+/**
+ * The todo filter controls.
+ */
+
+void (_dec = component('filters'), _dec(_class = function () {
+  function _class() {
+    _classCallCheck(this, _class);
+  }
+
+  _createClass(_class, [{
+    key: 'setFilter',
+
+
+    /**
+     * Sets the given filter button active.
+     * @param {String} name The name of the filter
+     */
+    value: function setFilter(name) {
+      this.elem.find('a').removeClass('selected');
+
+      if (name === '/active') {
+        this.elem.find('a[name="active"]').addClass('selected');
+      } else if (name === '/completed') {
+        this.elem.find('a[name="completed"]').addClass('selected');
+      } else {
+        this.elem.find('a[name="all"]').addClass('selected');
+      }
+    }
+  }]);
+
+  return _class;
+}()) || _class);
+
+},{}],12:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -10843,27 +10871,43 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
   return desc;
 }
 
+var Const = require('../const');
+
 var _$$cc = $.cc;
-var component = _$$cc.component;
 var on = _$$cc.on;
+var component = _$$cc.component;
 
+/**
+ * TodoInput class controls the input for adding todos.
+ */
 
-void (_dec = component('todo-clear-btn'), _dec2 = on('click'), _dec(_class = (_class2 = function () {
+void (_dec = component('new-todo'), _dec2 = on('keypress'), _dec(_class = (_class2 = function () {
   function _class2() {
     _classCallCheck(this, _class2);
   }
 
   _createClass(_class2, [{
-    key: 'onClick',
-    value: function onClick() {
-      this.elem.trigger('todo-clear-completed');
+    key: 'onKeypress',
+    value: function onKeypress(e) {
+      if (e.which !== Const.KEYCODE.ENTER) {
+        return;
+      }
+
+      if (!this.elem.val() || !this.elem.val().trim()) {
+        return;
+      }
+
+      var title = this.elem.val().trim();
+      this.elem.val('');
+
+      this.elem.trigger('todo-new-item', title);
     }
   }]);
 
   return _class2;
-}(), (_applyDecoratedDescriptor(_class2.prototype, 'onClick', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'onClick'), _class2.prototype)), _class2)) || _class);
+}(), (_applyDecoratedDescriptor(_class2.prototype, 'onKeypress', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'onKeypress'), _class2.prototype)), _class2)) || _class);
 
-},{}],12:[function(require,module,exports){
+},{"../const":18}],13:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -10902,7 +10946,7 @@ void (_dec = component('todo-count'), _dec(_class = function () {
   return _class;
 }()) || _class);
 
-},{"dom-gen":8}],13:[function(require,module,exports){
+},{"dom-gen":8}],14:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -10977,51 +11021,7 @@ void (_dec = component('todo-edit'), _dec2 = on('keypress'), _dec3 = on('blur'),
   return _class2;
 }(), (_applyDecoratedDescriptor(_class2.prototype, 'onKeypress', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'onKeypress'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'stopEditing', [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, 'stopEditing'), _class2.prototype)), _class2)) || _class);
 
-},{"../const":18}],14:[function(require,module,exports){
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _dec, _class;
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var component = $.cc.component;
-
-/**
- * The todo filter controls.
- */
-
-void (_dec = component('todo-filters'), _dec(_class = function () {
-  function _class() {
-    _classCallCheck(this, _class);
-  }
-
-  _createClass(_class, [{
-    key: 'setFilter',
-
-
-    /**
-     * Sets the given filter button active.
-     * @param {String} name The name of the filter
-     */
-    value: function setFilter(name) {
-      this.elem.find('a').removeClass('selected');
-
-      if (name === '/active') {
-        this.elem.find('a[name="active"]').addClass('selected');
-      } else if (name === '/completed') {
-        this.elem.find('a[name="completed"]').addClass('selected');
-      } else {
-        this.elem.find('a[name="all"]').addClass('selected');
-      }
-    }
-  }]);
-
-  return _class;
-}()) || _class);
-
-},{}],15:[function(require,module,exports){
+},{"../const":18}],15:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -11805,8 +11805,8 @@ require('class-component');
 require('./component/todo-item');
 require('./component/new-todo');
 require('./component/todo-list');
-require('./component/todo-clear-btn');
-require('./component/todo-filters');
+require('./component/clear-completed');
+require('./component/filters');
 require('./component/todo-edit');
 require('./component/todo-count');
 require('./component/toggle-all');
@@ -11814,7 +11814,7 @@ require('./service/filter-observer');
 require('./service/todoapp');
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./component/new-todo":10,"./component/todo-clear-btn":11,"./component/todo-count":12,"./component/todo-edit":13,"./component/todo-filters":14,"./component/todo-item":15,"./component/todo-list":16,"./component/toggle-all":17,"./service/filter-observer":25,"./service/todoapp":27,"class-component":4,"jquery":9}],25:[function(require,module,exports){
+},{"./component/clear-completed":10,"./component/filters":11,"./component/new-todo":12,"./component/todo-count":13,"./component/todo-edit":14,"./component/todo-item":15,"./component/todo-list":16,"./component/toggle-all":17,"./service/filter-observer":25,"./service/todoapp":27,"class-component":4,"jquery":9}],25:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -11983,7 +11983,7 @@ void (_dec = component('todo-app-presenter'), _dec2 = on('todo-app-update.contro
   }, {
     key: 'updateFilterBtns',
     value: function updateFilterBtns() {
-      this.elem.find('.todo-filters').cc.get('todo-filters').setFilter(this.getFilter().name);
+      this.elem.find('.filters').cc.get('filters').setFilter(this.getFilter().name);
     }
 
     /**
@@ -12020,7 +12020,7 @@ void (_dec = component('todo-app-presenter'), _dec2 = on('todo-app-update.contro
   }, {
     key: 'updateToggleBtnState',
     value: function updateToggleBtnState() {
-      this.elem.find('.todo-toggle-all').cc.get('todo-toggle-all').updateBtnState(!this.getTodos().uncompleted().isEmpty());
+      this.elem.find('.toggle-all').cc.get('toggle-all').updateBtnState(!this.getTodos().uncompleted().isEmpty());
     }
 
     /**

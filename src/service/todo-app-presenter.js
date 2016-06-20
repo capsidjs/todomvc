@@ -9,7 +9,7 @@ class {
   /**
    * Gets the current filter.
    */
-  getFilter() {
+  getFilter () {
     return this.elem.cc.get('todoapp').filter
   }
 
@@ -17,7 +17,7 @@ class {
    * Gets the current todo collection of the app.
    * @return {TodoCollection}
    */
-  getTodos() {
+  getTodos () {
     return this.elem.cc.get('todoapp').todoCollection
   }
   /**

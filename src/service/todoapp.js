@@ -134,7 +134,7 @@ class {
    * Completes all the todo items when the filter is /all.
    * @private
    */
-  completeAllWhenFilterAll() {
+  completeAllWhenFilterAll () {
     this.todoCollection.uncompleted().forEach(todo => {
       this.elem.find('#' + todo.id).cc.get('todo-item').toggleCompleted()
     })
@@ -145,7 +145,7 @@ class {
    * @private
    */
   @emit('todo-app-update').last
-  completeAllWhenFilterNotAll() {
+  completeAllWhenFilterNotAll () {
     this.todoCollection.completeAll()
     this.save()
   }
