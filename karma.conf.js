@@ -1,3 +1,5 @@
+const browserifyIstanbul = require('browserify-istanbul');
+
 module.exports = config => config.set({
 	frameworks: ['mocha', 'browserify'],
 	files: ['spec/helper.js', 'spec/**/*'],
@@ -10,7 +12,7 @@ module.exports = config => config.set({
 	},
 	browserify: {
 		debug: true,
-		transform: [require('browserify-istanbul')({
+		transform: [browserifyIstanbul({
 			instrumenter: require('isparta'),
 			ignore: ['**/spec/**/*', '**/src/*']
 		}), 'babelify']

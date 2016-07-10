@@ -3,6 +3,7 @@ const {div} = require('dom-gen');
 
 const TodoCollection = require('../../src/domain/todo-collection');
 const TodoFactory = require('../../src/domain/todo-factory');
+
 const todoFactory = new TodoFactory();
 
 let todoList;
