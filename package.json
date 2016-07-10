@@ -6,7 +6,7 @@
   "scripts": {
     "test": "karma start karma.conf.js",
     "lint": "xo",
-    "build": "browserify -t babelify src/index.js > build/app.js",
+    "dist": "browserify -t babelify src/index.js > dist/app.js",
     "codecov": "npm run test && codecov",
     "open-cov": "open coverage/Chrome*/lcov-report/index.html"
   },
@@ -53,9 +53,6 @@
     ]
   },
   "xo": {
-    "ignores": [
-      "build/app.js"
-    ],
     "env": [
       "browser",
       "mocha"
