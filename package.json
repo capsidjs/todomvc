@@ -5,7 +5,7 @@
   "main": "index.html",
   "scripts": {
     "test": "karma start karma.conf.js",
-    "lint": "eslint src/ spec/ karma.conf.js",
+    "lint": "xo",
     "build": "browserify -t babelify src/index.js > build/app.js",
     "codecov": "npm run test && codecov",
     "open-cov": "open coverage/Chrome*/lcov-report/index.html"
@@ -28,7 +28,6 @@
     "class-component": "^9.1.1",
     "codecov": "^1.0.1",
     "dom-gen": "^2.2.0",
-    "eslint": "^2.11.1",
     "eslint-config-standard": "^5.3.1",
     "eslint-plugin-promise": "^1.3.1",
     "eslint-plugin-standard": "^1.3.2",
@@ -44,7 +43,8 @@
     "mocha": "^2.2.5",
     "todomvc-app-css": "^2.0.6",
     "todomvc-common": "^1.0.2",
-    "watchify": "^3.7.0"
+    "watchify": "^3.7.0",
+    "xo": "^0.16.0"
   },
   "babel": {
     "presets": [
@@ -52,14 +52,20 @@
       "decorators-legacy"
     ]
   },
-  "eslintConfig": {
-    "extends": "standard",
-    "parser": "babel-eslint",
-    "env": {
-      "mocha": true
-    },
-    "globals": {
-      "$": false
+  "xo": {
+    "ignores": [
+      "build/app.js"
+    ],
+    "env": [
+      "browser",
+      "mocha"
+    ],
+    "globals": [
+      "$"
+    ],
+    "rules": {
+      "import/newline-after-import": 0,
+      "no-unused-expressions": 0
     }
   }
 }

@@ -1,16 +1,16 @@
 module.exports = {
-  KEYCODE: {
-    ENTER: 13,
-    ESCAPE: 27
-  },
+	KEYCODE: {
+		ENTER: 13,
+		ESCAPE: 27
+	},
 
-  STORAGE_KEY: {
-    TODO_LIST: 'todos-class-component'
-  },
+	STORAGE_KEY: {
+		TODO_LIST: 'todos-class-component'
+	},
 
-  FILTER: {
-    ACTIVE: '/active',
-    COMPLETED: '/completed',
-    ALL: '/all'
-  }
-}
+	FILTER: {
+		ACTIVE: '/active',
+		COMPLETED: '/completed',
+		ALL: '/all'
+	}
+};

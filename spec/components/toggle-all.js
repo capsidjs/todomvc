@@ -1,66 +1,68 @@
-const {expect} = require('chai')
-const {div} = require('dom-gen')
+const {
+	expect
+} = require('chai');
+const {
+	div
+} = require('dom-gen');
 
-var elem
-var toggleAll
+var elem;
+var toggleAll;
 
 describe('toggle-all', () => {
-  beforeEach(() => {
-    elem = div()
+	beforeEach(() => {
+		elem = div();
 
-    toggleAll = elem.cc.init('toggle-all')
-  })
+		toggleAll = elem.cc.init('toggle-all');
+	});
 
-  afterEach(() => {
-    elem.remove()
-  })
+	afterEach(() => {
+		elem.remove();
+	});
 
-  describe('on click', () => {
-    it('toggles the state', done => {
-      toggleAll.checked = true
+	describe('on click', () => {
+		it('toggles the state', done => {
+			toggleAll.checked = true;
 
-      elem.trigger('click')
+			elem.trigger('click');
 
-      setTimeout(() => {
-        expect(toggleAll.checked).to.be.true
+			setTimeout(() => {
+				expect(toggleAll.checked).to.be.true;
 
-        elem.trigger('click')
+				elem.trigger('click');
 
-        setTimeout(() => {
-          expect(toggleAll.checked).to.be.true
-          done()
-        })
-      })
-    })
+				expect(toggleAll.checked).to.be.true;
+				done();
+			});
+		});
 
-    it('triggers todo-uncomplete-all event when it is checked', done => {
-      toggleAll.checked = true
+		it('triggers todo-uncomplete-all event when it is checked', done => {
+			toggleAll.checked = true;
 
-      elem.on('todo-uncomplete-all', () => done())
+			elem.on('todo-uncomplete-all', () => done());
 
-      elem.trigger('click')
-    })
+			elem.trigger('click');
+		});
 
-    it('triggers todo-complete-all event when it is checked', done => {
-      toggleAll.checked = false
+		it('triggers todo-complete-all event when it is checked', done => {
+			toggleAll.checked = false;
 
-      elem.on('todo-complete-all', () => done())
+			elem.on('todo-complete-all', () => done());
 
-      elem.trigger('click')
-    })
-  })
+			elem.trigger('click');
+		});
+	});
 
-  describe('updateBtnState', () => {
-    it('sets the property checked false when active item does not exist', () => {
-      toggleAll.updateBtnState(false)
+	describe('updateBtnState', () => {
+		it('sets the property checked false when active item does not exist', () => {
+			toggleAll.updateBtnState(false);
 
-      expect(elem.prop('checked')).to.be.true
-    })
+			expect(elem.prop('checked')).to.be.true;
+		});
 
-    it('sets the property checked false when active item does exist', () => {
-      toggleAll.updateBtnState(true)
+		it('sets the property checked false when active item does exist', () => {
+			toggleAll.updateBtnState(true);
 
-      expect(elem.prop('checked')).to.be.false
-    })
-  })
-})
+			expect(elem.prop('checked')).to.be.false;
+		});
+	});
+});

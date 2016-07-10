@@ -1,56 +1,57 @@
-const Const = require('../../src/const')
+const {expect} = require('chai');
+const {input} = require('dom-gen');
 
-const {expect} = require('chai')
-const {input} = require('dom-gen')
+const Const = require('../../src/const');
 
-let elem, todoEdit
+let elem;
+let todoEdit;
 
 describe('TodoEdit', () => {
-  beforeEach(() => {
-    elem = input()
-    todoEdit = elem.cc.init('todo-edit')
-  })
+	beforeEach(() => {
+		elem = input();
+		todoEdit = elem.cc.init('todo-edit');
+	});
 
-  it('triggers todo-edited event when the elem is blurred', done => {
-    elem.on('todo-edited', () => done())
+	it('triggers todo-edited event when the elem is blurred', done => {
+		elem.on('todo-edited', () => done());
 
-    elem.trigger('blur')
-  })
+		elem.trigger('blur');
+	});
 
-  describe('onKeypress', () => {
-    it('triggers todo-edited event when the pressed key is ENTER', done => {
-      elem.on('todo-edited', () => done())
+	describe('onKeypress', () => {
+		it('triggers todo-edited event when the pressed key is ENTER', done => {
+			elem.on('todo-edited', () => done());
 
-      const e = $.Event('keypress')
-      e.which = Const.KEYCODE.ENTER
+			const e = $.Event('keypress'); // eslint-disable-line babel/new-cap
+			e.which = Const.KEYCODE.ENTER;
 
-      elem.trigger(e)
-    })
+			elem.trigger(e);
+		});
 
-    it('does nothing when the pressed key is not ENTER', done => {
-      elem.on('todo-edited', () => done(new Error('stopEditing should not be called')))
+		it('does nothing when the pressed key is not ENTER', done => {
+			elem.on('todo-edited', () => done(new Error('stopEditing should not be called')));
 
-      const e = $.Event('keypress')
-      e.which = 32
+			const e = $.Event('keypress'); // eslint-disable-line babel/new-cap
+			e.which = 32;
 
-      todoEdit.elem.trigger(e)
+			todoEdit.elem.trigger(e);
 
-      done()
-    })
-  })
+			done();
+		});
+	});
 
-  describe('stopEditing', () => {
-    it('triggers todo-edited events with current value of the input', done => {
-      todoEdit.elem.trigger = (event, value) => {
-        expect(event).to.equal('todo-edited')
-        expect(value).to.equal('foo')
+	describe('stopEditing', () => {
+		it('triggers todo-edited events with current value of the input', done => {
+			todoEdit.elem.trigger = (event, value) => {
+				expect(event).to.equal('todo-edited');
+				expect(value).to.equal('foo');
 
-        done()
-      }
+				done();
+			};
 
-      todoEdit.elem.val('foo')
+			todoEdit.elem.val('foo');
 
-      todoEdit.stopEditing()
-    })
-  })
-})
+			todoEdit.stopEditing();
+		});
+	});
+});
