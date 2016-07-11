@@ -1,10 +1,6 @@
-const {
-	li
-} = require('dom-gen');
+const {li} = require('dom-gen');
 
-const {
-	component
-} = $.cc;
+const {component} = $.cc;
 
 /**
  * The todo list component.

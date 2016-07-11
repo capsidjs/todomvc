@@ -1,10 +1,6 @@
-const {
-	strong
-} = require('dom-gen');
+const {strong} = require('dom-gen');
 
-const {
-	component
-} = $.cc;
+const {component} = $.cc;
 
 /**
  * The todo counting element.

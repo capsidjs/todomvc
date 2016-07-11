@@ -1,14 +1,6 @@
-const {
-	div,
-	input,
-	label,
-	button
-} = require('dom-gen');
+const {div, input, label, button} = require('dom-gen');
 
-const {
-	on,
-	component
-} = $.cc;
+const {on, component} = $.cc;
 
 /**
  * TodoItem class controls todo item in a list.

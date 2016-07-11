@@ -1,8 +1,6 @@
 const Filter = require('../domain/filter');
 
-const {
-	component
-} = $.cc;
+const {component} = $.cc;
 
 /**
  * The observer of the filter and invokes filterchange event when it's changed.

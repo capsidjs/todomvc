@@ -1,9 +1,5 @@
-const {
-	expect
-} = require('chai');
-const {
-	div
-} = require('dom-gen');
+const {expect} = require('chai');
+const {div} = require('dom-gen');
 
 var elem;
 var toggleAll;

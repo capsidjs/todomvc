@@ -1,6 +1,4 @@
-const {
-	component
-} = $.cc;
+const {component} = $.cc;
 
 /**
  * The todo filter controls.

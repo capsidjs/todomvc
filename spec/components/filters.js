@@ -1,10 +1,5 @@
-const {
-	expect
-} = require('chai');
-const {
-	div,
-	li
-} = require('dom-gen');
+const {expect} = require('chai');
+const {div, li} = require('dom-gen');
 
 let filterControl;
 let elem;

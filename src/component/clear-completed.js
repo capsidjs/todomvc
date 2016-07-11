@@ -1,7 +1,4 @@
-const {
-	component,
-	on
-} = $.cc;
+const {component, on} = $.cc;
 
 @component('clear-completed')
 class ClearCompleted {

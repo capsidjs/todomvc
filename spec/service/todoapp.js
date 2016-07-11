@@ -1,13 +1,5 @@
-const {
-	expect
-} = require('chai');
-
-const {
-	div,
-	ul,
-	button,
-	footer
-} = require('dom-gen');
+const {expect} = require('chai');
+const {div, ul, button, footer} = require('dom-gen');
 
 const Filter = require('../../src/domain/filter');
 

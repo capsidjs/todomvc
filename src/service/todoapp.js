@@ -2,11 +2,7 @@ const TodoFactory = require('../domain/todo-factory');
 const TodoRepository = require('../domain/todo-repository');
 require('./todo-app-presenter');
 
-const {
-	on,
-	emit,
-	component
-} = $.cc;
+const {on, emit, component} = $.cc;
 
 /**
  * The todo application class.

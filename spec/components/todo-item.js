@@ -1,10 +1,5 @@
-const {
-	expect
-} = require('chai');
-const {
-	ul,
-	li
-} = require('dom-gen');
+const {expect} = require('chai');
+const {ul, li} = require('dom-gen');
 
 let todoItem;
 let elem;

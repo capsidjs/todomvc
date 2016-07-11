@@ -1,9 +1,6 @@
 const Const = require('../const');
 
-const {
-	on,
-	component
-} = $.cc;
+const {on, component} = $.cc;
 
 /**
  * TodoEdit controls the edit area of each todo item.

@@ -1,7 +1,4 @@
-const {
-	on,
-	component
-} = $.cc;
+const {on, component} = $.cc;
 
 /**
  * The presenter of the todo app.

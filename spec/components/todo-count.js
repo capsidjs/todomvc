@@ -1,9 +1,5 @@
-const {
-	expect
-} = require('chai');
-const {
-	span
-} = require('dom-gen');
+const {expect} = require('chai');
+const {span} = require('dom-gen');
 
 describe('TodoCount', () => {
 	describe('setCount', () => {
