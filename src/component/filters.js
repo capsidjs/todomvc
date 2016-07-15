@@ -16,11 +16,11 @@ class Filters {
 		this.elem.find('a').removeClass('selected');
 
 		if (filter === Filter.ACTIVE) {
-			this.elem.find('a[name="active"]').addClass('selected');
+			this.elem.find('a[href="#/active"]').addClass('selected');
 		} else if (filter === Filter.COMPLETED) {
-			this.elem.find('a[name="completed"]').addClass('selected');
+			this.elem.find('a[href="#/completed"]').addClass('selected');
 		} else {
-			this.elem.find('a[name="all"]').addClass('selected');
+			this.elem.find('a[href="#/"]').addClass('selected');
 		}
 	}
 }

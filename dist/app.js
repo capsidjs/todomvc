@@ -11658,11 +11658,11 @@ var Filters = (_dec = component('filters'), _dec(_class = function () {
 			this.elem.find('a').removeClass('selected');
 
 			if (filter === Filter.ACTIVE) {
-				this.elem.find('a[name="active"]').addClass('selected');
+				this.elem.find('a[href="#/active"]').addClass('selected');
 			} else if (filter === Filter.COMPLETED) {
-				this.elem.find('a[name="completed"]').addClass('selected');
+				this.elem.find('a[href="#/completed"]').addClass('selected');
 			} else {
-				this.elem.find('a[name="all"]').addClass('selected');
+				this.elem.find('a[href="#/"]').addClass('selected');
 			}
 		}
 	}]);
@@ -11797,7 +11797,7 @@ module.exports = TodoCount;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _dec, _dec2, _dec3, _class, _desc, _value, _class2;
+var _dec, _dec2, _dec3, _dec4, _class, _desc, _value, _class2;
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -11830,8 +11830,9 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
 	return desc;
 }
 
-var Const = require('../const');
+var _require = require('../const');
 
+var KEYCODE = _require.KEYCODE;
 var _$$cc = $.cc;
 var on = _$$cc.on;
 var component = _$$cc.component;
@@ -11840,32 +11841,73 @@ var component = _$$cc.component;
  * TodoEdit controls the edit area of each todo item.
  */
 
-var TodoEdit = (_dec = component('todo-edit'), _dec2 = on('keypress'), _dec3 = on('blur'), _dec(_class = (_class2 = function () {
+var TodoEdit = (_dec = component('todo-edit'), _dec2 = on('keypress'), _dec3 = on('keydown'), _dec4 = on('blur'), _dec(_class = (_class2 = function () {
 	function TodoEdit() {
 		_classCallCheck(this, TodoEdit);
 	}
 
 	_createClass(TodoEdit, [{
+		key: 'onStart',
+		value: function onStart() {
+			this.elem.focus();
+		}
+
+		/**
+   * Updates the view with the given value.
+   */
+
+	}, {
+		key: 'onUpdate',
+		value: function onUpdate(value) {
+			this.elem.val(value);
+			this.elem.data('prev-value', value);
+		}
+
+		/**
+   * Handler for the key press events.
+   *
+   * @param {Event} e The event
+   */
+
+	}, {
 		key: 'onKeypress',
 		value: function onKeypress(e) {
-			if (e.which === Const.KEYCODE.ENTER) {
-				this.stopEditing();
+			if (e.which === KEYCODE.ENTER) {
+				this.onFinish();
+			} else if (e.which === KEYCODE.ESCAPE) {
+				this.onCancel();
 			}
 		}
 
 		/**
-   * Stops editing with current value.
+   * Finishes editing with current value.
    */
 
 	}, {
-		key: 'stopEditing',
-		value: function stopEditing() {
-			this.elem.trigger('todo-edited', this.elem.val());
+		key: 'onFinish',
+		value: function onFinish() {
+			var value = this.elem.val();
+
+			this.onUpdate(value);
+			this.elem.trigger('todo-edited', value);
+		}
+
+		/**
+   * Cancels editing and revert the change of the value.
+   */
+
+	}, {
+		key: 'onCancel',
+		value: function onCancel() {
+			var value = this.elem.data('prev-value');
+
+			this.onUpdate(value);
+			this.elem.trigger('todo-edited', value);
 		}
 	}]);
 
 	return TodoEdit;
-}(), (_applyDecoratedDescriptor(_class2.prototype, 'onKeypress', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'onKeypress'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'stopEditing', [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, 'stopEditing'), _class2.prototype)), _class2)) || _class);
+}(), (_applyDecoratedDescriptor(_class2.prototype, 'onKeypress', [_dec2, _dec3], Object.getOwnPropertyDescriptor(_class2.prototype, 'onKeypress'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'onFinish', [_dec4], Object.getOwnPropertyDescriptor(_class2.prototype, 'onFinish'), _class2.prototype)), _class2)) || _class);
 
 
 module.exports = TodoEdit;
@@ -11926,11 +11968,7 @@ var TodoItem = (_dec = component('todo-item'), _dec2 = on('click').at('.toggle')
 	function TodoItem(elem) {
 		_classCallCheck(this, TodoItem);
 
-		elem.append(div(input({
-			attr: {
-				type: 'checkbox'
-			}
-		}).addClass('toggle'), label(), button().addClass('destroy')).addClass('view'), input().addClass('edit').cc('todo-edit'));
+		elem.append(div(input({ attr: { type: 'checkbox' } }).addClass('toggle'), label(), button().addClass('destroy')).addClass('view'), input().addClass('edit').cc('todo-edit'));
 	}
 
 	/**
@@ -11947,7 +11985,7 @@ var TodoItem = (_dec = component('todo-item'), _dec2 = on('click').at('.toggle')
 		value: function update(todo) {
 			this.elem.attr('id', todo.id);
 			this.elem.find('label').text(todo.title);
-			this.elem.find('.edit').val(todo.title);
+			this.elem.find('.edit').cc.get('todo-edit').onUpdate(todo.title);
 
 			this.completed = todo.completed;
 			this.updateView();
@@ -12028,6 +12066,7 @@ var TodoItem = (_dec = component('todo-item'), _dec2 = on('click').at('.toggle')
 		key: 'startEditing',
 		value: function startEditing() {
 			this.elem.addClass('editing');
+			this.elem.find('.edit').cc.get('todo-edit').onStart();
 		}
 
 		/**
@@ -12422,14 +12461,14 @@ var TodoCollection = function () {
 		value: function toArray() {
 			return this.items.slice(0);
 		}
+	}, {
+		key: 'isEmpty',
+
 
 		/**
    * Checks if the collection is empty.
    * @param {Boolean}
    */
-
-	}, {
-		key: 'isEmpty',
 		value: function isEmpty() {
 			return this.items.length === 0;
 		}
@@ -12474,6 +12513,11 @@ var TodoCollection = function () {
 			}
 
 			return this;
+		}
+	}, {
+		key: 'length',
+		get: function get() {
+			return this.items.length;
 		}
 	}]);
 
@@ -12860,6 +12904,8 @@ var TodoAppPresenter = (_dec = component('todo-app-presenter'), _dec2 = on('todo
 		value: function updateControls() {
 			this.updateFilterBtns();
 
+			this.updateClearCompleted();
+
 			this.updateTodoCount();
 
 			this.updateVisibility();
@@ -12887,6 +12933,13 @@ var TodoAppPresenter = (_dec = component('todo-app-presenter'), _dec2 = on('todo
 		key: 'updateFilterBtns',
 		value: function updateFilterBtns() {
 			this.elem.find('.filters').cc.get('filters').setFilter(this.getFilter());
+		}
+	}, {
+		key: 'updateClearCompleted',
+		value: function updateClearCompleted() {
+			var numCompleted = this.getTodos().completed().length;
+
+			this.elem.find('.clear-completed').css('display', numCompleted > 0 ? 'inline' : 'none');
 		}
 
 		/**

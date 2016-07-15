@@ -28,6 +28,8 @@ class TodoAppPresenter {
 	updateControls() {
 		this.updateFilterBtns();
 
+		this.updateClearCompleted();
+
 		this.updateTodoCount();
 
 		this.updateVisibility();
@@ -50,6 +52,12 @@ class TodoAppPresenter {
 	 */
 	updateFilterBtns() {
 		this.elem.find('.filters').cc.get('filters').setFilter(this.getFilter());
+	}
+
+	updateClearCompleted() {
+		const numCompleted = this.getTodos().completed().length
+
+		this.elem.find('.clear-completed').css('display', numCompleted > 0 ? 'inline' : 'none')
 	}
 
 	/**

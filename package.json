@@ -7,6 +7,7 @@
     "test": "karma start karma.conf.js",
     "lint": "xo",
     "dist": "browserify -t babelify src/index.js > dist/app.js",
+    "check": "npm run dist && open index.html",
     "codecov": "npm run test && codecov",
     "open-cov": "open coverage/Chrome*/lcov-report/index.html"
   },

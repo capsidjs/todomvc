@@ -40,7 +40,7 @@ describe('TodoEdit', () => {
 		});
 	});
 
-	describe('stopEditing', () => {
+	describe('onFinish', () => {
 		it('triggers todo-edited events with current value of the input', done => {
 			todoEdit.elem.trigger = (event, value) => {
 				expect(event).to.equal('todo-edited');
@@ -51,7 +51,7 @@ describe('TodoEdit', () => {
 
 			todoEdit.elem.val('foo');
 
-			todoEdit.stopEditing();
+			todoEdit.onFinish();
 		});
 	});
 });
