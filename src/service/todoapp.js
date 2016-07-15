@@ -19,7 +19,9 @@ class Todoapp {
 
 		elem.cc('todo-app-presenter');
 
-		$(window).data('target', elem).cc('router').trigger('hashchange');
+		const router = $(window).data('target', elem).cc('router');
+
+		setTimeout(() => router.trigger('hashchange'))
 	}
 
 	@on('filterchange')

@@ -1,3 +1,5 @@
+const Filter = require('../domain/filter');
+
 const {component} = $.cc;
 
 /**
@@ -8,14 +10,14 @@ class Filters {
 
 	/**
 	 * Sets the given filter button active.
-	 * @param {String} name The name of the filter
+	 * @param {Filter} filter The name of the filter
 	 */
-	setFilter(name) {
+	setFilter(filter) {
 		this.elem.find('a').removeClass('selected');
 
-		if (name === '/active') {
+		if (filter === Filter.ACTIVE) {
 			this.elem.find('a[name="active"]').addClass('selected');
-		} else if (name === '/completed') {
+		} else if (filter === Filter.COMPLETED) {
 			this.elem.find('a[name="completed"]').addClass('selected');
 		} else {
 			this.elem.find('a[name="all"]').addClass('selected');

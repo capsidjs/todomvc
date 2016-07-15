@@ -49,7 +49,7 @@ class TodoAppPresenter {
 	 * @private
 	 */
 	updateFilterBtns() {
-		this.elem.find('.filters').cc.get('filters').setFilter(this.getFilter().name);
+		this.elem.find('.filters').cc.get('filters').setFilter(this.getFilter());
 	}
 
 	/**
