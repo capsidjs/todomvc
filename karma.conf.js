@@ -1,26 +1,13 @@
-const browserifyIstanbul = require('browserify-istanbul');
-
 module.exports = config => config.set({
 	frameworks: ['mocha', 'browserify'],
-	files: ['spec/helper.js', 'spec/**/*'],
-	preprocessors: {
-		'spec/**/*': 'browserify'
-	},
+	files: ['test/helper.js', 'test/**/*'],
+	preprocessors: {'test/**/*': 'browserify'},
 	reporters: ['progress', 'coverage'],
-	coverageReporter: {
-		type: 'lcov'
-	},
+	coverageReporter: {type: 'lcov'},
 	browserify: {
 		debug: true,
-		transform: [browserifyIstanbul({
-			instrumenter: require('isparta'),
-			ignore: ['**/spec/**/*', '**/src/*']
-		}), 'babelify']
+		transform: [['babelify', {presets: ['es2015', 'decorators-legacy'], plugins: ['istanbul']}]]
 	},
-	port: 9876,
-	colors: true,
-	logLevel: config.LOG_INFO,
-	autoWatch: false,
 	browsers: ['Chrome', 'Firefox'],
 	singleRun: true
 });
