@@ -14,7 +14,7 @@ class TodoItem {
 				label(),
 				button().addClass('destroy')
 			).addClass('view'),
-			input().addClass('edit').cc('todo-edit')
+			input().cc('edit')
 		);
 	}
 
@@ -28,7 +28,7 @@ class TodoItem {
 	update(todo) {
 		this.elem.attr('id', todo.id);
 		this.elem.find('label').text(todo.title);
-		this.elem.find('.edit').cc.get('todo-edit').onUpdate(todo.title);
+		this.elem.find('.edit').cc.get('edit').onUpdate(todo.title);
 
 		this.completed = todo.completed;
 		this.updateView();
@@ -94,7 +94,7 @@ class TodoItem {
 	@on('dblclick').at('label')
 	startEditing() {
 		this.elem.addClass('editing');
-		this.elem.find('.edit').cc.get('todo-edit').onStart();
+		this.elem.find('.edit').cc.get('edit').onStart();
 	}
 
 	/**

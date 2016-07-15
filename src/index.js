@@ -6,7 +6,7 @@ require('./component/new-todo');
 require('./component/todo-list');
 require('./component/clear-completed');
 require('./component/filters');
-require('./component/todo-edit');
+require('./component/edit');
 require('./component/todo-count');
 require('./component/toggle-all');
 require('./service/router');

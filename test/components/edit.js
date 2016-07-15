@@ -9,7 +9,7 @@ let todoEdit;
 describe('TodoEdit', () => {
 	beforeEach(() => {
 		elem = input();
-		todoEdit = elem.cc.init('todo-edit');
+		todoEdit = elem.cc.init('edit');
 	});
 
 	it('triggers todo-edited event when the elem is blurred', done => {

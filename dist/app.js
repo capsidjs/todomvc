@@ -11629,6 +11629,126 @@ module.exports = ClearCompleted;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _dec, _dec2, _dec3, _dec4, _class, _desc, _value, _class2;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
+	var desc = {};
+	Object['ke' + 'ys'](descriptor).forEach(function (key) {
+		desc[key] = descriptor[key];
+	});
+	desc.enumerable = !!desc.enumerable;
+	desc.configurable = !!desc.configurable;
+
+	if ('value' in desc || desc.initializer) {
+		desc.writable = true;
+	}
+
+	desc = decorators.slice().reverse().reduce(function (desc, decorator) {
+		return decorator(target, property, desc) || desc;
+	}, desc);
+
+	if (context && desc.initializer !== void 0) {
+		desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
+		desc.initializer = undefined;
+	}
+
+	if (desc.initializer === void 0) {
+		Object['define' + 'Property'](target, property, desc);
+		desc = null;
+	}
+
+	return desc;
+}
+
+var _require = require('../const');
+
+var KEYCODE = _require.KEYCODE;
+var _$$cc = $.cc;
+var on = _$$cc.on;
+var component = _$$cc.component;
+
+/**
+ * TodoEdit controls the edit area of each todo item.
+ */
+
+var TodoEdit = (_dec = component('edit'), _dec2 = on('keypress'), _dec3 = on('keydown'), _dec4 = on('blur'), _dec(_class = (_class2 = function () {
+	function TodoEdit() {
+		_classCallCheck(this, TodoEdit);
+	}
+
+	_createClass(TodoEdit, [{
+		key: 'onStart',
+		value: function onStart() {
+			this.elem.focus();
+		}
+
+		/**
+   * Updates the view with the given value.
+   */
+
+	}, {
+		key: 'onUpdate',
+		value: function onUpdate(value) {
+			this.elem.val(value);
+			this.elem.data('prev-value', value);
+		}
+
+		/**
+   * Handler for the key press events.
+   *
+   * @param {Event} e The event
+   */
+
+	}, {
+		key: 'onKeypress',
+		value: function onKeypress(e) {
+			if (e.which === KEYCODE.ENTER) {
+				this.onFinish();
+			} else if (e.which === KEYCODE.ESCAPE) {
+				this.onCancel();
+			}
+		}
+
+		/**
+   * Finishes editing with current value.
+   */
+
+	}, {
+		key: 'onFinish',
+		value: function onFinish() {
+			var value = this.elem.val();
+
+			this.onUpdate(value);
+			this.elem.trigger('todo-edited', value);
+		}
+
+		/**
+   * Cancels editing and revert the change of the value.
+   */
+
+	}, {
+		key: 'onCancel',
+		value: function onCancel() {
+			var value = this.elem.data('prev-value');
+
+			this.onUpdate(value);
+			this.elem.trigger('todo-edited', value);
+		}
+	}]);
+
+	return TodoEdit;
+}(), (_applyDecoratedDescriptor(_class2.prototype, 'onKeypress', [_dec2, _dec3], Object.getOwnPropertyDescriptor(_class2.prototype, 'onKeypress'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'onFinish', [_dec4], Object.getOwnPropertyDescriptor(_class2.prototype, 'onFinish'), _class2.prototype)), _class2)) || _class);
+
+
+module.exports = TodoEdit;
+
+},{"../const":23}],17:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _dec, _class;
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -11673,7 +11793,7 @@ var Filters = (_dec = component('filters'), _dec(_class = function () {
 
 module.exports = Filters;
 
-},{"../domain/filter":24}],17:[function(require,module,exports){
+},{"../domain/filter":24}],18:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -11750,7 +11870,7 @@ var NewTodo = (_dec = component('new-todo'), _dec2 = on('keypress'), _dec(_class
 
 module.exports = NewTodo;
 
-},{"../const":23}],18:[function(require,module,exports){
+},{"../const":23}],19:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -11792,127 +11912,7 @@ var TodoCount = (_dec = component('todo-count'), _dec(_class = function () {
 
 module.exports = TodoCount;
 
-},{"dom-gen":8}],19:[function(require,module,exports){
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _dec, _dec2, _dec3, _dec4, _class, _desc, _value, _class2;
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
-	var desc = {};
-	Object['ke' + 'ys'](descriptor).forEach(function (key) {
-		desc[key] = descriptor[key];
-	});
-	desc.enumerable = !!desc.enumerable;
-	desc.configurable = !!desc.configurable;
-
-	if ('value' in desc || desc.initializer) {
-		desc.writable = true;
-	}
-
-	desc = decorators.slice().reverse().reduce(function (desc, decorator) {
-		return decorator(target, property, desc) || desc;
-	}, desc);
-
-	if (context && desc.initializer !== void 0) {
-		desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
-		desc.initializer = undefined;
-	}
-
-	if (desc.initializer === void 0) {
-		Object['define' + 'Property'](target, property, desc);
-		desc = null;
-	}
-
-	return desc;
-}
-
-var _require = require('../const');
-
-var KEYCODE = _require.KEYCODE;
-var _$$cc = $.cc;
-var on = _$$cc.on;
-var component = _$$cc.component;
-
-/**
- * TodoEdit controls the edit area of each todo item.
- */
-
-var TodoEdit = (_dec = component('todo-edit'), _dec2 = on('keypress'), _dec3 = on('keydown'), _dec4 = on('blur'), _dec(_class = (_class2 = function () {
-	function TodoEdit() {
-		_classCallCheck(this, TodoEdit);
-	}
-
-	_createClass(TodoEdit, [{
-		key: 'onStart',
-		value: function onStart() {
-			this.elem.focus();
-		}
-
-		/**
-   * Updates the view with the given value.
-   */
-
-	}, {
-		key: 'onUpdate',
-		value: function onUpdate(value) {
-			this.elem.val(value);
-			this.elem.data('prev-value', value);
-		}
-
-		/**
-   * Handler for the key press events.
-   *
-   * @param {Event} e The event
-   */
-
-	}, {
-		key: 'onKeypress',
-		value: function onKeypress(e) {
-			if (e.which === KEYCODE.ENTER) {
-				this.onFinish();
-			} else if (e.which === KEYCODE.ESCAPE) {
-				this.onCancel();
-			}
-		}
-
-		/**
-   * Finishes editing with current value.
-   */
-
-	}, {
-		key: 'onFinish',
-		value: function onFinish() {
-			var value = this.elem.val();
-
-			this.onUpdate(value);
-			this.elem.trigger('todo-edited', value);
-		}
-
-		/**
-   * Cancels editing and revert the change of the value.
-   */
-
-	}, {
-		key: 'onCancel',
-		value: function onCancel() {
-			var value = this.elem.data('prev-value');
-
-			this.onUpdate(value);
-			this.elem.trigger('todo-edited', value);
-		}
-	}]);
-
-	return TodoEdit;
-}(), (_applyDecoratedDescriptor(_class2.prototype, 'onKeypress', [_dec2, _dec3], Object.getOwnPropertyDescriptor(_class2.prototype, 'onKeypress'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'onFinish', [_dec4], Object.getOwnPropertyDescriptor(_class2.prototype, 'onFinish'), _class2.prototype)), _class2)) || _class);
-
-
-module.exports = TodoEdit;
-
-},{"../const":23}],20:[function(require,module,exports){
+},{"dom-gen":8}],20:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -11968,7 +11968,7 @@ var TodoItem = (_dec = component('todo-item'), _dec2 = on('click').at('.toggle')
 	function TodoItem(elem) {
 		_classCallCheck(this, TodoItem);
 
-		elem.append(div(input({ attr: { type: 'checkbox' } }).addClass('toggle'), label(), button().addClass('destroy')).addClass('view'), input().addClass('edit').cc('todo-edit'));
+		elem.append(div(input({ attr: { type: 'checkbox' } }).addClass('toggle'), label(), button().addClass('destroy')).addClass('view'), input().cc('edit'));
 	}
 
 	/**
@@ -11985,7 +11985,7 @@ var TodoItem = (_dec = component('todo-item'), _dec2 = on('click').at('.toggle')
 		value: function update(todo) {
 			this.elem.attr('id', todo.id);
 			this.elem.find('label').text(todo.title);
-			this.elem.find('.edit').cc.get('todo-edit').onUpdate(todo.title);
+			this.elem.find('.edit').cc.get('edit').onUpdate(todo.title);
 
 			this.completed = todo.completed;
 			this.updateView();
@@ -12066,7 +12066,7 @@ var TodoItem = (_dec = component('todo-item'), _dec2 = on('click').at('.toggle')
 		key: 'startEditing',
 		value: function startEditing() {
 			this.elem.addClass('editing');
-			this.elem.find('.edit').cc.get('todo-edit').onStart();
+			this.elem.find('.edit').cc.get('edit').onStart();
 		}
 
 		/**
@@ -12721,14 +12721,14 @@ require('./component/new-todo');
 require('./component/todo-list');
 require('./component/clear-completed');
 require('./component/filters');
-require('./component/todo-edit');
+require('./component/edit');
 require('./component/todo-count');
 require('./component/toggle-all');
 require('./service/router');
 require('./service/todoapp');
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./component/clear-completed":15,"./component/filters":16,"./component/new-todo":17,"./component/todo-count":18,"./component/todo-edit":19,"./component/todo-item":20,"./component/todo-list":21,"./component/toggle-all":22,"./service/router":30,"./service/todoapp":32,"class-component":4,"jquery":12}],30:[function(require,module,exports){
+},{"./component/clear-completed":15,"./component/edit":16,"./component/filters":17,"./component/new-todo":18,"./component/todo-count":19,"./component/todo-item":20,"./component/todo-list":21,"./component/toggle-all":22,"./service/router":30,"./service/todoapp":32,"class-component":4,"jquery":12}],30:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
