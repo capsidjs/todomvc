@@ -1,5 +1,6 @@
+const {route, dispatch} = require('hash-route');
+
 const Filter = require('../domain/filter');
-const {route, dispatch} = require('hash-route')
 
 const {component, on} = $.cc;
 
@@ -9,28 +10,28 @@ const {component, on} = $.cc;
 @component('router')
 class FilterObserver {
 	constructor(elem) {
-		this.target = elem.data('target')
+		this.target = elem.data('target');
 	}
 
 	@on('hashchange')
-	onHashchange () {
-		dispatch(this)
+	onHashchange() {
+		dispatch(this);
 	}
 
 	@route('#/all') all() {
-		this.target.trigger('filterchange', Filter.ALL)
+		this.target.trigger('filterchange', Filter.ALL);
 	}
 
 	@route('#/active') active() {
-		this.target.trigger('filterchange', Filter.ACTIVE)
+		this.target.trigger('filterchange', Filter.ACTIVE);
 	}
 
 	@route('#/completed') completed() {
-		this.target.trigger('filterchange', Filter.COMPLETED)
+		this.target.trigger('filterchange', Filter.COMPLETED);
 	}
 
 	@route('*') other() {
-		this.target.trigger('filterchange', Filter.ALL)
+		this.target.trigger('filterchange', Filter.ALL);
 	}
 }
 

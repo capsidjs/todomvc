@@ -9,7 +9,7 @@ class Filter {
 
 class AllFilter extends Filter {
 	isAll() {
-		return true
+		return true;
 	}
 }
 

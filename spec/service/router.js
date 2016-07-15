@@ -1,15 +1,15 @@
-const Filter = require('../../src/domain/filter');
 const {div} = require('dom-gen');
 const {expect} = require('chai');
 
-let elem;
+const Filter = require('../../src/domain/filter');
+
 let target;
 
 describe('router', () => {
 	before(() => {
-		target = div()
+		target = div();
 
-		elem = $(window).data('target', target).cc('router');
+		$(window).data('target', target).cc('router');
 	});
 
 	it('triggers the filterchange event to the target with ACTIVE filter when the url hash is #/active', done => {

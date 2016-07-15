@@ -19,7 +19,7 @@ class Todoapp {
 
 		elem.cc('todo-app-presenter');
 
-		$(window).data('target', elem).cc('router').trigger('hashchange')
+		$(window).data('target', elem).cc('router').trigger('hashchange');
 	}
 
 	@on('filterchange')
