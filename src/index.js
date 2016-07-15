@@ -9,5 +9,5 @@ require('./component/filters');
 require('./component/todo-edit');
 require('./component/todo-count');
 require('./component/toggle-all');
-require('./service/filter-observer');
+require('./service/router');
 require('./service/todoapp');

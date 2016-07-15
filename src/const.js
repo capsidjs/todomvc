@@ -6,11 +6,5 @@ module.exports = {
 
 	STORAGE_KEY: {
 		TODO_LIST: 'todos-class-component'
-	},
-
-	FILTER: {
-		ACTIVE: '/active',
-		COMPLETED: '/completed',
-		ALL: '/all'
 	}
 };

@@ -18,6 +18,8 @@ class Todoapp {
 		this.todoCollection = this.todoRepository.getAll();
 
 		elem.cc('todo-app-presenter');
+
+		$(window).data('target', elem).cc('router').trigger('hashchange')
 	}
 
 	@on('filterchange')

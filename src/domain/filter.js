@@ -1,22 +1,20 @@
-const Const = require('../const');
-
 class Filter {
-	/**
-	 */
-	constructor(name) {
-		this.name = name;
-	}
-
 	/**
 	 * @return {boolean}
 	 */
 	isAll() {
-		return this.name === Const.FILTER.ALL;
+		return false;
 	}
 }
 
-Filter.ALL = new Filter(Const.FILTER.ALL);
-Filter.ACTIVE = new Filter(Const.FILTER.ACTIVE);
-Filter.COMPLETED = new Filter(Const.FILTER.COMPLETED);
+class AllFilter extends Filter {
+	isAll() {
+		return true
+	}
+}
+
+Filter.ALL = new AllFilter();
+Filter.ACTIVE = new Filter();
+Filter.COMPLETED = new Filter();
 
 module.exports = Filter;
