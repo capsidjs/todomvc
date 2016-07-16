@@ -12198,13 +12198,11 @@ var ToggleAll = (_dec = component('toggle-all'), _dec2 = on('click'), _dec(_clas
 	_createClass(ToggleAll, [{
 		key: 'toggleAll',
 		value: function toggleAll() {
-			if (this.checked) {
+			if (!this.elem.prop('checked')) {
 				this.elem.trigger('todo-uncomplete-all');
 			} else {
 				this.elem.trigger('todo-complete-all');
 			}
-
-			this.check = !this.check;
 		}
 
 		/**
@@ -12215,13 +12213,7 @@ var ToggleAll = (_dec = component('toggle-all'), _dec2 = on('click'), _dec(_clas
 	}, {
 		key: 'updateBtnState',
 		value: function updateBtnState(activeItemExists) {
-			this.checked = !activeItemExists;
-
-			if (this.checked) {
-				this.elem.prop('checked', true);
-			} else {
-				this.elem.prop('checked', false);
-			}
+			this.elem.prop('checked', !activeItemExists);
 		}
 	}]);
 

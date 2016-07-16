@@ -1,14 +1,16 @@
 const {expect} = require('chai');
-const {div} = require('dom-gen');
+const {input} = require('dom-gen');
 
 var elem;
 var toggleAll;
 
 describe('toggle-all', () => {
 	beforeEach(() => {
-		elem = div();
+		elem = input({attr: {type: 'checkbox'}});
 
 		toggleAll = elem.cc.init('toggle-all');
+
+		elem.appendTo(document.body)
 	});
 
 	afterEach(() => {
@@ -16,23 +18,8 @@ describe('toggle-all', () => {
 	});
 
 	describe('on click', () => {
-		it('toggles the state', done => {
-			toggleAll.checked = true;
-
-			elem.trigger('click');
-
-			setTimeout(() => {
-				expect(toggleAll.checked).to.be.true;
-
-				elem.trigger('click');
-
-				expect(toggleAll.checked).to.be.true;
-				done();
-			});
-		});
-
 		it('triggers todo-uncomplete-all event when it is checked', done => {
-			toggleAll.checked = true;
+			elem.prop('checked', true);
 
 			elem.on('todo-uncomplete-all', () => done());
 
@@ -40,7 +27,7 @@ describe('toggle-all', () => {
 		});
 
 		it('triggers todo-complete-all event when it is checked', done => {
-			toggleAll.checked = false;
+			elem.prop('checked', false);
 
 			elem.on('todo-complete-all', () => done());
 
