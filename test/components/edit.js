@@ -12,11 +12,13 @@ describe('TodoEdit', () => {
 		todoEdit = elem.cc.init('edit');
 	});
 
-	it('triggers todo-edited event when the elem is blurred', done => {
-		elem.on('todo-edited', () => done());
+	describe('on blur', () => {
+		it('triggers todo-edited event when the elem is blurred', done => {
+			elem.on('todo-edited', () => done());
 
-		elem.trigger('blur');
-	});
+			elem.trigger('blur');
+		});
+	})
 
 	describe('onKeypress', () => {
 		it('triggers todo-edited event when the pressed key is ENTER', done => {
