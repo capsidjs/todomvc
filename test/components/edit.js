@@ -10,6 +10,7 @@ describe('TodoEdit', () => {
 	beforeEach(() => {
 		elem = input();
 		todoEdit = elem.cc.init('edit');
+		todoEdit.onUpdate('foo')
 	});
 
 	describe('on blur', () => {
@@ -21,24 +22,35 @@ describe('TodoEdit', () => {
 	})
 
 	describe('onKeypress', () => {
-		it('triggers todo-edited event when the pressed key is ENTER', done => {
-			elem.on('todo-edited', () => done());
+		it('triggers todo-edited event with the edited value when ENTER is pressed', done => {
+			elem.on('todo-edited', (e, value) => {
+				expect(value).to.equal('bar')
+				done()
+			});
 
-			const e = $.Event('keypress'); // eslint-disable-line babel/new-cap
-			e.which = Const.KEYCODE.ENTER;
+			elem.val('bar')
 
-			elem.trigger(e);
+			elem.trigger(new $.Event('keypress', {which: Const.KEYCODE.ENTER}));
+
 		});
 
-		it('does nothing when the pressed key is not ENTER', done => {
-			elem.on('todo-edited', () => done(new Error('stopEditing should not be called')));
+		it('does nothing when the pressed key is SPACE', done => {
+			elem.on('todo-edited', () => done(new Error('todo-edited should not be triggered')));
 
-			const e = $.Event('keypress'); // eslint-disable-line babel/new-cap
-			e.which = 32;
-
-			todoEdit.elem.trigger(e);
+			todoEdit.elem.trigger(new $.Event('keypress', {which: 32}));
 
 			done();
+		});
+
+		it('triggers todo-edited event with the value before editing when ESCAPE is pressed', done => {
+			elem.on('todo-edited', (e, value) => {
+				expect(value).to.equal('foo')
+				done()
+			});
+
+			elem.val('bar')
+
+			elem.trigger(new $.Event('keypress', {which: Const.KEYCODE.ESCAPE}));
 		});
 	});
 
