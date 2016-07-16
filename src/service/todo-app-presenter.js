@@ -8,7 +8,7 @@ class TodoAppPresenter {
 	/**
 	 * Gets the current filter.
 	 */
-	getFilter() {
+	filter() {
 		return this.elem.cc.get('todoapp').filter;
 	}
 
@@ -16,7 +16,7 @@ class TodoAppPresenter {
 	 * Gets the current todo collection of the app.
 	 * @return {TodoCollection}
 	 */
-	getTodos() {
+	todos() {
 		return this.elem.cc.get('todoapp').todoCollection;
 	}
 
@@ -43,7 +43,7 @@ class TodoAppPresenter {
 	 */
 	@on('todo-app-update.todo-list')
 	updateTodoList() {
-		this.elem.find('.todo-list').cc.get('todo-list').update(this.getDisplayCollection());
+		this.elem.find('.todo-list').cc.get('todo-list').update(this.todos().filterBy(this.filter()));
 	}
 
 	/**
@@ -51,11 +51,11 @@ class TodoAppPresenter {
 	 * @private
 	 */
 	updateFilterBtns() {
-		this.elem.find('.filters').cc.get('filters').setFilter(this.getFilter());
+		this.elem.find('.filters').cc.get('filters').setFilter(this.filter());
 	}
 
 	updateClearCompleted() {
-		this.elem.find('.clear-completed').css('display', this.getTodos().completed().isEmpty() ? 'none' : 'inline')
+		this.elem.find('.clear-completed').css('display', this.todos().completed().isEmpty() ? 'none' : 'inline')
 	}
 
 	/**
@@ -63,7 +63,7 @@ class TodoAppPresenter {
 	 * @private
 	 */
 	updateTodoCount() {
-		this.elem.find('.todo-count').cc.get('todo-count').setCount(this.getTodos().uncompleted().length);
+		this.elem.find('.todo-count').cc.get('todo-count').setCount(this.todos().uncompleted().length);
 	}
 
 	/**
@@ -71,7 +71,7 @@ class TodoAppPresenter {
 	 * @private
 	 */
 	updateVisibility() {
-		this.elem.find('.main, .footer').css('display', this.getTodos().isEmpty() ? 'none' : 'block')
+		this.elem.find('.main, .footer').css('display', this.todos().isEmpty() ? 'none' : 'block')
 	}
 
 	/**
@@ -79,15 +79,7 @@ class TodoAppPresenter {
 	 * @private
 	 */
 	updateToggleBtnState() {
-		this.elem.find('.toggle-all').cc.get('toggle-all').updateBtnState(!this.getTodos().uncompleted().isEmpty());
-	}
-
-	/**
-	 * Gets the todo collection which is displayable in the current filter.
-	 * @private
-	 */
-	getDisplayCollection() {
-		return this.getTodos().filterBy(this.getFilter());
+		this.elem.find('.toggle-all').cc.get('toggle-all').updateBtnState(!this.todos().uncompleted().isEmpty());
 	}
 }
 
