@@ -55,9 +55,7 @@ class TodoAppPresenter {
 	}
 
 	updateClearCompleted() {
-		const numCompleted = this.getTodos().completed().length
-
-		this.elem.find('.clear-completed').css('display', numCompleted > 0 ? 'inline' : 'none')
+		this.elem.find('.clear-completed').css('display', this.getTodos().completed().isEmpty() ? 'none' : 'inline')
 	}
 
 	/**

@@ -112,10 +112,6 @@ class TodoCollection {
 		return this.items.slice(0);
 	}
 
-	get length() {
-		return this.items.length
-	}
-
 	/**
 	 * Checks if the collection is empty.
 	 * @param {Boolean}

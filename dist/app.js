@@ -12207,7 +12207,7 @@ var ToggleAll = (_dec = component('toggle-all'), _dec2 = on('click'), _dec(_clas
 
 		/**
    * Updates the button state by the given active items' condition.
-   * @param {Boolean} activeItemExists true if any active item exists, false otherwise
+   * @param {boolean} activeItemExists true if any active item exists, false otherwise
    */
 
 	}, {
@@ -12453,14 +12453,14 @@ var TodoCollection = function () {
 		value: function toArray() {
 			return this.items.slice(0);
 		}
-	}, {
-		key: 'isEmpty',
-
 
 		/**
    * Checks if the collection is empty.
    * @param {Boolean}
    */
+
+	}, {
+		key: 'isEmpty',
 		value: function isEmpty() {
 			return this.items.length === 0;
 		}
@@ -12505,11 +12505,6 @@ var TodoCollection = function () {
 			}
 
 			return this;
-		}
-	}, {
-		key: 'length',
-		get: function get() {
-			return this.items.length;
 		}
 	}]);
 
@@ -12929,9 +12924,7 @@ var TodoAppPresenter = (_dec = component('todo-app-presenter'), _dec2 = on('todo
 	}, {
 		key: 'updateClearCompleted',
 		value: function updateClearCompleted() {
-			var numCompleted = this.getTodos().completed().length;
-
-			this.elem.find('.clear-completed').css('display', numCompleted > 0 ? 'inline' : 'none');
+			this.elem.find('.clear-completed').css('display', this.getTodos().completed().isEmpty() ? 'none' : 'inline');
 		}
 
 		/**
