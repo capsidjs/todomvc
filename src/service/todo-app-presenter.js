@@ -63,7 +63,7 @@ class TodoAppPresenter {
 	 * @private
 	 */
 	updateTodoCount() {
-		this.elem.find('.todo-count').cc.get('todo-count').setCount(this.getTodos().uncompleted().toArray().length);
+		this.elem.find('.todo-count').cc.get('todo-count').setCount(this.getTodos().uncompleted().length);
 	}
 
 	/**
@@ -71,11 +71,7 @@ class TodoAppPresenter {
 	 * @private
 	 */
 	updateVisibility() {
-		if (this.getTodos().isEmpty()) {
-			this.elem.find('.main, .footer').css('display', 'none');
-		} else {
-			this.elem.find('.main, .footer').css('display', 'block');
-		}
+		this.elem.find('.main, .footer').css('display', this.getTodos().isEmpty() ? 'none' : 'block')
 	}
 
 	/**

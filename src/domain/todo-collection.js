@@ -117,7 +117,15 @@ class TodoCollection {
 	 * @param {Boolean}
 	 */
 	isEmpty() {
-		return this.items.length === 0;
+		return this.length === 0;
+	}
+
+	/**
+	 * Returns the length.
+	 * @return {number}
+	 */
+	get length() {
+		return this.items.length;
 	}
 
 	/**
