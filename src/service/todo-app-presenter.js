@@ -1,4 +1,4 @@
-const {on, component} = $.cc;
+const {on, component, wire} = $.cc;
 
 /**
  * The presenter of the todo app.
@@ -6,10 +6,22 @@ const {on, component} = $.cc;
 @component('todo-app-presenter')
 class TodoAppPresenter {
 	/**
+	 * Gets the todoapp.
+	 * @return {Todoapp}
+	 */
+	@wire get todoapp() {}
+	/**
+	 */
+	@wire get 'todo-list'() {}
+	@wire get filters() {}
+	@wire get 'todo-count'() {}
+	@wire get 'toggle-all'() {}
+
+	/**
 	 * Gets the current filter.
 	 */
 	filter() {
-		return this.elem.cc.get('todoapp').filter;
+		return this.todoapp.filter;
 	}
 
 	/**
@@ -17,7 +29,7 @@ class TodoAppPresenter {
 	 * @return {TodoCollection}
 	 */
 	todos() {
-		return this.elem.cc.get('todoapp').todoCollection;
+		return this.todoapp.todoCollection;
 	}
 
 	/**
@@ -26,15 +38,20 @@ class TodoAppPresenter {
 	 */
 	@on('todo-app-update.controls')
 	updateControls() {
-		this.updateFilterBtns();
+		// updates filter buttons
+		this.filters.setFilter(this.filter());
 
-		this.updateClearCompleted();
+		// updates visibility of clear-completed area
+		this.elem.find('.clear-completed').css('display', this.todos().completed().isEmpty() ? 'none' : 'inline');
 
-		this.updateTodoCount();
+		// updates todo count
+		this['todo-count'].setCount(this.todos().uncompleted().length);
 
-		this.updateVisibility();
+        // updates visibility of main and footer area
+		this.elem.find('.main, .footer').css('display', this.todos().isEmpty() ? 'none' : 'block');
 
-		this.updateToggleBtnState();
+        // updates toggle-all button state
+		this['toggle-all'].updateBtnState(!this.todos().uncompleted().isEmpty());
 	}
 
 	/**
@@ -43,43 +60,7 @@ class TodoAppPresenter {
 	 */
 	@on('todo-app-update.todo-list')
 	updateTodoList() {
-		this.elem.find('.todo-list').cc.get('todo-list').update(this.todos().filterBy(this.filter()));
-	}
-
-	/**
-	 * Updates the filter buttons.
-	 * @private
-	 */
-	updateFilterBtns() {
-		this.elem.find('.filters').cc.get('filters').setFilter(this.filter());
-	}
-
-	updateClearCompleted() {
-		this.elem.find('.clear-completed').css('display', this.todos().completed().isEmpty() ? 'none' : 'inline')
-	}
-
-	/**
-	 * Updates the todo counter.
-	 * @private
-	 */
-	updateTodoCount() {
-		this.elem.find('.todo-count').cc.get('todo-count').setCount(this.todos().uncompleted().length);
-	}
-
-	/**
-	 * Updates the visiblity of components.
-	 * @private
-	 */
-	updateVisibility() {
-		this.elem.find('.main, .footer').css('display', this.todos().isEmpty() ? 'none' : 'block')
-	}
-
-	/**
-	 * Updates the toggle-all button state.
-	 * @private
-	 */
-	updateToggleBtnState() {
-		this.elem.find('.toggle-all').cc.get('toggle-all').updateBtnState(!this.todos().uncompleted().isEmpty());
+		this['todo-list'].update(this.todos().filterBy(this.filter()));
 	}
 }
 

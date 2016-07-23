@@ -21,7 +21,7 @@ class Todoapp {
 
 		const router = $(window).data('target', elem).cc('router');
 
-		setTimeout(() => router.trigger('hashchange'))
+		setTimeout(() => router.trigger('hashchange'));
 	}
 
 	@on('filterchange')

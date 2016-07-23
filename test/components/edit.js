@@ -10,7 +10,7 @@ describe('TodoEdit', () => {
 	beforeEach(() => {
 		elem = input();
 		todoEdit = elem.cc.init('edit');
-		todoEdit.onUpdate('foo')
+		todoEdit.onUpdate('foo');
 	});
 
 	describe('on blur', () => {
@@ -19,19 +19,18 @@ describe('TodoEdit', () => {
 
 			elem.trigger('blur');
 		});
-	})
+	});
 
 	describe('onKeypress', () => {
 		it('triggers todo-edited event with the edited value when ENTER is pressed', done => {
 			elem.on('todo-edited', (e, value) => {
-				expect(value).to.equal('bar')
-				done()
+				expect(value).to.equal('bar');
+				done();
 			});
 
-			elem.val('bar')
+			elem.val('bar');
 
 			elem.trigger(new $.Event('keypress', {which: Const.KEYCODE.ENTER}));
-
 		});
 
 		it('does nothing when the pressed key is SPACE', done => {
@@ -44,11 +43,11 @@ describe('TodoEdit', () => {
 
 		it('triggers todo-edited event with the value before editing when ESCAPE is pressed', done => {
 			elem.on('todo-edited', (e, value) => {
-				expect(value).to.equal('foo')
-				done()
+				expect(value).to.equal('foo');
+				done();
 			});
 
-			elem.val('bar')
+			elem.val('bar');
 
 			elem.trigger(new $.Event('keypress', {which: Const.KEYCODE.ESCAPE}));
 		});

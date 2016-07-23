@@ -10,7 +10,7 @@ describe('toggle-all', () => {
 
 		toggleAll = elem.cc.init('toggle-all');
 
-		elem.appendTo(document.body)
+		elem.appendTo(document.body);
 	});
 
 	afterEach(() => {

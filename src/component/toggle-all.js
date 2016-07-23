@@ -10,10 +10,10 @@ class ToggleAll {
 	 */
 	@on('click')
 	toggleAll() {
-		if (!this.elem.prop('checked')) {
-			this.elem.trigger('todo-uncomplete-all');
-		} else {
+		if (this.elem.prop('checked')) {
 			this.elem.trigger('todo-complete-all');
+		} else {
+			this.elem.trigger('todo-uncomplete-all');
 		}
 	}
 

@@ -41,7 +41,7 @@ class TodoEdit {
 	onFinish() {
 		const value = this.elem.val();
 
-		this.onUpdate(value)
+		this.onUpdate(value);
 		this.elem.trigger('todo-edited', value);
 	}
 
@@ -51,7 +51,7 @@ class TodoEdit {
 	onCancel() {
 		const value = this.elem.data('prev-value');
 
-		this.onUpdate(value)
+		this.onUpdate(value);
 		this.elem.trigger('todo-edited', value);
 	}
 }
