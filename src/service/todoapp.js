@@ -1,8 +1,7 @@
 const TodoFactory = require('../domain/todo-factory');
 const TodoRepository = require('../domain/todo-repository');
-require('./todo-app-presenter');
 
-const {on, emit, component} = $.cc;
+const {on, component, wire} = $.cc;
 
 /**
  * The todo application class.
@@ -17,17 +16,44 @@ class Todoapp {
 		this.todoRepository = new TodoRepository();
 		this.todoCollection = this.todoRepository.getAll();
 
-		elem.cc('todo-app-presenter');
-
 		const router = $(window).data('target', elem).cc('router');
 
 		setTimeout(() => router.trigger('hashchange'));
 	}
 
+	@wire get 'todo-list'() {}
+	@wire get filters() {}
+	@wire get 'todo-count'() {}
+	@wire get 'toggle-all'() {}
+
+	refreshControls() {
+		// updates filter buttons
+		this.filters.setFilter(this.filter);
+
+		// updates visibility of clear-completed area
+		this.elem.find('.clear-completed').css('display', this.todoCollection.completed().isEmpty() ? 'none' : 'inline');
+
+		// updates todo count
+		this['todo-count'].setCount(this.todoCollection.uncompleted().length);
+
+        // updates visibility of main and footer area
+		this.elem.find('.main, .footer').css('display', this.todoCollection.isEmpty() ? 'none' : 'block');
+
+        // updates toggle-all button state
+		this['toggle-all'].updateBtnState(!this.todoCollection.uncompleted().isEmpty());
+	}
+
+	refreshAll() {
+		this.refreshControls();
+
+		this['todo-list'].update(this.todoCollection.filterBy(this.filter));
+	}
+
 	@on('filterchange')
-	@emit('todo-app-update').last
 	onFilterchange(e, filter) {
 		this.filter = filter;
+
+		this.refreshAll();
 	}
 
 	/**
@@ -37,12 +63,13 @@ class Todoapp {
 	 * @param {String} title The todo title
 	 */
 	@on('todo-new-item')
-	@emit('todo-app-update').last
 	addTodo(e, title) {
 		const todo = this.todoFactory.createByTitle(title);
 
 		this.todoCollection.push(todo);
 		this.save();
+
+		this.refreshAll();
 	}
 
 	/**
@@ -58,13 +85,14 @@ class Todoapp {
 	 * @param {String} id The todo id
 	 */
 	@on('todo-item-toggle')
-	@emit('todo-app-update.controls').last
 	toggle(e, id) {
 		this.todoCollection.toggleById(id);
 		this.save();
 
-		if (!this.filter.isAll()) {
-			this.elem.trigger('todo-app-update.todo-list');
+		if (this.filter.isAll()) {
+			this.refreshControls();
+		} else {
+			this.refreshAll();
 		}
 	}
 
@@ -74,10 +102,11 @@ class Todoapp {
 	 * @param {String} id The todo id
 	 */
 	@on('todo-item-destroy')
-	@emit('todo-app-update').last
 	remove(e, id) {
 		this.todoCollection.removeById(id);
 		this.save();
+
+		this.refreshAll();
 	}
 
 	/**
@@ -96,10 +125,11 @@ class Todoapp {
 	 * Clears the completed todos.
 	 */
 	@on('todo-clear-completed')
-	@emit('todo-app-update').last
 	clearCompleted() {
 		this.todoCollection = this.todoCollection.uncompleted();
 		this.save();
+
+		this.refreshAll();
 	}
 
 	/**
@@ -116,7 +146,7 @@ class Todoapp {
 			this.todoCollection.uncompleteAll();
 			this.save();
 
-			this.elem.trigger('todo-app-update');
+			this.refreshAll();
 		}
 	}
 
@@ -147,10 +177,11 @@ class Todoapp {
 	 * Completes all the todo items when the filter is not /all.
 	 * @private
 	 */
-	@emit('todo-app-update').last
 	completeAllWhenFilterNotAll() {
 		this.todoCollection.completeAll();
 		this.save();
+
+		this.refreshAll();
 	}
 }
 

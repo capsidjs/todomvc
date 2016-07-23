@@ -30,7 +30,7 @@ describe('todoapp', () => {
 
 	describe('on filterchange', () => {
 		it('updates view', done => {
-			elem.on('todo-app-update', () => done());
+			todoApp.refreshAll = () => done();
 
 			elem.trigger('filterchange', Filter.ALL);
 		});
@@ -61,7 +61,7 @@ describe('todoapp', () => {
 			elem.trigger('todo-new-item', 'foo');
 			elem.trigger('filterchange', Filter.ACTIVE);
 
-			elem.on('todo-app-update.todo-list', () => done());
+			todoApp.refreshAll = () => done();
 
 			const id = elem.find('.todo-item').attr('id');
 
