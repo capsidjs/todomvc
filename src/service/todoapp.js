@@ -47,7 +47,7 @@ class Todoapp {
 	refreshAll() {
 		this.refreshControls();
 
-		this['todo-list'].update(this.todoCollection.filterBy(this.filter));
+		this['todo-list'].onRefresh(this.todoCollection, this.filter);
 	}
 
 	@on('filterchange')

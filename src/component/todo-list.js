@@ -9,12 +9,12 @@ const {component} = $.cc;
 class TodoList {
 	/**
 	 * Updates the todo items by the given todo model list.
-	 * @param {TodoCollection} todoList The todo list
+	 * @param {TodoCollection} todos The todo list
 	 */
-	update(todoList) {
+	onRefresh(todos, filter) {
 		this.elem.empty();
 
-		todoList.forEach(todo => {
+		todos.filterBy(filter).forEach(todo => {
 			li().appendTo(this.elem).cc.init('todo-item').update(todo);
 		});
 	}

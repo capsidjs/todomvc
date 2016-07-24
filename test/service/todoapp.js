@@ -1,5 +1,5 @@
 const {expect} = require('chai');
-const {div, ul, button, footer} = require('dom-gen');
+const {div, ul, button, footer, cc} = require('dom-gen');
 
 const Filter = require('../../src/domain/filter');
 
@@ -18,8 +18,9 @@ describe('todoapp', () => {
 			),
 			footer(
 				{attr: {id: 'footer'}},
+				div().cc('todo-count'),
 				ul().cc('filters'),
-				div().cc('todo-count')
+				button().cc('clear-completed')
 			)
 		);
 

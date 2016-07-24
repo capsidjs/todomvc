@@ -3,6 +3,7 @@ const {div} = require('dom-gen');
 
 const TodoCollection = require('../../src/domain/todo-collection');
 const TodoFactory = require('../../src/domain/todo-factory');
+const Filter = require('../../src/domain/filter');
 
 const todoFactory = new TodoFactory();
 
@@ -13,13 +14,13 @@ describe('todo-list', () => {
 		todoList = div().cc.init('todo-list');
 	});
 
-	describe('update', () => {
-		it('updates the todo list view by the given todo array', () => {
-			todoList.update(new TodoCollection([
+	describe('onRefresh', () => {
+		it('updates the todo list view by the given todo collection and filter', () => {
+			todoList.onRefresh(new TodoCollection([
 				todoFactory.createByTitle('foo0'),
 				todoFactory.createByTitle('foo1'),
 				todoFactory.createByTitle('foo2')
-			]));
+			]), Filter.ALL);
 
 			expect(todoList.elem.find('li')).to.have.length(3);
 		});
