@@ -18,6 +18,16 @@ class TodoList {
 			li().appendTo(this.elem).cc.init('todo-item').update(todo);
 		});
 	}
+
+	/**
+	 * Toggles the given todos.
+	 * @param {TodoCollecion} todos The todo list
+	 */
+	toggleAll(todos) {
+		todos.forEach(todo => {
+			this.elem.find('#' + todo.id).cc.get('todo-item').toggleCompleted();
+		});
+	}
 }
 
 module.exports = TodoList;

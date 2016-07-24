@@ -140,9 +140,7 @@ class Todoapp {
 	@on('todo-uncomplete-all')
 	uncompleteAll() {
 		if (this.filter.isAll()) {
-			this.todoCollection.completed().forEach(todo => {
-				this.elem.find('#' + todo.id).cc.get('todo-item').toggleCompleted();
-			});
+			this['todo-list'].toggleAll(this.todoCollection.completed());
 		} else {
 			this.todoCollection.uncompleteAll();
 			this.save();
@@ -158,31 +156,13 @@ class Todoapp {
 	@on('todo-complete-all')
 	completeAll() {
 		if (this.filter.isAll()) {
-			this.completeAllWhenFilterAll();
+			this['todo-list'].toggleAll(this.todoCollection.uncompleted());
 		} else {
-			this.completeAllWhenFilterNotAll();
+			this.todoCollection.completeAll();
+			this.save();
+
+			this.refreshAll();
 		}
-	}
-
-	/**
-	 * Completes all the todo items when the filter is /all.
-	 * @private
-	 */
-	completeAllWhenFilterAll() {
-		this.todoCollection.uncompleted().forEach(todo => {
-			this.elem.find('#' + todo.id).cc.get('todo-item').toggleCompleted();
-		});
-	}
-
-	/**
-	 * Completes all the todo items when the filter is not /all.
-	 * @private
-	 */
-	completeAllWhenFilterNotAll() {
-		this.todoCollection.completeAll();
-		this.save();
-
-		this.refreshAll();
 	}
 }
 
