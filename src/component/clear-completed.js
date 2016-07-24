@@ -9,6 +9,13 @@ class ClearCompleted {
 	onClick() {
 		this.elem.trigger('todo-clear-completed');
 	}
+
+	/**
+	 * @param {TodoCollection} todos The todo collection
+	 */
+	onUpdate(todos) {
+		this.elem.css('display', todos.completed().isEmpty() ? 'none' : 'inline');
+	}
 }
 
 module.exports = ClearCompleted;

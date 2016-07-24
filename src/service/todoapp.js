@@ -23,6 +23,7 @@ class Todoapp {
 
 	@wire get 'todo-list'() {}
 	@wire get filters() {}
+	@wire get 'clear-completed'() {}
 	@wire get 'todo-count'() {}
 	@wire get 'toggle-all'() {}
 
@@ -31,7 +32,7 @@ class Todoapp {
 		this.filters.setFilter(this.filter);
 
 		// updates visibility of clear-completed area
-		this.elem.find('.clear-completed').css('display', this.todoCollection.completed().isEmpty() ? 'none' : 'inline');
+		this['clear-completed'].onUpdate(this.todoCollection);
 
 		// updates todo count
 		this['todo-count'].setCount(this.todoCollection.uncompleted().length);
