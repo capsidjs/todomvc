@@ -6,7 +6,7 @@ const {on, component} = $.cc;
  * TodoEdit controls the edit area of each todo item.
  */
 @component('edit')
-class TodoEdit {
+class Edit {
 	onStart() {
 		this.elem.focus();
 	}
@@ -56,4 +56,4 @@ class TodoEdit {
 	}
 }
 
-module.exports = TodoEdit;
+module.exports = Edit;

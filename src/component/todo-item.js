@@ -20,7 +20,7 @@ class TodoItem {
 
 	/**
 	 * Updates the todo title by todo model.
-	 * @param {Object} todo The todo
+	 * @param {Todo} todo The todo
 	 * @param {String} todo.id The id
 	 * @param {String} todo.title The title
 	 * @param {Boolean} todo.completed If completed or not
