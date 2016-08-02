@@ -137,7 +137,7 @@ class Todoapp {
 	 * Uncompletes all the todo items.
 	 * @private
 	 */
-	@on('todo-uncomplete-all')
+	@on('toggle-all-uncheck')
 	uncompleteAll() {
 		if (this.filter.isAll()) {
 			this['todo-list'].toggleAll(this.todoCollection.completed());
@@ -153,7 +153,7 @@ class Todoapp {
 	 * Completes all the todo items.
 	 * @private
 	 */
-	@on('todo-complete-all')
+	@on('toggle-all-check')
 	completeAll() {
 		if (this.filter.isAll()) {
 			this['todo-list'].toggleAll(this.todoCollection.uncompleted());

@@ -18,18 +18,18 @@ describe('toggle-all', () => {
 	});
 
 	describe('on click', () => {
-		it('triggers todo-uncomplete-all event when it is checked', done => {
+		it('triggers toggle-all-uncheck event when it is checked', done => {
 			elem.prop('checked', true);
 
-			elem.on('todo-uncomplete-all', () => done());
+			elem.on('toggle-all-uncheck', () => done());
 
 			elem.trigger('click');
 		});
 
-		it('triggers todo-complete-all event when it is checked', done => {
+		it('triggers toggle-all-check event when it is checked', done => {
 			elem.prop('checked', false);
 
-			elem.on('todo-complete-all', () => done());
+			elem.on('toggle-all-check', () => done());
 
 			elem.trigger('click');
 		});

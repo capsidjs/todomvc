@@ -124,12 +124,12 @@ describe('todoapp', () => {
 		});
 	});
 
-	describe('on todo-complete-all', () => {
+	describe('on toggle-all-check', () => {
 		it('completes all the todos when the filter is `/all`', () => {
 			elem.trigger('todo-new-item', 'foo');
 			elem.trigger('todo-new-item', 'bar');
 
-			elem.trigger('todo-complete-all');
+			elem.trigger('toggle-all-check');
 
 			todoApp.todoCollection.toArray().forEach(todo => {
 				expect(todo.completed).to.be.true;
@@ -142,7 +142,7 @@ describe('todoapp', () => {
 			elem.trigger('todo-new-item', 'foo');
 			elem.trigger('todo-new-item', 'bar');
 
-			elem.trigger('todo-complete-all');
+			elem.trigger('toggle-all-check');
 
 			todoApp.todoCollection.toArray().forEach(todo => {
 				expect(todo.completed).to.be.true;
@@ -150,13 +150,13 @@ describe('todoapp', () => {
 		});
 	});
 
-	describe('on todo-uncomplete-all', () => {
+	describe('on toggle-all-uncheck', () => {
 		it('uncompletes all the todos when the filter is `/all`', () => {
 			elem.trigger('todo-new-item', 'foo');
 			elem.trigger('todo-new-item', 'bar');
 
-			elem.trigger('todo-complete-all');
-			elem.trigger('todo-uncomplete-all');
+			elem.trigger('toggle-all-check');
+			elem.trigger('toggle-all-uncheck');
 
 			todoApp.todoCollection.toArray().forEach(todo => {
 				expect(todo.completed).to.be.false;
@@ -169,8 +169,8 @@ describe('todoapp', () => {
 			elem.trigger('todo-new-item', 'foo');
 			elem.trigger('todo-new-item', 'bar');
 
-			elem.trigger('todo-complete-all');
-			elem.trigger('todo-uncomplete-all');
+			elem.trigger('toggle-all-check');
+			elem.trigger('toggle-all-uncheck');
 
 			todoApp.todoCollection.toArray().forEach(todo => {
 				expect(todo.completed).to.be.false;

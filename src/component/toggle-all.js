@@ -1,7 +1,7 @@
 const {on, component} = $.cc;
 
 /**
- * The toggle all button
+ * The toggle all button.
  */
 @component('toggle-all')
 class ToggleAll {
@@ -11,9 +11,9 @@ class ToggleAll {
 	@on('click')
 	toggleAll() {
 		if (this.elem.prop('checked')) {
-			this.elem.trigger('todo-complete-all');
+			this.elem.trigger('toggle-all-check');
 		} else {
-			this.elem.trigger('todo-uncomplete-all');
+			this.elem.trigger('toggle-all-uncheck');
 		}
 	}
 
