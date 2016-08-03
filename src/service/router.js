@@ -18,19 +18,19 @@ class FilterObserver {
 		dispatch(this);
 	}
 
-	@route('#/all') all() {
+	@route '#/all'() {
 		this.target.trigger('filterchange', Filter.ALL);
 	}
 
-	@route('#/active') active() {
+	@route '#/active'() {
 		this.target.trigger('filterchange', Filter.ACTIVE);
 	}
 
-	@route('#/completed') completed() {
+	@route '#/completed'() {
 		this.target.trigger('filterchange', Filter.COMPLETED);
 	}
 
-	@route('*') other() {
+	@route '*'() {
 		this.target.trigger('filterchange', Filter.ALL);
 	}
 }
