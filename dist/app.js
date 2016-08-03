@@ -1,6 +1,14 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
+module.exports = function (camelString) {
+  return camelString.replace(/[A-Z]/g, function (c) {
+    return '-' + c.toLowerCase();
+  }).replace(/^-/, '');
+};
+},{}],2:[function(require,module,exports){
+'use strict';
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -144,7 +152,7 @@ var ClassComponentConfiguration = function () {
 }();
 
 module.exports = ClassComponentConfiguration;
-},{}],2:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -237,7 +245,7 @@ var ClassComponentContext = function () {
 
 module.exports = ClassComponentContext;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -370,11 +378,11 @@ var ClassComponentManager = function () {
 
 module.exports = ClassComponentManager;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./class-component-configuration":1}],4:[function(require,module,exports){
+},{"./class-component-configuration":2}],5:[function(require,module,exports){
 'use strict';
 
 /**
- * class-component.js v10.1.0
+ * class-component.js v10.2.0
  * author: Yoshiya Hinosawa ( http://github.com/kt3k )
  * license: MIT
  */
@@ -383,6 +391,7 @@ var $ = jQuery;
 var reSpaces = / +/;
 
 var ClassComponentManager = require('./class-component-manager');
+var camelToKebab = require('./camel-to-kebab');
 var decorators = require('./decorators');
 
 /**
@@ -440,22 +449,17 @@ function initializeModule() {
   };
 
   /**
-   * The decorator for class assignment.
-   *
-   * @example
-   *   @$.cc.component('foo')
-   *   class Foo extends Bar {
-   *     ...
-   *   }
-   *
-   * The above is the same as `$.cc.assign('foo', Foo)`
-   *
-   * @param {String} className The class name
-   * @return {Function}
+   * The decorator for class component registration.
+   * @param {String|Function} name The class name or the implementation class itself
+   * @return {Function|undefined} The decorator if the class name is given, undefined if the implementation class is given
    */
-  cc.component = function (className) {
+  cc.component = function (name) {
+    if (typeof name === 'function') {
+      cc(camelToKebab(name.name), name);
+    }
+
     return function (Cls) {
-      return cc(className, Cls);
+      return cc(name, Cls);
     };
   };
 
@@ -476,7 +480,7 @@ if ($.cc == null) {
 }
 
 module.exports = $.cc;
-},{"./class-component-manager":3,"./decorators":5,"./fn.cc":6}],5:[function(require,module,exports){
+},{"./camel-to-kebab":1,"./class-component-manager":4,"./decorators":6,"./fn.cc":7}],6:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -633,7 +637,7 @@ var wire = function wire(target, key, descriptor) {
 exports.on = on;
 exports.emit = emit;
 exports.wire = wire;
-},{"./listener-info":7}],6:[function(require,module,exports){
+},{"./listener-info":8}],7:[function(require,module,exports){
 'use strict';
 
 var ClassComponentContext = require('./class-component-context');
@@ -672,7 +676,7 @@ Object.defineProperty(jQuery.fn, 'cc', {
   configurable: false
 
 });
-},{"./class-component-context":2}],7:[function(require,module,exports){
+},{"./class-component-context":3}],8:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -720,7 +724,7 @@ var ListenerInfo = function () {
 }();
 
 module.exports = ListenerInfo;
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 (function (global){
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.domGen = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
@@ -888,7 +892,7 @@ var wbr = exports.wbr = domGen('wbr');
 },{}]},{},[1])(1)
 });
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -959,7 +963,7 @@ var HashRouteCollection = function () {
 }();
 
 module.exports = HashRouteCollection;
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -1057,8 +1061,10 @@ var HashRoute = function () {
 }();
 
 module.exports = HashRoute;
-},{"path-to-regexp":13}],11:[function(require,module,exports){
+},{"path-to-regexp":14}],12:[function(require,module,exports){
 'use strict';
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
 var HashRoute = require('./hash-route');
 var HashRouteCollection = require('./hash-route-collection');
@@ -1080,10 +1086,26 @@ exports.reset();
  * @param {string} key The key name
  * @param {object} descriptor The descriptor
  */
-exports.route = function (pattern) {
-  return function (target, key, descriptor) {
-    routes.add(HashRoute.createFromPatternAndMethod(pattern, descriptor.value));
-  };
+exports.route = function (target, key, descriptor) {
+  if (typeof target === 'string') {
+    var _ret = function () {
+      // This is @route(routePattern) usage
+      // So the first argument is the pattern string.
+      var pattern = target;
+
+      return {
+        v: function v(target, key, descriptor) {
+          routes.add(HashRoute.createFromPatternAndMethod(pattern, descriptor.value));
+        }
+      };
+    }();
+
+    if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+  }
+
+  // This is @route methodName() {} usage
+  // Uses the key as the route pattern
+  routes.add(HashRoute.createFromPatternAndMethod(key, descriptor.value));
 };
 
 /**
@@ -1095,7 +1117,7 @@ exports.dispatch = function (obj, path) {
 
   routes.dispatch(obj, path);
 };
-},{"./hash-route":10,"./hash-route-collection":9}],12:[function(require,module,exports){
+},{"./hash-route":11,"./hash-route-collection":10}],13:[function(require,module,exports){
 /*eslint-disable no-unused-vars*/
 /*!
  * jQuery JavaScript Library v3.1.0
@@ -11171,7 +11193,7 @@ if ( !noGlobal ) {
 return jQuery;
 } );
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 var isarray = require('isarray')
 
 /**
@@ -11599,12 +11621,12 @@ function pathToRegexp (path, keys, options) {
   return stringToRegexp(/** @type {string} */ (path), /** @type {!Array} */ (keys), options)
 }
 
-},{"isarray":14}],14:[function(require,module,exports){
+},{"isarray":15}],15:[function(require,module,exports){
 module.exports = Array.isArray || function (arr) {
   return Object.prototype.toString.call(arr) == '[object Array]';
 };
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -11673,7 +11695,7 @@ var ClearCompleted = (_dec = component('clear-completed'), _dec2 = on('click'), 
 
 module.exports = ClearCompleted;
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -11722,12 +11744,12 @@ var component = _$$cc.component;
  * TodoEdit controls the edit area of each todo item.
  */
 
-var TodoEdit = (_dec = component('edit'), _dec2 = on('keypress'), _dec3 = on('keydown'), _dec4 = on('blur'), _dec(_class = (_class2 = function () {
-	function TodoEdit() {
-		_classCallCheck(this, TodoEdit);
+var Edit = (_dec = component('edit'), _dec2 = on('keypress'), _dec3 = on('keydown'), _dec4 = on('blur'), _dec(_class = (_class2 = function () {
+	function Edit() {
+		_classCallCheck(this, Edit);
 	}
 
-	_createClass(TodoEdit, [{
+	_createClass(Edit, [{
 		key: 'onStart',
 		value: function onStart() {
 			this.elem.focus();
@@ -11787,13 +11809,13 @@ var TodoEdit = (_dec = component('edit'), _dec2 = on('keypress'), _dec3 = on('ke
 		}
 	}]);
 
-	return TodoEdit;
+	return Edit;
 }(), (_applyDecoratedDescriptor(_class2.prototype, 'onKeypress', [_dec2, _dec3], Object.getOwnPropertyDescriptor(_class2.prototype, 'onKeypress'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'onFinish', [_dec4], Object.getOwnPropertyDescriptor(_class2.prototype, 'onFinish'), _class2.prototype)), _class2)) || _class);
 
 
-module.exports = TodoEdit;
+module.exports = Edit;
 
-},{"../const":23}],17:[function(require,module,exports){
+},{"../const":24}],18:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -11842,7 +11864,7 @@ var Filters = (_dec = component('filters'), _dec(_class = function () {
 
 module.exports = Filters;
 
-},{"../domain/filter":24}],18:[function(require,module,exports){
+},{"../domain/filter":25}],19:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -11919,7 +11941,7 @@ var NewTodo = (_dec = component('new-todo'), _dec2 = on('keypress'), _dec(_class
 
 module.exports = NewTodo;
 
-},{"../const":23}],19:[function(require,module,exports){
+},{"../const":24}],20:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -11961,7 +11983,7 @@ var TodoCount = (_dec = component('todo-count'), _dec(_class = function () {
 
 module.exports = TodoCount;
 
-},{"dom-gen":8}],20:[function(require,module,exports){
+},{"dom-gen":9}],21:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -12022,7 +12044,7 @@ var TodoItem = (_dec = component('todo-item'), _dec2 = on('click').at('.toggle')
 
 	/**
   * Updates the todo title by todo model.
-  * @param {Object} todo The todo
+  * @param {Todo} todo The todo
   * @param {String} todo.id The id
   * @param {String} todo.title The title
   * @param {Boolean} todo.completed If completed or not
@@ -12146,7 +12168,7 @@ var TodoItem = (_dec = component('todo-item'), _dec2 = on('click').at('.toggle')
 
 module.exports = TodoItem;
 
-},{"dom-gen":8}],21:[function(require,module,exports){
+},{"dom-gen":9}],22:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -12208,7 +12230,7 @@ var TodoList = (_dec = component('todo-list'), _dec(_class = function () {
 
 module.exports = TodoList;
 
-},{"dom-gen":8}],22:[function(require,module,exports){
+},{"dom-gen":9}],23:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -12251,7 +12273,7 @@ var on = _$$cc.on;
 var component = _$$cc.component;
 
 /**
- * The toggle all button
+ * The toggle all button.
  */
 
 var ToggleAll = (_dec = component('toggle-all'), _dec2 = on('click'), _dec(_class = (_class2 = function () {
@@ -12263,9 +12285,9 @@ var ToggleAll = (_dec = component('toggle-all'), _dec2 = on('click'), _dec(_clas
 		key: 'toggleAll',
 		value: function toggleAll() {
 			if (this.elem.prop('checked')) {
-				this.elem.trigger('todo-complete-all');
+				this.elem.trigger('toggle-all-check');
 			} else {
-				this.elem.trigger('todo-uncomplete-all');
+				this.elem.trigger('toggle-all-uncheck');
 			}
 		}
 
@@ -12287,7 +12309,7 @@ var ToggleAll = (_dec = component('toggle-all'), _dec2 = on('click'), _dec(_clas
 
 module.exports = ToggleAll;
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -12301,7 +12323,7 @@ module.exports = {
 	}
 };
 
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -12356,7 +12378,7 @@ Filter.COMPLETED = new Filter();
 
 module.exports = Filter;
 
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -12588,7 +12610,7 @@ var TodoCollection = function () {
 
 module.exports = TodoCollection;
 
-},{"./filter":24}],26:[function(require,module,exports){
+},{"./filter":25}],27:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -12652,7 +12674,7 @@ var TodoFactory = function () {
 
 module.exports = TodoFactory;
 
-},{"./todo":28}],27:[function(require,module,exports){
+},{"./todo":29}],28:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -12746,7 +12768,7 @@ var TodoRepository = function () {
 
 module.exports = TodoRepository;
 
-},{"../const":23,"./todo-collection":25}],28:[function(require,module,exports){
+},{"../const":24,"./todo-collection":26}],29:[function(require,module,exports){
 "use strict";
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -12771,7 +12793,7 @@ function Todo(id, title, completed) {
 
 module.exports = Todo;
 
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -12790,12 +12812,12 @@ require('./service/router');
 require('./service/todoapp');
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./component/clear-completed":15,"./component/edit":16,"./component/filters":17,"./component/new-todo":18,"./component/todo-count":19,"./component/todo-item":20,"./component/todo-list":21,"./component/toggle-all":22,"./service/router":30,"./service/todoapp":31,"class-component":4,"jquery":12}],30:[function(require,module,exports){
+},{"./component/clear-completed":16,"./component/edit":17,"./component/filters":18,"./component/new-todo":19,"./component/todo-count":20,"./component/todo-item":21,"./component/todo-list":22,"./component/toggle-all":23,"./service/router":31,"./service/todoapp":32,"class-component":5,"jquery":13}],31:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _class, _desc, _value, _class2;
+var _dec, _dec2, _class, _desc, _value, _class2;
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -12844,7 +12866,7 @@ var on = _$$cc.on;
  * The observer of the filter and invokes filterchange event when it's changed.
  */
 
-var FilterObserver = (_dec = component('router'), _dec2 = on('hashchange'), _dec3 = route('#/all'), _dec4 = route('#/active'), _dec5 = route('#/completed'), _dec6 = route('*'), _dec(_class = (_class2 = function () {
+var FilterObserver = (_dec = component('router'), _dec2 = on('hashchange'), _dec(_class = (_class2 = function () {
 	function FilterObserver(elem) {
 		_classCallCheck(this, FilterObserver);
 
@@ -12857,34 +12879,34 @@ var FilterObserver = (_dec = component('router'), _dec2 = on('hashchange'), _dec
 			dispatch(this);
 		}
 	}, {
-		key: 'all',
+		key: '#/all',
 		value: function all() {
 			this.target.trigger('filterchange', Filter.ALL);
 		}
 	}, {
-		key: 'active',
+		key: '#/active',
 		value: function active() {
 			this.target.trigger('filterchange', Filter.ACTIVE);
 		}
 	}, {
-		key: 'completed',
+		key: '#/completed',
 		value: function completed() {
 			this.target.trigger('filterchange', Filter.COMPLETED);
 		}
 	}, {
-		key: 'other',
-		value: function other() {
+		key: '*',
+		value: function _() {
 			this.target.trigger('filterchange', Filter.ALL);
 		}
 	}]);
 
 	return FilterObserver;
-}(), (_applyDecoratedDescriptor(_class2.prototype, 'onHashchange', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'onHashchange'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'all', [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, 'all'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'active', [_dec4], Object.getOwnPropertyDescriptor(_class2.prototype, 'active'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'completed', [_dec5], Object.getOwnPropertyDescriptor(_class2.prototype, 'completed'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'other', [_dec6], Object.getOwnPropertyDescriptor(_class2.prototype, 'other'), _class2.prototype)), _class2)) || _class);
+}(), (_applyDecoratedDescriptor(_class2.prototype, 'onHashchange', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'onHashchange'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, '#/all', [route], Object.getOwnPropertyDescriptor(_class2.prototype, '#/all'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, '#/active', [route], Object.getOwnPropertyDescriptor(_class2.prototype, '#/active'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, '#/completed', [route], Object.getOwnPropertyDescriptor(_class2.prototype, '#/completed'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, '*', [route], Object.getOwnPropertyDescriptor(_class2.prototype, '*'), _class2.prototype)), _class2)) || _class);
 
 
 module.exports = FilterObserver;
 
-},{"../domain/filter":24,"hash-route":11}],31:[function(require,module,exports){
+},{"../domain/filter":25,"hash-route":12}],32:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -12934,7 +12956,7 @@ var wire = _$$cc.wire;
  * The todo application class.
  */
 
-var Todoapp = (_dec = component('todoapp'), _dec2 = on('filterchange'), _dec3 = on('todo-new-item'), _dec4 = on('todo-item-toggle'), _dec5 = on('todo-item-destroy'), _dec6 = on('todo-item-edited'), _dec7 = on('todo-clear-completed'), _dec8 = on('todo-uncomplete-all'), _dec9 = on('todo-complete-all'), _dec(_class = (_class2 = function () {
+var Todoapp = (_dec = component('todoapp'), _dec2 = on('filterchange'), _dec3 = on('todo-new-item'), _dec4 = on('todo-item-toggle'), _dec5 = on('todo-item-destroy'), _dec6 = on('todo-item-edited'), _dec7 = on('todo-clear-completed'), _dec8 = on('toggle-all-uncheck'), _dec9 = on('toggle-all-check'), _dec(_class = (_class2 = function () {
 	/**
   * @param {jQuery} elem The element
   */
@@ -13133,4 +13155,4 @@ var Todoapp = (_dec = component('todoapp'), _dec2 = on('filterchange'), _dec3 = 
 
 module.exports = Todoapp;
 
-},{"../domain/todo-factory":26,"../domain/todo-repository":27}]},{},[29]);
+},{"../domain/todo-factory":27,"../domain/todo-repository":28}]},{},[30]);
