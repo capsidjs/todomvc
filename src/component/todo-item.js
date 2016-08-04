@@ -1,6 +1,6 @@
 const {div, input, label, button} = require('dom-gen');
 
-const {on, component} = $.cc;
+const {on, wire, component} = $.cc;
 
 /**
  * TodoItem class controls todo item in a list.
@@ -19,6 +19,11 @@ class TodoItem {
 	}
 
 	/**
+	 * @return {Edit}
+	 */
+	@wire get edit () {}
+
+	/**
 	 * Updates the todo title by todo model.
 	 * @param {Todo} todo The todo
 	 * @param {String} todo.id The id
@@ -28,7 +33,7 @@ class TodoItem {
 	update(todo) {
 		this.elem.attr('id', todo.id);
 		this.elem.find('label').text(todo.title);
-		this.elem.find('.edit').cc.get('edit').onUpdate(todo.title);
+		this.edit.onUpdate(todo.title);
 
 		this.completed = todo.completed;
 		this.updateView();
@@ -94,7 +99,7 @@ class TodoItem {
 	@on('dblclick').at('label')
 	startEditing() {
 		this.elem.addClass('editing');
-		this.elem.find('.edit').cc.get('edit').onStart();
+		this.edit.onStart();
 	}
 
 	/**
