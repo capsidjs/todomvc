@@ -7,8 +7,8 @@ const {component, on} = $.cc;
 /**
  * The observer of the filter and invokes filterchange event when it's changed.
  */
-@component('router')
-class FilterObserver {
+@component
+class Router {
 	constructor(elem) {
 		this.target = elem.data('target');
 	}
@@ -35,4 +35,4 @@ class FilterObserver {
 	}
 }
 
-module.exports = FilterObserver;
+module.exports = Router;

@@ -5,7 +5,7 @@ const {on, component} = $.cc;
 /**
  * TodoEdit controls the edit area of each todo item.
  */
-@component('edit')
+@component
 class Edit {
 	onStart() {
 		this.elem.focus();

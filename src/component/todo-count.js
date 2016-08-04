@@ -5,7 +5,7 @@ const {component} = $.cc;
 /**
  * The todo counting element.
  */
-@component('todo-count')
+@component
 class TodoCount {
 	/**
 	 * @param {number} count The number of todos

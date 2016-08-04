@@ -5,7 +5,7 @@ const {component} = $.cc;
 /**
  * The todo filter controls.
  */
-@component('filters')
+@component
 class Filters {
 
 	/**

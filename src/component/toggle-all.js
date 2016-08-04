@@ -3,7 +3,7 @@ const {on, component} = $.cc;
 /**
  * The toggle all button.
  */
-@component('toggle-all')
+@component
 class ToggleAll {
 	/**
 	 * Toggles the all items.

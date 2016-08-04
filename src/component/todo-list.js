@@ -5,7 +5,7 @@ const {component} = $.cc;
 /**
  * The todo list component.
  */
-@component('todo-list')
+@component
 class TodoList {
 	/**
 	 * Updates the todo items by the given todo model list.

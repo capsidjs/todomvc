@@ -1,6 +1,6 @@
 const {component, on} = $.cc;
 
-@component('clear-completed')
+@component
 class ClearCompleted {
 	/**
 	 * Handles the click event. Triggers the todo-clear-completed event.

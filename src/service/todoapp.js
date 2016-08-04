@@ -6,7 +6,7 @@ const {on, component, wire} = $.cc;
 /**
  * The todo application class.
  */
-@component('todoapp')
+@component
 class Todoapp {
 	/**
 	 * @param {jQuery} elem The element

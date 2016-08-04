@@ -5,7 +5,7 @@ const {on, component} = $.cc;
 /**
  * TodoItem class controls todo item in a list.
  */
-@component('todo-item')
+@component
 class TodoItem {
 	constructor(elem) {
 		elem.append(
