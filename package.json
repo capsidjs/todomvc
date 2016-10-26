@@ -46,7 +46,7 @@
     "todomvc-app-css": "^2.0.6",
     "todomvc-common": "^1.0.2",
     "watchify": "^3.7.0",
-    "xo": "^0.16.0"
+    "xo": "^0.17.0"
   },
   "babel": {
     "presets": [
