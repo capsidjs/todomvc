@@ -1,3 +1,5 @@
+import trigger from '../util/trigger';
+
 const {KEYCODE} = require('../const');
 
 const {on, component} = $.cc;
@@ -8,15 +10,15 @@ const {on, component} = $.cc;
 @component
 class Edit {
 	onStart() {
-		this.elem.focus();
+		this.$el.focus();
 	}
 
 	/**
 	 * Updates the view with the given value.
 	 */
 	onUpdate(value) {
-		this.elem.val(value);
-		this.elem.data('prev-value', value);
+		this.$el.val(value);
+		this.$el.data('prev-value', value);
 	}
 
 	/**
@@ -39,20 +41,20 @@ class Edit {
 	 */
 	@on('blur')
 	onFinish() {
-		const value = this.elem.val();
+		const value = this.$el.val();
 
 		this.onUpdate(value);
-		this.elem.trigger('todo-edited', value);
+		trigger(this.el, 'todo-edited', value);
 	}
 
 	/**
 	 * Cancels editing and revert the change of the value.
 	 */
 	onCancel() {
-		const value = this.elem.data('prev-value');
+		const value = this.$el.data('prev-value');
 
 		this.onUpdate(value);
-		this.elem.trigger('todo-edited', value);
+		trigger(this.el, 'todo-edited', value);
 	}
 }
 

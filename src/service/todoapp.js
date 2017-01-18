@@ -1,3 +1,5 @@
+import trigger from '../util/trigger';
+
 const TodoFactory = require('../domain/todo-factory');
 const TodoRepository = require('../domain/todo-repository');
 
@@ -8,17 +10,16 @@ const {on, component, wire} = $.cc;
  */
 @component
 class Todoapp {
-	/**
-	 * @param {jQuery} elem The element
-	 */
-	constructor(elem) {
+	__init__() {
 		this.todoFactory = new TodoFactory();
 		this.todoRepository = new TodoRepository();
 		this.todoCollection = this.todoRepository.getAll();
 
-		const router = $(window).data('target', elem).cc('router');
+		const router = $.cc.co('router', this.el)
 
-		setTimeout(() => router.trigger('hashchange'));
+		setTimeout(() => trigger(router, 'hashchange'));
+
+		$(window).on('hashchange', () => router.onHashchange())
 	}
 
 	@wire get 'todo-list'() {}
@@ -51,8 +52,8 @@ class Todoapp {
 	}
 
 	@on('filterchange')
-	onFilterchange(e, filter) {
-		this.filter = filter;
+	onFilterchange(e) {
+		this.filter = e.detail;
 
 		this.refreshAll();
 	}
@@ -64,7 +65,8 @@ class Todoapp {
 	 * @param {String} title The todo title
 	 */
 	@on('todo-new-item')
-	addTodo(e, title) {
+	addTodo(e) {
+		const title = e.detail;
 		const todo = this.todoFactory.createByTitle(title);
 
 		this.todoCollection.push(todo);
@@ -86,7 +88,8 @@ class Todoapp {
 	 * @param {String} id The todo id
 	 */
 	@on('todo-item-toggle')
-	toggle(e, id) {
+	toggle(e) {
+		const id = e.detail;
 		this.todoCollection.toggleById(id);
 		this.save();
 
@@ -103,7 +106,9 @@ class Todoapp {
 	 * @param {String} id The todo id
 	 */
 	@on('todo-item-destroy')
-	remove(e, id) {
+	remove(e) {
+		const id = e.detail;
+
 		this.todoCollection.removeById(id);
 		this.save();
 
@@ -117,7 +122,9 @@ class Todoapp {
 	 * @param {string} title The todo title
 	 */
 	@on('todo-item-edited')
-	editItem(e, id, title) {
+	editItem(e) {
+		const {id, title} = e.detail;
+
 		this.todoCollection.getById(id).title = title;
 		this.save();
 	}

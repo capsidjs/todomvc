@@ -1,5 +1,8 @@
-global.$ = global.jQuery = require('jquery');
-require('class-component');
+const $ = global.$ = require('jquery');
+const cc = require('classcaps');
+const ccj = require('classcaps/jquery');
+
+ccj(cc, $);
 
 require('./component/todo-item');
 require('./component/new-todo');

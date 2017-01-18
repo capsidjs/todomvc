@@ -1,3 +1,5 @@
+import trigger from '../util/trigger';
+
 const {div, input, label, button} = require('dom-gen');
 
 const {on, wire, component} = $.cc;
@@ -7,8 +9,8 @@ const {on, wire, component} = $.cc;
  */
 @component
 class TodoItem {
-	constructor(elem) {
-		elem.append(
+	__init__() {
+		this.$el.append(
 			div(
 				input({attr: {type: 'checkbox'}}).addClass('toggle'),
 				label(),
@@ -21,7 +23,7 @@ class TodoItem {
 	/**
 	 * @return {Edit}
 	 */
-	@wire get edit () {}
+	@wire get edit() {}
 
 	/**
 	 * Updates the todo title by todo model.
@@ -43,9 +45,9 @@ class TodoItem {
 	 * Toggles the completed state of the item.
 	 * @private
 	 */
-	@on('click').at('.toggle')
+	@on('click', {at: '.toggle'})
 	toggleCompleted() {
-		this.elem.trigger('todo-item-toggle', this.elem.attr('id'));
+		trigger(this.el, 'todo-item-toggle', this.elem.attr('id'));
 
 		this.completed = !this.completed;
 		this.updateView();
@@ -55,11 +57,11 @@ class TodoItem {
 	 * Destroys the item.
 	 * @private
 	 */
-	@on('click').at('.destroy')
+	@on('click', {at: '.destroy'})
 	destroy() {
-		this.elem.parent().trigger('todo-item-destroy', this.elem.attr('id'));
+		trigger(this.el.parentElement, 'todo-item-destroy', this.$el.attr('id'));
 
-		this.elem.remove();
+		this.$el.remove();
 	}
 
 	/**
@@ -96,7 +98,7 @@ class TodoItem {
 	 * Starts editing.
 	 * @private
 	 */
-	@on('dblclick').at('label')
+	@on('dblclick', {at: 'label'})
 	startEditing() {
 		this.elem.addClass('editing');
 		this.edit.onStart();
@@ -107,8 +109,10 @@ class TodoItem {
 	 * @private
 	 */
 	@on('todo-edited')
-	stopEditing(e, title) {
-		this.elem.removeClass('editing');
+	stopEditing(e) {
+		const title = e.detail;
+
+		this.$el.removeClass('editing');
 
 		if (!title) {
 			this.destroy();
@@ -116,9 +120,9 @@ class TodoItem {
 			return;
 		}
 
-		this.elem.find('label').text(title);
+		this.$el.find('label').text(title);
 
-		this.elem.trigger('todo-item-edited', [this.elem.attr('id'), title]);
+		trigger(this.el, 'todo-item-edited', {id: this.$el.attr('id'), title});
 	}
 }
 

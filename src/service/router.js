@@ -1,3 +1,5 @@
+import trigger from '../util/trigger';
+
 const {route, dispatch} = require('hash-route');
 
 const Filter = require('../domain/filter');
@@ -9,29 +11,24 @@ const {component, on} = $.cc;
  */
 @component
 class Router {
-	constructor(elem) {
-		this.target = elem.data('target');
-	}
-
-	@on('hashchange')
 	onHashchange() {
 		dispatch(this);
 	}
 
 	@route '#/all'() {
-		this.target.trigger('filterchange', Filter.ALL);
+		trigger(this.el, 'filterchange', Filter.ALL);
 	}
 
 	@route '#/active'() {
-		this.target.trigger('filterchange', Filter.ACTIVE);
+		trigger(this.el, 'filterchange', Filter.ACTIVE);
 	}
 
 	@route '#/completed'() {
-		this.target.trigger('filterchange', Filter.COMPLETED);
+		trigger(this.el, 'filterchange', Filter.COMPLETED);
 	}
 
 	@route '*'() {
-		this.target.trigger('filterchange', Filter.ALL);
+		trigger(this.el, 'filterchange', Filter.ALL);
 	}
 }
 

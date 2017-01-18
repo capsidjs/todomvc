@@ -1,3 +1,5 @@
+import trigger from '../util/trigger';
+
 const {on, component} = $.cc;
 
 /**
@@ -11,9 +13,9 @@ class ToggleAll {
 	@on('click')
 	toggleAll() {
 		if (this.elem.prop('checked')) {
-			this.elem.trigger('toggle-all-check');
+			trigger(this.el, 'toggle-all-check');
 		} else {
-			this.elem.trigger('toggle-all-uncheck');
+			trigger(this.el, 'toggle-all-uncheck');
 		}
 	}
 

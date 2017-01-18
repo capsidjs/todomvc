@@ -1,3 +1,5 @@
+import trigger from '../util/trigger';
+
 const Const = require('../const');
 
 const {on, component} = $.cc;
@@ -24,7 +26,7 @@ class NewTodo {
 		const title = this.elem.val().trim();
 		this.elem.val('');
 
-		this.elem.trigger('todo-new-item', title);
+		trigger(this.el, 'todo-new-item', title);
 	}
 }
 

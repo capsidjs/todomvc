@@ -14,7 +14,7 @@
   "repository": "https://github.com/kt3k/todomvc-mangrove.git",
   "keywords": [
     "todomvc",
-    "class-component"
+    "classcaps"
   ],
   "author": "Yoshiya Hinosawa <stibium121@gmail.com> (https://twitter.com/kt3k)",
   "license": "MIT",
@@ -26,7 +26,7 @@
     "babelify": "^7.3.0",
     "browserify": "^13.0.1",
     "chai": "^3.5.0",
-    "class-component": "^11.0.2",
+    "classcaps": "^0.1.2",
     "codecov": "^1.0.1",
     "dom-gen": "^2.2.0",
     "eslint": "^3.3.1",

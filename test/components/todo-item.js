@@ -1,5 +1,6 @@
 const {expect} = require('chai');
 const {ul, li} = require('dom-gen');
+const {trigger} = require('../helper');
 
 let todoItem;
 let elem;
@@ -74,7 +75,9 @@ describe('todo-edit', () => {
 		});
 
 		it('triggers the todo-item-destroy event on the parent element', done => {
-			parentElem.on('todo-item-destroy', (e, id) => {
+			parentElem.on('todo-item-destroy', e => {
+				const id = e.detail;
+
 				expect(id).to.equal('foo');
 
 				done();
@@ -86,7 +89,7 @@ describe('todo-edit', () => {
 
 	describe('on label dblclick', () => {
 		it('adds editing class to the element', () => {
-			elem.find('label').trigger('dblclick');
+			trigger(elem.find('label'), 'dblclick');
 
 			expect(elem.hasClass('editing')).to.be.true;
 		});
@@ -94,36 +97,38 @@ describe('todo-edit', () => {
 
 	describe('on todo-edited event', () => {
 		it('removes editing class', () => {
-			elem.find('label').trigger('dblclick');
+			trigger(elem.find('label'), 'dblclick');
 
 			expect(elem.hasClass('editing')).to.be.true;
 
-			elem.trigger('todo-edited');
+			trigger(elem, 'todo-edited');
 
 			expect(elem.hasClass('editing')).to.be.false;
 		});
 
 		it('removes the element when the todo title is empty', () => {
-			elem.trigger('todo-edited', '');
+			trigger(elem, 'todo-edited', '');
 
 			expect(elem.parent()).to.have.length(0);
 		});
 
 		it('updates label when the todo title is not empty', () => {
-			elem.trigger('todo-edited', 'ham egg');
+			trigger(elem, 'todo-edited', 'ham egg');
 
 			expect(elem.find('label').text()).to.equal('ham egg');
 		});
 
 		it('triggers todo-item-edited button when the todo title is not empty', done => {
-			elem.on('todo-item-edited', (e, id, title) => {
+			elem.on('todo-item-edited', e => {
+				const {id, title} = e.detail;
+
 				expect(id).to.equal('foo');
 				expect(title).to.equal('ham egg');
 
 				done();
 			});
 
-			elem.trigger('todo-edited', 'ham egg');
+			trigger(elem, 'todo-edited', 'ham egg');
 		});
 	});
 });

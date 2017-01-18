@@ -1,3 +1,5 @@
+import trigger from '../util/trigger';
+
 const {component, on} = $.cc;
 
 @component
@@ -7,14 +9,14 @@ class ClearCompleted {
 	 */
 	@on('click')
 	onClick() {
-		this.elem.trigger('todo-clear-completed');
+		trigger(this.el, 'todo-clear-completed');
 	}
 
 	/**
 	 * @param {TodoCollection} todos The todo collection
 	 */
 	onUpdate(todos) {
-		this.elem.css('display', todos.completed().isEmpty() ? 'none' : 'inline');
+		this.$el.css('display', todos.completed().isEmpty() ? 'none' : 'inline');
 	}
 }
 

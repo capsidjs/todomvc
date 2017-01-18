@@ -3,17 +3,20 @@ const {expect} = require('chai');
 
 const Filter = require('../../src/domain/filter');
 
-let target;
+let target, router;
 
 describe('router', () => {
 	before(() => {
-		target = div();
+		target = div().cc('router');
+		router = target.cc.get('router');
 
-		$(window).data('target', target).cc('router');
+		$(window).on('hashchange', () => router.onHashchange());
 	});
 
 	it('triggers the filterchange event to the target with ACTIVE filter when the url hash is #/active', done => {
-		target.on('filterchange', (e, filter) => {
+		target.on('filterchange', e => {
+			const filter = e.detail;
+
 			target.off('filterchange');
 			expect(filter).to.equal(Filter.ACTIVE);
 			done();
@@ -23,7 +26,9 @@ describe('router', () => {
 	});
 
 	it('triggers the filterchange event to the target with COMPLETED filter when the url hash is #/completed', done => {
-		target.on('filterchange', (e, filter) => {
+		target.on('filterchange', e => {
+			const filter = e.detail;
+
 			target.off('filterchange');
 			expect(filter).to.equal(Filter.COMPLETED);
 			done();
@@ -33,7 +38,9 @@ describe('router', () => {
 	});
 
 	it('triggers the filterchange event to the target with ALL filter when the url hash is #/all', done => {
-		target.on('filterchange', (e, filter) => {
+		target.on('filterchange', e => {
+			const filter = e.detail;
+
 			target.off('filterchange');
 			expect(filter).to.equal(Filter.ALL);
 			done();
@@ -43,7 +50,9 @@ describe('router', () => {
 	});
 
 	it('triggers the filterchange event to the target with ALL filter when the url hash is otherwise', done => {
-		target.on('filterchange', (e, filter) => {
+		target.on('filterchange', e => {
+			const filter = e.detail;
+
 			target.off('filterchange');
 			expect(filter).to.equal(Filter.ALL);
 			done();

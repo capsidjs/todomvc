@@ -14,7 +14,7 @@ describe('TodoInput', () => {
 
 	describe('on keypress', () => {
 		it('does nothing when the keycode is not ENTER', () => {
-			elem.trigger($.Event('keypress', {which: 32})); // eslint-disable-line babel/new-cap
+			elem[0].dispatchEvent(new KeyboardEvent('keypress', {which: 32}));
 
 			expect(elem.val()).to.equal('abc');
 		});
@@ -22,19 +22,27 @@ describe('TodoInput', () => {
 		it('does nothing when the keycode is ENTER and the value is whitespace', () => {
 			elem.val('   ');
 
-			elem.trigger($.Event('keypress', {which: Const.KEYCODE.ENTER})); // eslint-disable-line babel/new-cap
+			const e = new CustomEvent('keypress')
+			e.which = Const.KEYCODE.ENTER
+
+			elem[0].dispatchEvent(e);
 
 			expect(elem.val()).to.equal('   ');
 		});
 
 		it('empties the value and triggers todo-new-item event', done => {
-			elem.on('todo-new-item', (e, title) => {
+			elem.on('todo-new-item', e => {
+				const title = e.detail;
+
 				expect(title).to.equal('abc');
 
 				done();
 			});
 
-			elem.trigger($.Event('keypress', {which: Const.KEYCODE.ENTER})); // eslint-disable-line babel/new-cap
+			const e = new CustomEvent('keypress')
+			e.which = Const.KEYCODE.ENTER
+
+			elem[0].dispatchEvent(e);
 		});
 	});
 });
