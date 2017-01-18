@@ -1,4 +1,4 @@
-import cc from 'classcaps'
+import cc from 'classcaps';
 
 const {expect} = require('chai');
 const {input} = require('dom-gen');
@@ -35,10 +35,10 @@ describe('Edit', () => {
 
 			elem.val('bar');
 
-			cc.get('edit', elem[0]).onKeypress
+			cc.get('edit', elem[0]).onKeypress;
 
 			const e = new CustomEvent('keypress');
-		  e.which = Const.KEYCODE.ENTER;
+			e.which = Const.KEYCODE.ENTER;
 
 			elem[0].dispatchEvent(e);
 		});
@@ -47,7 +47,7 @@ describe('Edit', () => {
 			elem.on('todo-edited', () => done(new Error('todo-edited should not be triggered')));
 
 			const e = new CustomEvent('keypress');
-		  e.which = 32;
+			e.which = 32;
 
 			todoEdit.el.dispatchEvent(e);
 
@@ -65,7 +65,7 @@ describe('Edit', () => {
 			elem.val('bar');
 
 			const e = new CustomEvent('keypress');
-		  e.which = Const.KEYCODE.ESCAPE;
+			e.which = Const.KEYCODE.ESCAPE;
 
 			elem[0].dispatchEvent(e);
 		});

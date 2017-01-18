@@ -4,7 +4,7 @@ const {route, dispatch} = require('hash-route');
 
 const Filter = require('../domain/filter');
 
-const {component, on} = $.cc;
+const {component} = $.cc;
 
 /**
  * The observer of the filter and invokes filterchange event when it's changed.

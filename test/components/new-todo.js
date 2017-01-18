@@ -22,8 +22,8 @@ describe('TodoInput', () => {
 		it('does nothing when the keycode is ENTER and the value is whitespace', () => {
 			elem.val('   ');
 
-			const e = new CustomEvent('keypress')
-			e.which = Const.KEYCODE.ENTER
+			const e = new CustomEvent('keypress');
+			e.which = Const.KEYCODE.ENTER;
 
 			elem[0].dispatchEvent(e);
 
@@ -39,8 +39,8 @@ describe('TodoInput', () => {
 				done();
 			});
 
-			const e = new CustomEvent('keypress')
-			e.which = Const.KEYCODE.ENTER
+			const e = new CustomEvent('keypress');
+			e.which = Const.KEYCODE.ENTER;
 
 			elem[0].dispatchEvent(e);
 		});

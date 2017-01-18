@@ -1,5 +1,3 @@
-import trigger from '../util/trigger';
-
 const TodoFactory = require('../domain/todo-factory');
 const TodoRepository = require('../domain/todo-repository');
 
@@ -15,11 +13,11 @@ class Todoapp {
 		this.todoRepository = new TodoRepository();
 		this.todoCollection = this.todoRepository.getAll();
 
-		const router = $.cc.co('router', this.el)
+		const router = $.cc.co('router', this.el);
 
-		setTimeout(() => trigger(router, 'hashchange'));
+		setTimeout(() => router.onHashchange());
 
-		$(window).on('hashchange', () => router.onHashchange())
+		$(window).on('hashchange', () => router.onHashchange());
 	}
 
 	@wire get 'todo-list'() {}
