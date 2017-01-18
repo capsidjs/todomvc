@@ -3,7 +3,8 @@ const {expect} = require('chai');
 
 const Filter = require('../../src/domain/filter');
 
-let target, router;
+let target;
+let router;
 
 describe('router', () => {
 	before(() => {
