@@ -1,6 +1,6 @@
 import trigger from '../util/trigger';
 
-const {on, component} = $.cc;
+const {on, component} = require('capsid');
 
 /**
  * The toggle all button.

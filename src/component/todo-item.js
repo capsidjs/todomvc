@@ -2,7 +2,7 @@ import trigger from '../util/trigger';
 
 const {div, input, label, button} = require('dom-gen');
 
-const {on, wire, component} = $.cc;
+const {on, wire, component} = require('capsid');
 
 /**
  * TodoItem class controls todo item in a list.

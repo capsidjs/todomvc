@@ -1,4 +1,4 @@
-import cc from 'classcaps';
+import cc from 'capsid';
 
 const {expect} = require('chai');
 const {input} = require('dom-gen');

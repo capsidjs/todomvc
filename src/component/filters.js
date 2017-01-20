@@ -1,6 +1,6 @@
 const Filter = require('../domain/filter');
 
-const {component} = $.cc;
+const {component} = require('capsid');
 
 /**
  * The todo filter controls.

@@ -1,6 +1,6 @@
 const {li} = require('dom-gen');
 
-const {component} = $.cc;
+const {component} = require('capsid');
 
 /**
  * The todo list component.

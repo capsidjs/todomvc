@@ -2,7 +2,7 @@ import trigger from '../util/trigger';
 
 const Const = require('../const');
 
-const {on, component} = $.cc;
+const {on, component} = require('capsid');
 
 /**
  * TodoInput class controls the input for adding todos.

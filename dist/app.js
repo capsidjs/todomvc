@@ -1,549 +1,193 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
-module.exports = function (camelString) {
-  return camelString.replace(/[A-Z]/g, function (c) {
-    return '-' + c.toLowerCase();
-  }).replace(/^-/, '');
+//
+/**
+ * Transform camelCase string to kebab-case string
+ * @param camelString The string in camelCase
+ * @return The string in kebab-case
+ */
+
+var camelToKebab = function camelToKebab(camelString) {
+  return camelString.replace(/(?!^)[A-Z]/g, '-$&').toLowerCase();
 };
-},{}],2:[function(require,module,exports){
-'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+//
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /**
- * ClassComponentConfiguration is the utility class for class component initialization.
+ * The mapping from class-component name to its initializer function.
  */
+var ccc = {};
 
-var ClassComponentConfiguration = function () {
-  /**
-   * @param {String} className The class name
-   * @param {Function} Constructor The constructor of the coelement of the class component
-   */
-
-  function ClassComponentConfiguration(className, Constructor) {
-    _classCallCheck(this, ClassComponentConfiguration);
-
-    this.className = className;
-    this.Constructor = Constructor;
-    this.initClass = this.className + '-initialized';
+//
+/**
+ * Asserts the given condition holds, otherwise throws.
+ * @param assertion The assertion expression
+ * @param message The assertion message
+ */
+function check(assertion, message) {
+  if (!assertion) {
+    throw new Error(message);
   }
-
-  /**
-   * Returns the selector for uninitialized class component.
-   * @public
-   * @return {String}
-   */
-
-
-  _createClass(ClassComponentConfiguration, [{
-    key: 'selector',
-    value: function selector() {
-      return '.' + this.className + ':not(.' + this.initClass + ')';
-    }
-  }, {
-    key: 'isInitialized',
-    value: function isInitialized(elem) {
-      return elem.hasClass(this.initClass);
-    }
-
-    /**
-     * Marks the given element as initialized as this class component.
-     * @private
-     * @param {jQuery} elem
-     */
-
-  }, {
-    key: 'markInitialized',
-    value: function markInitialized(elem) {
-      elem.addClass(this.initClass);
-    }
-
-    /**
-     * Applies the defining function to the element.
-     * @private
-     * @param {jQuery} elem
-     */
-
-  }, {
-    key: 'applyCustomDefinition',
-    value: function applyCustomDefinition(elem) {
-      var coelem = new this.Constructor(elem);
-
-      if (typeof coelem.__cc_init__ === 'function') {
-        coelem.__cc_init__(elem);
-      } else {
-        coelem.elem = elem;
-      }
-
-      this.getAllListenerInfo().forEach(function (listenerInfo) {
-        return listenerInfo.bindTo(elem, coelem);
-      });
-
-      elem.data('__coelement:' + this.className, coelem);
-    }
-
-    /**
-     * Gets the list of the event-decorated handlers.
-     * @private
-     * @return {Function[]}
-     */
-
-  }, {
-    key: 'getHandlers',
-    value: function getHandlers() {
-      var prototype = this.Constructor.prototype;
-
-      return Object.getOwnPropertyNames(prototype).map(function (key) {
-        return Object.getOwnPropertyDescriptor(prototype, key);
-      }).filter(ClassComponentConfiguration.isHandler).map(function (descriptor) {
-        return descriptor.value;
-      });
-    }
-
-    /**
-     * Gets all the listener info of the coelement.
-     * @private
-     * @return {ListenerInfo[]}
-     */
-
-  }, {
-    key: 'getAllListenerInfo',
-    value: function getAllListenerInfo() {
-      return [].concat.apply([], this.getHandlers().map(function (handler) {
-        return handler.__events__;
-      }));
-    }
-
-    /**
-     * Returns true when the given property is an event handler.
-     * @private
-     * @param {object} descriptor The property descriptor
-     * @return {boolean}
-     */
-
-  }, {
-    key: 'initElem',
-
-
-    /**
-     * Initialize the element by the configuration.
-     * @public
-     * @param {jQuery} elem The element
-     */
-    value: function initElem(elem) {
-      if (this.isInitialized(elem)) {
-        return;
-      }
-
-      this.markInitialized(elem);
-      this.applyCustomDefinition(elem);
-    }
-  }], [{
-    key: 'isHandler',
-    value: function isHandler(descriptor) {
-      return descriptor != null && typeof descriptor.value === 'function' && descriptor.value.__events__ != null;
-    }
-  }]);
-
-  return ClassComponentConfiguration;
-}();
-
-module.exports = ClassComponentConfiguration;
-},{}],3:[function(require,module,exports){
-(function (global){
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var $ = global.jQuery;
-
-/**
- * This is class component contenxt manager. This help to initialize or get colements.
- */
-
-var ClassComponentContext = function () {
-  /**
-   * @param {jQuery} jqObj jQuery object of a dom selection
-   */
-
-  function ClassComponentContext(jqObj) {
-    _classCallCheck(this, ClassComponentContext);
-
-    this.jqObj = jqObj;
-  }
-
-  /**
-   * Inserts the class name, initializes as the class component and returns the coelement if exists.
-   * @param {String} className The class name
-   * @return {Object}
-   */
-
-
-  _createClass(ClassComponentContext, [{
-    key: 'init',
-    value: function init(className) {
-      this.up(className);
-
-      return this.get(className);
-    }
-
-    /**
-     * Initializes the element if it has registered class component names. Returns the jquery object itself.
-     * @param {string} [classNames] The class name.
-     * @return {jQuery}
-     */
-
-  }, {
-    key: 'up',
-    value: function up(classNames) {
-      var _this = this;
-
-      if (classNames != null) {
-        classNames.split(/\s+/).forEach(function (className) {
-          _this.jqObj.addClass(className); // adds the class name
-
-          $.cc.__manager__.initAt(className, _this.jqObj); // init as the class-component
-        });
-      } else {
-          // Initializes anything it already has.
-          $.cc.__manager__.initAllAtElem(this.jqObj);
-        }
-
-      return this.jqObj;
-    }
-
-    /**
-     * Gets the coelement of the given name.
-     * @param {String} coelementName The name of the coelement
-     * @return {Object}
-     */
-
-  }, {
-    key: 'get',
-    value: function get(coelementName) {
-      var coelement = this.jqObj.data('__coelement:' + coelementName);
-
-      if (coelement) {
-        return coelement;
-      }
-
-      if (this.jqObj.length === 0) {
-        throw new Error('coelement "' + coelementName + '" unavailable at empty dom selection');
-      }
-
-      throw new Error('no coelement named: ' + coelementName + ', on the dom: ' + this.jqObj.get(0).tagName);
-    }
-  }]);
-
-  return ClassComponentContext;
-}();
-
-module.exports = ClassComponentContext;
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],4:[function(require,module,exports){
-(function (global){
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var $ = global.jQuery;
-
-var ClassComponentConfiguration = require('./class-component-configuration');
-
-/**
- * ClassComponentManger handles the registration and initialization of the class compoents.
- */
-
-var ClassComponentManager = function () {
-  function ClassComponentManager() {
-    _classCallCheck(this, ClassComponentManager);
-
-    /**
-     * @property {Object<ClassComponentConfiguration>} ccc
-     */
-    this.ccc = {};
-  }
-
-  /**
-   * Registers the class component configuration for the given name.
-   * @param {String} name The name
-   * @param {Function} Constructor The constructor of the class component
-   */
-
-
-  _createClass(ClassComponentManager, [{
-    key: 'register',
-    value: function register(name, Constructor) {
-      Constructor.coelementName = name;
-
-      this.ccc[name] = new ClassComponentConfiguration(name, Constructor);
-    }
-
-    /**
-     * Initializes the class components of the given name in the given element.
-     * @param {String} className The class name
-     * @param {jQuery|HTMLElement|String} elem The dom where class componets are initialized
-     * @return {Array<HTMLElement>} The elements which are initialized in this initialization
-     * @throw {Error}
-     */
-
-  }, {
-    key: 'init',
-    value: function init(className, elem) {
-      var ccc = this.getConfiguration(className);
-
-      return $(ccc.selector(), elem).each(function () {
-        ccc.initElem($(this));
-      }).toArray();
-    }
-
-    /**
-     * Initializes the class component of the give name at the given element.
-     * @param {String} className The class name
-     * @param {jQuery|HTMLElement|String} elem The element
-     */
-
-  }, {
-    key: 'initAt',
-    value: function initAt(className, elem) {
-      this.getConfiguration(className).initElem($(elem));
-    }
-
-    /**
-     * Initializes all the class component at the element.
-     * @param {HTMLElement}
-     */
-
-  }, {
-    key: 'initAllAtElem',
-    value: function initAllAtElem(elem) {
-      var _this = this;
-
-      var classes = $(elem).attr('class');
-
-      if (!classes) {
-        return;
-      }
-
-      classes.split(/\s+/).filter(function (className) {
-        return _this.ccc[className];
-      }).forEach(function (className) {
-        return _this.initAt(className, elem);
-      });
-    }
-
-    /**
-     * @param {jQuery|HTMLElement|String} elem The element
-     */
-
-  }, {
-    key: 'initAll',
-    value: function initAll(elem) {
-      var _this2 = this;
-
-      Object.keys(this.ccc).forEach(function (className) {
-        _this2.init(className, elem);
-      });
-    }
-
-    /**
-     * Gets the configuration of the given class name.
-     * @param {String} className The class name
-     * @return {ClassComponentConfiguration}
-     * @throw {Error}
-     */
-
-  }, {
-    key: 'getConfiguration',
-    value: function getConfiguration(className) {
-      var ccc = this.ccc[className];
-
-      if (ccc == null) {
-        throw new Error('Class componet "' + className + '" is not defined.');
-      }
-
-      return ccc;
-    }
-  }]);
-
-  return ClassComponentManager;
-}();
-
-module.exports = ClassComponentManager;
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./class-component-configuration":2}],5:[function(require,module,exports){
-'use strict';
-
-/**
- * class-component.js v10.2.0
- * author: Yoshiya Hinosawa ( http://github.com/kt3k )
- * license: MIT
- */
-var $ = jQuery;
-
-var reSpaces = / +/;
-
-var ClassComponentManager = require('./class-component-manager');
-var camelToKebab = require('./camel-to-kebab');
-var decorators = require('./decorators');
-
-/**
- * Initializes the module object.
- *
- * @return {Object}
- */
-function initializeModule() {
-  require('./fn.cc');
-
-  var __manager__ = new ClassComponentManager();
-
-  /**
-   * The main namespace for class component module.
-   * Registers a class component of the given name using the given defining function.
-   * @param {String} name The class name
-   * @param {Function} Constructor The class definition
-   */
-  var cc = function cc(name, Constructor) {
-    if (typeof name !== 'string') {
-      throw new Error('`name` of a class component has to be a string');
-    }
-
-    if (typeof Constructor !== 'function') {
-      throw new Error('`Constructor` of a class component has to be a function');
-    }
-
-    __manager__.register(name, Constructor);
-
-    $(document).ready(function () {
-      __manager__.init(name);
-    });
-  };
-
-  /**
-   * Initialized the all class components of the given names and returns of the promise of all initialization.
-   *
-   * @param {String[]|String} arguments
-   * @return {Object<HTMLElement[]>}
-   */
-  cc.init = function (classNames, elem) {
-    if (classNames == null) {
-      __manager__.initAll(elem);
-
-      return;
-    }
-
-    if (typeof classNames === 'string') {
-      classNames = classNames.split(reSpaces);
-    }
-
-    return classNames.map(function (className) {
-      return __manager__.init(className, elem);
-    });
-  };
-
-  /**
-   * The decorator for class component registration.
-   * @param {String|Function} name The class name or the implementation class itself
-   * @return {Function|undefined} The decorator if the class name is given, undefined if the implementation class is given
-   */
-  cc.component = function (name) {
-    if (typeof name === 'function') {
-      cc(camelToKebab(name.name), name);
-    }
-
-    return function (Cls) {
-      return cc(name, Cls);
-    };
-  };
-
-  // Exports __manager__
-  cc.__manager__ = __manager__;
-
-  // Exports decorators
-  cc.on = decorators.on;
-  cc.emit = decorators.emit;
-  cc.wire = decorators.wire;
-
-  return cc;
 }
 
-// If the cc is not set, then create one.
-if ($.cc == null) {
-  $.cc = initializeModule();
+/**
+ * @param classNames The class names
+ */
+function checkClassNamesAreStringOrNull(classNames) {
+  check(typeof classNames === 'string' || classNames == null, 'classNames must be a string or undefined/null.');
 }
 
-module.exports = $.cc;
-},{"./camel-to-kebab":1,"./class-component-manager":4,"./decorators":6,"./fn.cc":7}],6:[function(require,module,exports){
-'use strict';
+/**
+ * Asserts the given name is a valid component name.
+ * @param name The component name
+ */
+function checkComponentNameIsValid(name) {
+  check(typeof name === 'string', 'The name should not be a string');
+  check(!!ccc[name], 'The coelement of the given name is not registered: ' + name);
+}
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+//
 
-var ListenerInfo = require('./listener-info');
+var READY_STATE_CHANGE = 'readystatechange';
+var doc = document;
 
-var registerListenerInfo = function registerListenerInfo(method, event, selector) {
-  method.__events__ = method.__events__ || [];
+var ready = new Promise(function (resolve) {
+  var checkReady = function checkReady() {
+    if (doc.readyState === 'complete') {
+      resolve();
+      doc.removeEventListener(READY_STATE_CHANGE, checkReady);
+    }
+  };
 
-  method.__events__.push(new ListenerInfo(event, selector, method));
+  doc.addEventListener(READY_STATE_CHANGE, checkReady);
+
+  checkReady();
+});
+
+var documentElement = doc.documentElement;
+
+//
+/**
+ * Initializes the class components of the given name in the given element.
+ * @param classNames The class names
+ * @param el The dom where class componets are initialized
+ * @throws when the class name is invalid type.
+ */
+var init = function init(classNames, el) {
+  checkClassNamesAreStringOrNull(classNames);(classNames ? classNames.split(/\s+/) : Object.keys(ccc)).map(function (className) {
+    var initializer = ccc[className];
+
+    check(!!initializer, 'Class componet ' + className + ' is not defined.');[].map.call((el || doc).querySelectorAll(initializer.selector), initializer);
+  });
 };
 
+//
+
+
+var plugins = [];
+
+//
+var COELEMENT_DATA_KEY_PREFIX = '__coelement:';
+var KEY_EVENT_LISTENERS = '__cc_listeners__';
+
+//
 /**
- * The decorator for registering event listener info to the method.
- * @param {string} event The event name
+ * Registers the class-component for the given name and constructor and returns the constructor.
+ * @param name The component name
+ * @param Constructor The constructor of the class component
+ * @return The registered component class
  */
-var on = function on(event) {
-  var onDecorator = function onDecorator(target, key, descriptor) {
-    registerListenerInfo(descriptor.value, event);
-  };
+var def = function def(name, Constructor) {
+  check(typeof name === 'string', '`name` of a class component has to be a string.');
+  check(typeof Constructor === 'function', '`Constructor` of a class component has to be a function');
+
+  var initClass = name + '-initialized';
 
   /**
-   * The decorator for registering event listener info to the method.
-   * @param {string} event The event name
-   * @param {string} selector The selector for listening.
+   * Initializes the html element by the configuration.
+   * @param el The html element
+   * @param coelem The dummy parameter, don't use
    */
-  onDecorator.at = function (selector) {
-    return function (target, key, descriptor) {
-      registerListenerInfo(descriptor.value, event, selector);
-    };
+  var initializer = function initializer(el, coelem) {
+    var classList = el.classList;
+
+    if (!classList.contains(initClass)) {
+      el[COELEMENT_DATA_KEY_PREFIX + name] = coelem = new Constructor();
+
+      plugins.forEach(function (plugin) {
+        plugin(el, coelem);
+      });
+
+      coelem.el = el;
+
+      if (typeof coelem.__init__ === 'function') {
+        coelem.__init__();
+      }
+
+      (Constructor[KEY_EVENT_LISTENERS] || []).map(function (listenerBinder) {
+        listenerBinder(el, coelem);
+      });
+
+      classList.add(initClass);
+    }
   };
 
-  return onDecorator;
+  initializer.selector = '.' + name + ':not(.' + initClass + ')';
+
+  ccc[name] = initializer;
+
+  ready.then(function () {
+    init(name);
+  });
+
+  return Constructor;
 };
+
+//
+/**
+ * Triggers the event.
+ * @param el The element
+ * @param type The event type
+ * @param detail The optional detail object
+ */
+var trigger = function trigger(el, type, detail) {
+  el.dispatchEvent(new CustomEvent(type, { detail: detail, bubbles: true }));
+};
+
+//
+
+var matches = documentElement.matches || documentElement.webkitMatchesSelector || documentElement.msMatchesSelector;
+
+//
 
 /**
  * `@emit(event)` decorator.
  * This decorator adds the event emission at the beginning of the method.
- * @param {string} event The event name
+ * @param event The event name
  */
 var emit = function emit(event) {
-  var emitDecorator = function emitDecorator(target, key, descriptor) {
+  return function (target, key, descriptor) {
     var method = descriptor.value;
 
     descriptor.value = function () {
-      this.elem.trigger(event, arguments);
+      trigger(this.el, event, arguments[0]);
 
-      method.apply(this, arguments);
+      return method.apply(this, arguments);
     };
   };
+};
 
-  /**
-   * `@emit(event).first` decorator. This is the same as emit()
-   * @param {string} event The event name
-   */
-  emitDecorator.first = emitDecorator;
-
-  /**
-   * `@emit(event).last` decorator.
-   * This adds the emission of the event at the end of the method.
-   * @param {string} event The event name
-   */
-  emitDecorator.last = function (target, key, descriptor) {
+/**
+ * `@emit.last(event)` decorator
+ *
+ * This decorator adds the event emission at the end of the method.
+ * If the method returns the promise, then the event is emitted when it is resolved.
+ * @param event The event name
+ */
+emit.last = function (event) {
+  return function (target, key, descriptor) {
     var method = descriptor.value;
 
     descriptor.value = function () {
@@ -551,49 +195,19 @@ var emit = function emit(event) {
 
       var result = method.apply(this, arguments);
 
-      if (result != null && typeof result.then === 'function') {
-        Promise.resolve(result).then(function (x) {
-          return _this.elem.trigger(event, x);
-        });
+      var emit = function emit(x) {
+        return trigger(_this.el, event, x);
+      };
+
+      if (result && result.then) {
+        result.then(emit);
       } else {
-        this.elem.trigger(event, result);
+        emit(result);
       }
 
       return result;
     };
   };
-
-  /**
-   * `@emit(event).on.error` decorator.
-   * This add the emission of the event when the method errored.
-   * @param {string} event The event name
-   */
-  var error = function error(target, key, descriptor) {
-    var method = descriptor.value;
-
-    descriptor.value = function () {
-      var _this2 = this;
-
-      var result = void 0;
-      try {
-        result = method.apply(this, arguments);
-      } catch (e) {
-        this.elem.trigger(event, e);
-
-        throw e;
-      }
-
-      Promise.resolve(result).catch(function (err) {
-        _this2.elem.trigger(event, err);
-      });
-
-      return result;
-    };
-  };
-
-  emitDecorator.on = { error: error };
-
-  return emitDecorator;
 };
 
 /**
@@ -606,16 +220,20 @@ var emit = function emit(event) {
  */
 var wireByNameAndSelector = function wireByNameAndSelector(name, selector) {
   return function (target, key, descriptor) {
-    selector = selector || '.' + name;
+    var sel = selector || '.' + name;
 
     descriptor.get = function () {
-      var matched = this.elem.filter(selector).add(selector, this.elem);
-
-      if (matched.length > 1) {
-        console.warn('There are ' + matched.length + ' matches for the given wired getter selector: ' + selector);
+      if (matches.call(this.el, sel)) {
+        return def.get(name, this.el);
       }
 
-      return matched.cc.get(name);
+      var nodes = this.el.querySelectorAll(sel);
+
+      if (nodes.length) {
+        return def.get(name, nodes[0]);
+      }
+
+      throw new Error('wired class-component "' + name + '" is not available at ' + this.el.tagName + '(class=[' + this.constructor.name + ']');
     };
   };
 };
@@ -624,117 +242,242 @@ var wireByNameAndSelector = function wireByNameAndSelector(name, selector) {
  * Wires the class component of the name of the key to the property of the same name.
  */
 var wire = function wire(target, key, descriptor) {
-  if ((typeof descriptor === 'undefined' ? 'undefined' : _typeof(descriptor)) !== 'object') {
-    var name = target;
-    var selector = key;
-
-    return wireByNameAndSelector(name, selector);
+  if (typeof target === 'string') {
+    // If target is a string, then we suppose this is called as @wire(componentName, selector) and therefore
+    // we need to return the following expression (it works as another decorator).
+    return wireByNameAndSelector(target, key);
   }
 
-  wireByNameAndSelector(key)(target, key, descriptor);
+  wireByNameAndSelector(camelToKebab(key))(target, key, descriptor);
 };
 
-exports.on = on;
-exports.emit = emit;
-exports.wire = wire;
-},{"./listener-info":8}],7:[function(require,module,exports){
-'use strict';
-
-var ClassComponentContext = require('./class-component-context');
-
-var CLASS_COMPONENT_DATA_KEY = '__class_component_data__';
-
-// Defines the special property cc on the jquery prototype.
-Object.defineProperty(jQuery.fn, 'cc', {
-  get: function get() {
-    var cc = this.data(CLASS_COMPONENT_DATA_KEY);
-
-    if (cc) {
-      return cc;
-    }
-
-    var ctx = new ClassComponentContext(this);
-
-    cc = function cc(classNames) {
-      return ctx.up(classNames);
+/**
+ * The decorator for class component registration.
+ *
+ * if `name` is function, then use it as class itself and the component name is kebabized version of its name.
+ * @param name The class name or the implementation class itself
+ * @return The decorator if the class name is given, undefined if the implementation class is given
+ */
+var component = function component(name) {
+  if (typeof name !== 'function') {
+    return function (Cls) {
+      return def(name, Cls);
     };
+  }
 
-    cc.get = function (className) {
-      return ctx.get(className);
-    };
-    cc.init = function (className) {
-      return ctx.init(className);
-    };
+  return def(camelToKebab(name.name), name);
+};
 
-    this.data(CLASS_COMPONENT_DATA_KEY, cc);
+//
+/**
+ * The decorator for registering event listener info to the method.
+ * @param event The event name
+ * @param at The selector
+ * @param target The target prototype (decorator interface)
+ * @param key The decorator target key (decorator interface)
+ */
+var on = function on(event) {
+  var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+      at = _ref.at;
 
-    return cc;
-  },
+  return function (target, key) {
+    var Constructor = target.constructor;
 
+    /**
+     * @param el The element
+     * @param coelem The coelement
+     */
+    Constructor[KEY_EVENT_LISTENERS] = (Constructor[KEY_EVENT_LISTENERS] || []).concat(function (el, coelem) {
+      el.addEventListener(event, function (e) {
+        if (!at || [].some.call(el.querySelectorAll(at), function (node) {
+          return node === e.target || node.contains(e.target);
+        })) {
+          coelem[key](e);
+        }
+      });
+    });
+  };
+};
 
-  enumerable: false,
-  configurable: false
+//
 
-});
-},{"./class-component-context":3}],8:[function(require,module,exports){
-"use strict";
+var cc = def;
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+cc.def = def;
+cc.init = init;
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+cc.on = on;
+cc.emit = emit;
+cc.wire = wire;
+cc.component = component;
+
+// Expose __ccc__
+cc.__ccc__ = ccc;
+
+// Expose plugins
+cc.plugins = plugins;
 
 /**
- * The event listener's information.
+ * Initializes the given element as the class-component.
+ * @param name The name of the class component
+ * @param el The element to initialize
  */
+cc.el = function (name, el) {
+  checkComponentNameIsValid(name);
 
-var ListenerInfo = function () {
+  ccc[name](el);
+};
+
+/**
+ * Initializes the given element as the class-component.
+ * @param name The name of the class component
+ * @param el The element to initialize
+ * @return
+ */
+cc.co = function (name, el) {
+  cc.el(name, el);
+
+  return cc.get(name, el);
+};
+
+/**
+ * Gets the eoelement instance of the class-component of the given name
+ * @param name The class-component name
+ * @param el The element
+ */
+cc.get = function (name, el) {
+  checkComponentNameIsValid(name);
+
+  var coelement = el[COELEMENT_DATA_KEY_PREFIX + name];
+
+  check(coelement, 'no coelement named: ' + name + ', on the dom: ' + el.tagName);
+
+  return coelement;
+};
+
+module.exports = cc;
+
+},{}],2:[function(require,module,exports){
+'use strict';
+
+(function () {
+  'use strict';
+
+  //      
+
+
   /**
-   * @param {string} event The event name to bind
-   * @param {string} selector The selector to bind the listener
-   * @param {Function} handler The handler for the event
+   * The mapping from class-component name to its initializer function.
    */
 
-  function ListenerInfo(event, selector, handler) {
-    _classCallCheck(this, ListenerInfo);
+  //      
+  /**
+   * Asserts the given condition holds, otherwise throws.
+   * @param assertion The assertion expression
+   * @param message The assertion message
+   */
 
-    this.event = event;
-    this.selector = selector;
-    this.handler = handler;
+  function check(assertion, message) {
+    if (!assertion) {
+      throw new Error(message);
+    }
   }
 
   /**
-   * Binds the listener to the given element with the given coelement.
-   * @param {jQuery} elem The jquery element
-   * @param {object} coelem The coelement which is bound to the element
+   * @param classNames The class names
+   */
+  function checkClassNamesAreStringOrNull(classNames) {
+    check(typeof classNames === 'string' || classNames == null, 'classNames must be a string or undefined/null.');
+  }
+
+  /**
+   * Asserts the given name is a valid component name.
+   * @param name The component name
    */
 
+  //      
 
-  _createClass(ListenerInfo, [{
-    key: "bindTo",
-    value: function bindTo(elem, coelem) {
-      var handler = this.handler;
+  /**
+   * Applies the jquery plugin to cc and $
+   * @param cc The class-component function
+   * @param $ The jQuery function
+   */
+  var init = function init(cc, $) {
+    $.cc = cc;
+    var ccc = cc.__ccc__;
+    var _get = cc.get;
 
-      elem.on(this.event, this.selector, function () {
-        handler.apply(coelem, arguments);
-      });
-    }
-  }]);
+    var descriptor = { get: function get() {
+        var $el = this;
+        var dom = $el[0];
 
-  return ListenerInfo;
-}();
+        check(dom != null, 'cc (class-component context) is unavailable at empty dom selection');
 
-module.exports = ListenerInfo;
-},{}],9:[function(require,module,exports){
+        var cc = dom.cc;
+
+        if (!cc) {
+          /**
+           * Initializes the element as class-component of the given names. If the names not given, then initializes it by the class-component of the class names it already has.
+           * @param {?string} classNames The class component names
+           * @return {jQuery}
+           */
+          cc = dom.cc = function (classNames) {
+            checkClassNamesAreStringOrNull(classNames);(classNames || dom.className).split(/\s+/).map(function (className) {
+              if (ccc[className]) {
+                ccc[className]($el.addClass(className)[0]);
+              }
+            });
+
+            return $el;
+          };
+
+          /**
+           * Gets the coelement of the given name.
+           * @param {string} name The name of the coelement
+           * @return {Object}
+           */
+          cc.get = function (name) {
+            return _get(name, dom);
+          };
+
+          cc.init = function (className) {
+            return cc(className).cc.get(className);
+          };
+        }
+
+        return cc;
+      } };
+
+    // Defines the special property cc on the jquery prototype.
+    Object.defineProperty($.fn, 'cc', descriptor);
+
+    // Applies jQuery initializer plugin
+    cc.plugins.push(function (el, coel) {
+      coel.$el = $(el);
+      coel.elem = coel.$el; // backward compat, will be removed
+    });
+  };
+
+  if (typeof module !== 'undefined' && module.exports) {
+    // If the env is common js, then exports init.
+    module.exports = init;
+  } else if (typeof self !== 'undefined' && self.cc && self.$ && !self.$.cc) {
+    // If the env is browser and cc and $ is already defined and this plugin isn't applied yet
+    // Then applies the plugin here.
+    init(self.cc, self.$);
+  }
+})();
+},{}],3:[function(require,module,exports){
+module.exports = require('./dist/classcaps-jquery.js')
+
+},{"./dist/classcaps-jquery.js":2}],4:[function(require,module,exports){
 (function (global){
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.domGen = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = domGen;
-
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+module.exports = domGen;
 
 /**
  * Returns a generator of the doms of the given tag name.
@@ -773,126 +516,127 @@ function domGen(tagName) {
 function seemLikePlainObject(o) {
   return o instanceof Object && Object.getPrototypeOf(o).hasOwnProperty('isPrototypeOf');
 }
-var a = exports.a = domGen('a');
-var abbr = exports.abbr = domGen('abbr');
-var address = exports.address = domGen('address');
-var area = exports.area = domGen('area');
-var article = exports.article = domGen('article');
-var aside = exports.aside = domGen('aside');
-var audio = exports.audio = domGen('audio');
-var b = exports.b = domGen('b');
-var base = exports.base = domGen('base');
-var bdi = exports.bdi = domGen('bdi');
-var bdo = exports.bdo = domGen('bdo');
-var blockquote = exports.blockquote = domGen('blockquote');
-var body = exports.body = domGen('body');
-var br = exports.br = domGen('br');
-var button = exports.button = domGen('button');
-var canvas = exports.canvas = domGen('canvas');
-var caption = exports.caption = domGen('caption');
-var cite = exports.cite = domGen('cite');
-var code = exports.code = domGen('code');
-var col = exports.col = domGen('col');
-var colgroup = exports.colgroup = domGen('colgroup');
-var data = exports.data = domGen('data');
-var datalist = exports.datalist = domGen('datalist');
-var dd = exports.dd = domGen('dd');
-var del = exports.del = domGen('del');
-var details = exports.details = domGen('details');
-var dfn = exports.dfn = domGen('dfn');
-var dialog = exports.dialog = domGen('dialog');
-var div = exports.div = domGen('div');
-var dl = exports.dl = domGen('dl');
-var dt = exports.dt = domGen('dt');
-var em = exports.em = domGen('em');
-var embed = exports.embed = domGen('embed');
-var fieldset = exports.fieldset = domGen('fieldset');
-var figcaption = exports.figcaption = domGen('figcaption');
-var figure = exports.figure = domGen('figure');
-var footer = exports.footer = domGen('footer');
-var form = exports.form = domGen('form');
-var h1 = exports.h1 = domGen('h1');
-var h2 = exports.h2 = domGen('h2');
-var h3 = exports.h3 = domGen('h3');
-var h4 = exports.h4 = domGen('h4');
-var h5 = exports.h5 = domGen('h5');
-var h6 = exports.h6 = domGen('h6');
-var head = exports.head = domGen('head');
-var header = exports.header = domGen('header');
-var hr = exports.hr = domGen('hr');
-var html = exports.html = domGen('html');
-var i = exports.i = domGen('i');
-var iframe = exports.iframe = domGen('iframe');
-var img = exports.img = domGen('img');
-var input = exports.input = domGen('input');
-var ins = exports.ins = domGen('ins');
-var kbd = exports.kbd = domGen('kbd');
-var keygen = exports.keygen = domGen('keygen');
-var label = exports.label = domGen('label');
-var legend = exports.legend = domGen('legend');
-var li = exports.li = domGen('li');
-var link = exports.link = domGen('link');
-var main = exports.main = domGen('main');
-var map = exports.map = domGen('map');
-var mark = exports.mark = domGen('mark');
-var math = exports.math = domGen('math');
-var menu = exports.menu = domGen('menu');
-var menuitem = exports.menuitem = domGen('menuitem');
-var meta = exports.meta = domGen('meta');
-var meter = exports.meter = domGen('meter');
-var nav = exports.nav = domGen('nav');
-var noscript = exports.noscript = domGen('noscript');
-var object = exports.object = domGen('object');
-var ol = exports.ol = domGen('ol');
-var optgroup = exports.optgroup = domGen('optgroup');
-var option = exports.option = domGen('option');
-var output = exports.output = domGen('output');
-var p = exports.p = domGen('p');
-var param = exports.param = domGen('param');
-var picture = exports.picture = domGen('picture');
-var pre = exports.pre = domGen('pre');
-var progress = exports.progress = domGen('progress');
-var q = exports.q = domGen('q');
-var rb = exports.rb = domGen('rb');
-var rp = exports.rp = domGen('rp');
-var rt = exports.rt = domGen('rt');
-var rtc = exports.rtc = domGen('rtc');
-var ruby = exports.ruby = domGen('ruby');
-var s = exports.s = domGen('s');
-var samp = exports.samp = domGen('samp');
-var script = exports.script = domGen('script');
-var section = exports.section = domGen('section');
-var select = exports.select = domGen('select');
-var small = exports.small = domGen('small');
-var source = exports.source = domGen('source');
-var span = exports.span = domGen('span');
-var strong = exports.strong = domGen('strong');
-var style = exports.style = domGen('style');
-var sub = exports.sub = domGen('sub');
-var summary = exports.summary = domGen('summary');
-var sup = exports.sup = domGen('sup');
-var svg = exports.svg = domGen('svg');
-var table = exports.table = domGen('table');
-var tbody = exports.tbody = domGen('tbody');
-var td = exports.td = domGen('td');
-var template = exports.template = domGen('template');
-var textarea = exports.textarea = domGen('textarea');
-var tfoot = exports.tfoot = domGen('tfoot');
-var th = exports.th = domGen('th');
-var thead = exports.thead = domGen('thead');
-var time = exports.time = domGen('time');
-var title = exports.title = domGen('title');
-var tr = exports.tr = domGen('tr');
-var track = exports.track = domGen('track');
-var u = exports.u = domGen('u');
-var ul = exports.ul = domGen('ul');
-var video = exports.video = domGen('video');
-var wbr = exports.wbr = domGen('wbr');
+domGen.a = domGen('a');
+domGen.abbr = domGen('abbr');
+domGen.address = domGen('address');
+domGen.area = domGen('area');
+domGen.article = domGen('article');
+domGen.aside = domGen('aside');
+domGen.audio = domGen('audio');
+domGen.b = domGen('b');
+domGen.base = domGen('base');
+domGen.bdi = domGen('bdi');
+domGen.bdo = domGen('bdo');
+domGen.blockquote = domGen('blockquote');
+domGen.body = domGen('body');
+domGen.br = domGen('br');
+domGen.button = domGen('button');
+domGen.canvas = domGen('canvas');
+domGen.caption = domGen('caption');
+domGen.cite = domGen('cite');
+domGen.code = domGen('code');
+domGen.col = domGen('col');
+domGen.colgroup = domGen('colgroup');
+domGen.data = domGen('data');
+domGen.datalist = domGen('datalist');
+domGen.dd = domGen('dd');
+domGen.del = domGen('del');
+domGen.details = domGen('details');
+domGen.dfn = domGen('dfn');
+domGen.dialog = domGen('dialog');
+domGen.div = domGen('div');
+domGen.dl = domGen('dl');
+domGen.dt = domGen('dt');
+domGen.em = domGen('em');
+domGen.embed = domGen('embed');
+domGen.fieldset = domGen('fieldset');
+domGen.figcaption = domGen('figcaption');
+domGen.figure = domGen('figure');
+domGen.footer = domGen('footer');
+domGen.form = domGen('form');
+domGen.h1 = domGen('h1');
+domGen.h2 = domGen('h2');
+domGen.h3 = domGen('h3');
+domGen.h4 = domGen('h4');
+domGen.h5 = domGen('h5');
+domGen.h6 = domGen('h6');
+domGen.head = domGen('head');
+domGen.header = domGen('header');
+domGen.hr = domGen('hr');
+domGen.html = domGen('html');
+domGen.i = domGen('i');
+domGen.iframe = domGen('iframe');
+domGen.img = domGen('img');
+domGen.input = domGen('input');
+domGen.ins = domGen('ins');
+domGen.kbd = domGen('kbd');
+domGen.keygen = domGen('keygen');
+domGen.label = domGen('label');
+domGen.legend = domGen('legend');
+domGen.li = domGen('li');
+domGen.link = domGen('link');
+domGen.main = domGen('main');
+domGen.map = domGen('map');
+domGen.mark = domGen('mark');
+domGen.math = domGen('math');
+domGen.menu = domGen('menu');
+domGen.menuitem = domGen('menuitem');
+domGen.meta = domGen('meta');
+domGen.meter = domGen('meter');
+domGen.nav = domGen('nav');
+domGen.noscript = domGen('noscript');
+domGen.object = domGen('object');
+domGen.ol = domGen('ol');
+domGen.optgroup = domGen('optgroup');
+domGen.option = domGen('option');
+domGen.output = domGen('output');
+domGen.p = domGen('p');
+domGen.param = domGen('param');
+domGen.picture = domGen('picture');
+domGen.pre = domGen('pre');
+domGen.progress = domGen('progress');
+domGen.q = domGen('q');
+domGen.rb = domGen('rb');
+domGen.rp = domGen('rp');
+domGen.rt = domGen('rt');
+domGen.rtc = domGen('rtc');
+domGen.ruby = domGen('ruby');
+domGen.s = domGen('s');
+domGen.samp = domGen('samp');
+domGen.script = domGen('script');
+domGen.section = domGen('section');
+domGen.select = domGen('select');
+domGen.small = domGen('small');
+domGen.source = domGen('source');
+domGen.span = domGen('span');
+domGen.strong = domGen('strong');
+domGen.style = domGen('style');
+domGen.sub = domGen('sub');
+domGen.summary = domGen('summary');
+domGen.sup = domGen('sup');
+domGen.svg = domGen('svg');
+domGen.table = domGen('table');
+domGen.tbody = domGen('tbody');
+domGen.td = domGen('td');
+domGen.template = domGen('template');
+domGen.textarea = domGen('textarea');
+domGen.tfoot = domGen('tfoot');
+domGen.th = domGen('th');
+domGen.thead = domGen('thead');
+domGen.time = domGen('time');
+domGen.title = domGen('title');
+domGen.tr = domGen('tr');
+domGen.track = domGen('track');
+domGen.u = domGen('u');
+domGen.ul = domGen('ul');
+domGen.var = domGen('var');
+domGen.video = domGen('video');
+domGen.wbr = domGen('wbr');
 
 },{}]},{},[1])(1)
 });
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],10:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -963,7 +707,7 @@ var HashRouteCollection = function () {
 }();
 
 module.exports = HashRouteCollection;
-},{}],11:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -981,22 +725,28 @@ var HashRoute = function () {
    * @param {string} pattern The pattern string
    * @param {RegExp} re The regexp
    * @param {object[]} keys The key informations
-   * @param {Function} method The method
    */
 
   function HashRoute(_ref) {
     var pattern = _ref.pattern;
     var re = _ref.re;
     var keys = _ref.keys;
-    var method = _ref.method;
+    var property = _ref.property;
 
     _classCallCheck(this, HashRoute);
 
     this.pattern = pattern;
     this.re = re;
     this.keys = keys;
-    this.method = method;
+    this.property = property;
   }
+
+  /**
+   * Creates the hash route object from the given pattern and property name.
+   * @param {string} pattern The route pattern
+   * @param {string} property The property name
+   */
+
 
   _createClass(HashRoute, [{
     key: 'match',
@@ -1045,15 +795,15 @@ var HashRoute = function () {
     value: function dispatch(obj, path) {
       var params = this.match(path);
 
-      return this.method.call(obj, params, path, this);
+      return obj[this.property](params, path, this);
     }
   }], [{
-    key: 'createFromPatternAndMethod',
-    value: function createFromPatternAndMethod(pattern, method) {
+    key: 'createFromPatternAndProperty',
+    value: function createFromPatternAndProperty(pattern, property) {
       var keys = [];
       var re = pathToRegexp(pattern, keys);
 
-      return new HashRoute({ pattern: pattern, re: re, keys: keys, method: method });
+      return new HashRoute({ pattern: pattern, re: re, keys: keys, property: property });
     }
   }]);
 
@@ -1061,7 +811,7 @@ var HashRoute = function () {
 }();
 
 module.exports = HashRoute;
-},{"path-to-regexp":14}],12:[function(require,module,exports){
+},{"path-to-regexp":10}],7:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -1095,7 +845,7 @@ exports.route = function (target, key, descriptor) {
 
       return {
         v: function v(target, key, descriptor) {
-          routes.add(HashRoute.createFromPatternAndMethod(pattern, descriptor.value));
+          routes.add(HashRoute.createFromPatternAndProperty(pattern, key));
         }
       };
     }();
@@ -1105,7 +855,7 @@ exports.route = function (target, key, descriptor) {
 
   // This is @route methodName() {} usage
   // Uses the key as the route pattern
-  routes.add(HashRoute.createFromPatternAndMethod(key, descriptor.value));
+  routes.add(HashRoute.createFromPatternAndProperty(key, key));
 };
 
 /**
@@ -1117,10 +867,14 @@ exports.dispatch = function (obj, path) {
 
   routes.dispatch(obj, path);
 };
-},{"./hash-route":11,"./hash-route-collection":10}],13:[function(require,module,exports){
-/*eslint-disable no-unused-vars*/
+},{"./hash-route":6,"./hash-route-collection":5}],8:[function(require,module,exports){
+module.exports = Array.isArray || function (arr) {
+  return Object.prototype.toString.call(arr) == '[object Array]';
+};
+
+},{}],9:[function(require,module,exports){
 /*!
- * jQuery JavaScript Library v3.1.0
+ * jQuery JavaScript Library v3.1.1
  * https://jquery.com/
  *
  * Includes Sizzle.js
@@ -1130,7 +884,7 @@ exports.dispatch = function (obj, path) {
  * Released under the MIT license
  * https://jquery.org/license
  *
- * Date: 2016-07-07T21:44Z
+ * Date: 2016-09-22T22:30Z
  */
 ( function( global, factory ) {
 
@@ -1203,13 +957,13 @@ var support = {};
 		doc.head.appendChild( script ).parentNode.removeChild( script );
 	}
 /* global Symbol */
-// Defining this global in .eslintrc would create a danger of using the global
+// Defining this global in .eslintrc.json would create a danger of using the global
 // unguarded in another place, it seems safer to define global only for this module
 
 
 
 var
-	version = "3.1.0",
+	version = "3.1.1",
 
 	// Define a local copy of jQuery
 	jQuery = function( selector, context ) {
@@ -1249,13 +1003,14 @@ jQuery.fn = jQuery.prototype = {
 	// Get the Nth element in the matched element set OR
 	// Get the whole matched element set as a clean array
 	get: function( num ) {
-		return num != null ?
 
-			// Return just the one element from the set
-			( num < 0 ? this[ num + this.length ] : this[ num ] ) :
+		// Return all the elements in a clean array
+		if ( num == null ) {
+			return slice.call( this );
+		}
 
-			// Return all the elements in a clean array
-			slice.call( this );
+		// Return just the one element from the set
+		return num < 0 ? this[ num + this.length ] : this[ num ];
 	},
 
 	// Take an array of elements and push it onto the stack
@@ -1663,14 +1418,14 @@ function isArrayLike( obj ) {
 }
 var Sizzle =
 /*!
- * Sizzle CSS Selector Engine v2.3.0
+ * Sizzle CSS Selector Engine v2.3.3
  * https://sizzlejs.com/
  *
  * Copyright jQuery Foundation and other contributors
  * Released under the MIT license
  * http://jquery.org/license
  *
- * Date: 2016-01-04
+ * Date: 2016-08-08
  */
 (function( window ) {
 
@@ -1816,7 +1571,7 @@ var i,
 
 	// CSS string/identifier serialization
 	// https://drafts.csswg.org/cssom/#common-serializing-idioms
-	rcssescape = /([\0-\x1f\x7f]|^-?\d)|^-$|[^\x80-\uFFFF\w-]/g,
+	rcssescape = /([\0-\x1f\x7f]|^-?\d)|^-$|[^\0-\x1f\x7f-\uFFFF\w-]/g,
 	fcssescape = function( ch, asCodePoint ) {
 		if ( asCodePoint ) {
 
@@ -1843,7 +1598,7 @@ var i,
 
 	disabledAncestor = addCombinator(
 		function( elem ) {
-			return elem.disabled === true;
+			return elem.disabled === true && ("form" in elem || "label" in elem);
 		},
 		{ dir: "parentNode", next: "legend" }
 	);
@@ -2129,26 +1884,54 @@ function createButtonPseudo( type ) {
  * @param {Boolean} disabled true for :disabled; false for :enabled
  */
 function createDisabledPseudo( disabled ) {
-	// Known :disabled false positives:
-	// IE: *[disabled]:not(button, input, select, textarea, optgroup, option, menuitem, fieldset)
-	// not IE: fieldset[disabled] > legend:nth-of-type(n+2) :can-disable
+
+	// Known :disabled false positives: fieldset[disabled] > legend:nth-of-type(n+2) :can-disable
 	return function( elem ) {
 
-		// Check form elements and option elements for explicit disabling
-		return "label" in elem && elem.disabled === disabled ||
-			"form" in elem && elem.disabled === disabled ||
+		// Only certain elements can match :enabled or :disabled
+		// https://html.spec.whatwg.org/multipage/scripting.html#selector-enabled
+		// https://html.spec.whatwg.org/multipage/scripting.html#selector-disabled
+		if ( "form" in elem ) {
 
-			// Check non-disabled form elements for fieldset[disabled] ancestors
-			"form" in elem && elem.disabled === false && (
-				// Support: IE6-11+
-				// Ancestry is covered for us
-				elem.isDisabled === disabled ||
+			// Check for inherited disabledness on relevant non-disabled elements:
+			// * listed form-associated elements in a disabled fieldset
+			//   https://html.spec.whatwg.org/multipage/forms.html#category-listed
+			//   https://html.spec.whatwg.org/multipage/forms.html#concept-fe-disabled
+			// * option elements in a disabled optgroup
+			//   https://html.spec.whatwg.org/multipage/forms.html#concept-option-disabled
+			// All such elements have a "form" property.
+			if ( elem.parentNode && elem.disabled === false ) {
 
-				// Otherwise, assume any non-<option> under fieldset[disabled] is disabled
-				/* jshint -W018 */
-				elem.isDisabled !== !disabled &&
-					("label" in elem || !disabledAncestor( elem )) !== disabled
-			);
+				// Option elements defer to a parent optgroup if present
+				if ( "label" in elem ) {
+					if ( "label" in elem.parentNode ) {
+						return elem.parentNode.disabled === disabled;
+					} else {
+						return elem.disabled === disabled;
+					}
+				}
+
+				// Support: IE 6 - 11
+				// Use the isDisabled shortcut property to check for disabled fieldset ancestors
+				return elem.isDisabled === disabled ||
+
+					// Where there is no isDisabled, check manually
+					/* jshint -W018 */
+					elem.isDisabled !== !disabled &&
+						disabledAncestor( elem ) === disabled;
+			}
+
+			return elem.disabled === disabled;
+
+		// Try to winnow out elements that can't be disabled before trusting the disabled property.
+		// Some victims get caught in our net (label, legend, menu, track), but it shouldn't
+		// even exist on them, let alone have a boolean value.
+		} else if ( "label" in elem ) {
+			return elem.disabled === disabled;
+		}
+
+		// Remaining elements are neither :enabled nor :disabled
+		return false;
 	};
 }
 
@@ -2264,25 +2047,21 @@ setDocument = Sizzle.setDocument = function( node ) {
 		return !document.getElementsByName || !document.getElementsByName( expando ).length;
 	});
 
-	// ID find and filter
+	// ID filter and find
 	if ( support.getById ) {
-		Expr.find["ID"] = function( id, context ) {
-			if ( typeof context.getElementById !== "undefined" && documentIsHTML ) {
-				var m = context.getElementById( id );
-				return m ? [ m ] : [];
-			}
-		};
 		Expr.filter["ID"] = function( id ) {
 			var attrId = id.replace( runescape, funescape );
 			return function( elem ) {
 				return elem.getAttribute("id") === attrId;
 			};
 		};
+		Expr.find["ID"] = function( id, context ) {
+			if ( typeof context.getElementById !== "undefined" && documentIsHTML ) {
+				var elem = context.getElementById( id );
+				return elem ? [ elem ] : [];
+			}
+		};
 	} else {
-		// Support: IE6/7
-		// getElementById is not reliable as a find shortcut
-		delete Expr.find["ID"];
-
 		Expr.filter["ID"] =  function( id ) {
 			var attrId = id.replace( runescape, funescape );
 			return function( elem ) {
@@ -2290,6 +2069,36 @@ setDocument = Sizzle.setDocument = function( node ) {
 					elem.getAttributeNode("id");
 				return node && node.value === attrId;
 			};
+		};
+
+		// Support: IE 6 - 7 only
+		// getElementById is not reliable as a find shortcut
+		Expr.find["ID"] = function( id, context ) {
+			if ( typeof context.getElementById !== "undefined" && documentIsHTML ) {
+				var node, i, elems,
+					elem = context.getElementById( id );
+
+				if ( elem ) {
+
+					// Verify the id attribute
+					node = elem.getAttributeNode("id");
+					if ( node && node.value === id ) {
+						return [ elem ];
+					}
+
+					// Fall back on getElementsByName
+					elems = context.getElementsByName( id );
+					i = 0;
+					while ( (elem = elems[i++]) ) {
+						node = elem.getAttributeNode("id");
+						if ( node && node.value === id ) {
+							return [ elem ];
+						}
+					}
+				}
+
+				return [];
+			}
 		};
 	}
 
@@ -3331,6 +3140,7 @@ function addCombinator( matcher, combinator, base ) {
 					return matcher( elem, context, xml );
 				}
 			}
+			return false;
 		} :
 
 		// Check against all ancestor/preceding elements
@@ -3375,6 +3185,7 @@ function addCombinator( matcher, combinator, base ) {
 					}
 				}
 			}
+			return false;
 		};
 }
 
@@ -3737,8 +3548,7 @@ select = Sizzle.select = function( selector, context, results, seed ) {
 		// Reduce context if the leading compound selector is an ID
 		tokens = match[0] = match[0].slice( 0 );
 		if ( tokens.length > 2 && (token = tokens[0]).type === "ID" &&
-				support.getById && context.nodeType === 9 && documentIsHTML &&
-				Expr.relative[ tokens[1].type ] ) {
+				context.nodeType === 9 && documentIsHTML && Expr.relative[ tokens[1].type ] ) {
 
 			context = ( Expr.find["ID"]( token.matches[0].replace(runescape, funescape), context ) || [] )[0];
 			if ( !context ) {
@@ -3920,24 +3730,29 @@ function winnow( elements, qualifier, not ) {
 		return jQuery.grep( elements, function( elem, i ) {
 			return !!qualifier.call( elem, i, elem ) !== not;
 		} );
-
 	}
 
+	// Single element
 	if ( qualifier.nodeType ) {
 		return jQuery.grep( elements, function( elem ) {
 			return ( elem === qualifier ) !== not;
 		} );
-
 	}
 
-	if ( typeof qualifier === "string" ) {
-		if ( risSimple.test( qualifier ) ) {
-			return jQuery.filter( qualifier, elements, not );
-		}
-
-		qualifier = jQuery.filter( qualifier, elements );
+	// Arraylike of elements (jQuery, arguments, Array)
+	if ( typeof qualifier !== "string" ) {
+		return jQuery.grep( elements, function( elem ) {
+			return ( indexOf.call( qualifier, elem ) > -1 ) !== not;
+		} );
 	}
 
+	// Simple selector that can be filtered directly, removing non-Elements
+	if ( risSimple.test( qualifier ) ) {
+		return jQuery.filter( qualifier, elements, not );
+	}
+
+	// Complex selector, compare the two sets, removing non-Elements
+	qualifier = jQuery.filter( qualifier, elements );
 	return jQuery.grep( elements, function( elem ) {
 		return ( indexOf.call( qualifier, elem ) > -1 ) !== not && elem.nodeType === 1;
 	} );
@@ -3950,11 +3765,13 @@ jQuery.filter = function( expr, elems, not ) {
 		expr = ":not(" + expr + ")";
 	}
 
-	return elems.length === 1 && elem.nodeType === 1 ?
-		jQuery.find.matchesSelector( elem, expr ) ? [ elem ] : [] :
-		jQuery.find.matches( expr, jQuery.grep( elems, function( elem ) {
-			return elem.nodeType === 1;
-		} ) );
+	if ( elems.length === 1 && elem.nodeType === 1 ) {
+		return jQuery.find.matchesSelector( elem, expr ) ? [ elem ] : [];
+	}
+
+	return jQuery.find.matches( expr, jQuery.grep( elems, function( elem ) {
+		return elem.nodeType === 1;
+	} ) );
 };
 
 jQuery.fn.extend( {
@@ -4282,14 +4099,14 @@ jQuery.each( {
 		return this.pushStack( matched );
 	};
 } );
-var rnotwhite = ( /\S+/g );
+var rnothtmlwhite = ( /[^\x20\t\r\n\f]+/g );
 
 
 
 // Convert String-formatted options into Object-formatted ones
 function createOptions( options ) {
 	var object = {};
-	jQuery.each( options.match( rnotwhite ) || [], function( _, flag ) {
+	jQuery.each( options.match( rnothtmlwhite ) || [], function( _, flag ) {
 		object[ flag ] = true;
 	} );
 	return object;
@@ -5054,13 +4871,16 @@ var access = function( elems, fn, key, value, chainable, emptyGet, raw ) {
 		}
 	}
 
-	return chainable ?
-		elems :
+	if ( chainable ) {
+		return elems;
+	}
 
-		// Gets
-		bulk ?
-			fn.call( elems ) :
-			len ? fn( elems[ 0 ], key ) : emptyGet;
+	// Gets
+	if ( bulk ) {
+		return fn.call( elems );
+	}
+
+	return len ? fn( elems[ 0 ], key ) : emptyGet;
 };
 var acceptData = function( owner ) {
 
@@ -5197,7 +5017,7 @@ Data.prototype = {
 				// Otherwise, create an array by matching non-whitespace
 				key = key in cache ?
 					[ key ] :
-					( key.match( rnotwhite ) || [] );
+					( key.match( rnothtmlwhite ) || [] );
 			}
 
 			i = key.length;
@@ -5245,6 +5065,31 @@ var dataUser = new Data();
 var rbrace = /^(?:\{[\w\W]*\}|\[[\w\W]*\])$/,
 	rmultiDash = /[A-Z]/g;
 
+function getData( data ) {
+	if ( data === "true" ) {
+		return true;
+	}
+
+	if ( data === "false" ) {
+		return false;
+	}
+
+	if ( data === "null" ) {
+		return null;
+	}
+
+	// Only convert to a number if it doesn't change the string
+	if ( data === +data + "" ) {
+		return +data;
+	}
+
+	if ( rbrace.test( data ) ) {
+		return JSON.parse( data );
+	}
+
+	return data;
+}
+
 function dataAttr( elem, key, data ) {
 	var name;
 
@@ -5256,14 +5101,7 @@ function dataAttr( elem, key, data ) {
 
 		if ( typeof data === "string" ) {
 			try {
-				data = data === "true" ? true :
-					data === "false" ? false :
-					data === "null" ? null :
-
-					// Only convert to a number if it doesn't change the string
-					+data + "" === data ? +data :
-					rbrace.test( data ) ? JSON.parse( data ) :
-					data;
+				data = getData( data );
 			} catch ( e ) {}
 
 			// Make sure we set the data so it isn't changed later
@@ -5640,7 +5478,7 @@ function getDefaultDisplay( elem ) {
 		return display;
 	}
 
-	temp = doc.body.appendChild( doc.createElement( nodeName ) ),
+	temp = doc.body.appendChild( doc.createElement( nodeName ) );
 	display = jQuery.css( temp, "display" );
 
 	temp.parentNode.removeChild( temp );
@@ -5758,15 +5596,23 @@ function getAll( context, tag ) {
 
 	// Support: IE <=9 - 11 only
 	// Use typeof to avoid zero-argument method invocation on host objects (#15151)
-	var ret = typeof context.getElementsByTagName !== "undefined" ?
-			context.getElementsByTagName( tag || "*" ) :
-			typeof context.querySelectorAll !== "undefined" ?
-				context.querySelectorAll( tag || "*" ) :
-			[];
+	var ret;
 
-	return tag === undefined || tag && jQuery.nodeName( context, tag ) ?
-		jQuery.merge( [ context ], ret ) :
-		ret;
+	if ( typeof context.getElementsByTagName !== "undefined" ) {
+		ret = context.getElementsByTagName( tag || "*" );
+
+	} else if ( typeof context.querySelectorAll !== "undefined" ) {
+		ret = context.querySelectorAll( tag || "*" );
+
+	} else {
+		ret = [];
+	}
+
+	if ( tag === undefined || tag && jQuery.nodeName( context, tag ) ) {
+		return jQuery.merge( [ context ], ret );
+	}
+
+	return ret;
 }
 
 
@@ -6040,7 +5886,7 @@ jQuery.event = {
 		}
 
 		// Handle multiple events separated by a space
-		types = ( types || "" ).match( rnotwhite ) || [ "" ];
+		types = ( types || "" ).match( rnothtmlwhite ) || [ "" ];
 		t = types.length;
 		while ( t-- ) {
 			tmp = rtypenamespace.exec( types[ t ] ) || [];
@@ -6122,7 +5968,7 @@ jQuery.event = {
 		}
 
 		// Once for each type.namespace in types; type may be omitted
-		types = ( types || "" ).match( rnotwhite ) || [ "" ];
+		types = ( types || "" ).match( rnothtmlwhite ) || [ "" ];
 		t = types.length;
 		while ( t-- ) {
 			tmp = rtypenamespace.exec( types[ t ] ) || [];
@@ -6248,51 +6094,58 @@ jQuery.event = {
 	},
 
 	handlers: function( event, handlers ) {
-		var i, matches, sel, handleObj,
+		var i, handleObj, sel, matchedHandlers, matchedSelectors,
 			handlerQueue = [],
 			delegateCount = handlers.delegateCount,
 			cur = event.target;
 
-		// Support: IE <=9
 		// Find delegate handlers
-		// Black-hole SVG <use> instance trees (#13180)
-		//
-		// Support: Firefox <=42
-		// Avoid non-left-click in FF but don't block IE radio events (#3861, gh-2343)
-		if ( delegateCount && cur.nodeType &&
-			( event.type !== "click" || isNaN( event.button ) || event.button < 1 ) ) {
+		if ( delegateCount &&
+
+			// Support: IE <=9
+			// Black-hole SVG <use> instance trees (trac-13180)
+			cur.nodeType &&
+
+			// Support: Firefox <=42
+			// Suppress spec-violating clicks indicating a non-primary pointer button (trac-3861)
+			// https://www.w3.org/TR/DOM-Level-3-Events/#event-type-click
+			// Support: IE 11 only
+			// ...but not arrow key "clicks" of radio inputs, which can have `button` -1 (gh-2343)
+			!( event.type === "click" && event.button >= 1 ) ) {
 
 			for ( ; cur !== this; cur = cur.parentNode || this ) {
 
 				// Don't check non-elements (#13208)
 				// Don't process clicks on disabled elements (#6911, #8165, #11382, #11764)
-				if ( cur.nodeType === 1 && ( cur.disabled !== true || event.type !== "click" ) ) {
-					matches = [];
+				if ( cur.nodeType === 1 && !( event.type === "click" && cur.disabled === true ) ) {
+					matchedHandlers = [];
+					matchedSelectors = {};
 					for ( i = 0; i < delegateCount; i++ ) {
 						handleObj = handlers[ i ];
 
 						// Don't conflict with Object.prototype properties (#13203)
 						sel = handleObj.selector + " ";
 
-						if ( matches[ sel ] === undefined ) {
-							matches[ sel ] = handleObj.needsContext ?
+						if ( matchedSelectors[ sel ] === undefined ) {
+							matchedSelectors[ sel ] = handleObj.needsContext ?
 								jQuery( sel, this ).index( cur ) > -1 :
 								jQuery.find( sel, this, null, [ cur ] ).length;
 						}
-						if ( matches[ sel ] ) {
-							matches.push( handleObj );
+						if ( matchedSelectors[ sel ] ) {
+							matchedHandlers.push( handleObj );
 						}
 					}
-					if ( matches.length ) {
-						handlerQueue.push( { elem: cur, handlers: matches } );
+					if ( matchedHandlers.length ) {
+						handlerQueue.push( { elem: cur, handlers: matchedHandlers } );
 					}
 				}
 			}
 		}
 
 		// Add the remaining (directly-bound) handlers
+		cur = this;
 		if ( delegateCount < handlers.length ) {
-			handlerQueue.push( { elem: this, handlers: handlers.slice( delegateCount ) } );
+			handlerQueue.push( { elem: cur, handlers: handlers.slice( delegateCount ) } );
 		}
 
 		return handlerQueue;
@@ -6526,7 +6379,19 @@ jQuery.each( {
 
 		// Add which for click: 1 === left; 2 === middle; 3 === right
 		if ( !event.which && button !== undefined && rmouseEvent.test( event.type ) ) {
-			return ( button & 1 ? 1 : ( button & 2 ? 3 : ( button & 4 ? 2 : 0 ) ) );
+			if ( button & 1 ) {
+				return 1;
+			}
+
+			if ( button & 2 ) {
+				return 3;
+			}
+
+			if ( button & 4 ) {
+				return 2;
+			}
+
+			return 0;
 		}
 
 		return event.which;
@@ -7282,15 +7147,17 @@ function setPositiveNumber( elem, value, subtract ) {
 }
 
 function augmentWidthOrHeight( elem, name, extra, isBorderBox, styles ) {
-	var i = extra === ( isBorderBox ? "border" : "content" ) ?
-
-		// If we already have the right measurement, avoid augmentation
-		4 :
-
-		// Otherwise initialize for horizontal or vertical properties
-		name === "width" ? 1 : 0,
-
+	var i,
 		val = 0;
+
+	// If we already have the right measurement, avoid augmentation
+	if ( extra === ( isBorderBox ? "border" : "content" ) ) {
+		i = 4;
+
+	// Otherwise initialize for horizontal or vertical properties
+	} else {
+		i = name === "width" ? 1 : 0;
+	}
 
 	for ( ; i < 4; i += 2 ) {
 
@@ -8144,7 +8011,7 @@ jQuery.Animation = jQuery.extend( Animation, {
 			callback = props;
 			props = [ "*" ];
 		} else {
-			props = props.match( rnotwhite );
+			props = props.match( rnothtmlwhite );
 		}
 
 		var prop,
@@ -8182,9 +8049,14 @@ jQuery.speed = function( speed, easing, fn ) {
 		opt.duration = 0;
 
 	} else {
-		opt.duration = typeof opt.duration === "number" ?
-			opt.duration : opt.duration in jQuery.fx.speeds ?
-				jQuery.fx.speeds[ opt.duration ] : jQuery.fx.speeds._default;
+		if ( typeof opt.duration !== "number" ) {
+			if ( opt.duration in jQuery.fx.speeds ) {
+				opt.duration = jQuery.fx.speeds[ opt.duration ];
+
+			} else {
+				opt.duration = jQuery.fx.speeds._default;
+			}
+		}
 	}
 
 	// Normalize opt.queue - true/undefined/null -> "fx"
@@ -8534,7 +8406,10 @@ jQuery.extend( {
 	removeAttr: function( elem, value ) {
 		var name,
 			i = 0,
-			attrNames = value && value.match( rnotwhite );
+
+			// Attribute names can contain non-HTML whitespace characters
+			// https://html.spec.whatwg.org/multipage/syntax.html#attributes-2
+			attrNames = value && value.match( rnothtmlwhite );
 
 		if ( attrNames && elem.nodeType === 1 ) {
 			while ( ( name = attrNames[ i++ ] ) ) {
@@ -8641,12 +8516,19 @@ jQuery.extend( {
 				// Use proper attribute retrieval(#12072)
 				var tabindex = jQuery.find.attr( elem, "tabindex" );
 
-				return tabindex ?
-					parseInt( tabindex, 10 ) :
+				if ( tabindex ) {
+					return parseInt( tabindex, 10 );
+				}
+
+				if (
 					rfocusable.test( elem.nodeName ) ||
-						rclickable.test( elem.nodeName ) && elem.href ?
-							0 :
-							-1;
+					rclickable.test( elem.nodeName ) &&
+					elem.href
+				) {
+					return 0;
+				}
+
+				return -1;
 			}
 		}
 	},
@@ -8663,9 +8545,14 @@ jQuery.extend( {
 // on the option
 // The getter ensures a default option is selected
 // when in an optgroup
+// eslint rule "no-unused-expressions" is disabled for this code
+// since it considers such accessions noop
 if ( !support.optSelected ) {
 	jQuery.propHooks.selected = {
 		get: function( elem ) {
+
+			/* eslint no-unused-expressions: "off" */
+
 			var parent = elem.parentNode;
 			if ( parent && parent.parentNode ) {
 				parent.parentNode.selectedIndex;
@@ -8673,6 +8560,9 @@ if ( !support.optSelected ) {
 			return null;
 		},
 		set: function( elem ) {
+
+			/* eslint no-unused-expressions: "off" */
+
 			var parent = elem.parentNode;
 			if ( parent ) {
 				parent.selectedIndex;
@@ -8703,7 +8593,13 @@ jQuery.each( [
 
 
 
-var rclass = /[\t\r\n\f]/g;
+	// Strip and collapse whitespace according to HTML spec
+	// https://html.spec.whatwg.org/multipage/infrastructure.html#strip-and-collapse-whitespace
+	function stripAndCollapse( value ) {
+		var tokens = value.match( rnothtmlwhite ) || [];
+		return tokens.join( " " );
+	}
+
 
 function getClass( elem ) {
 	return elem.getAttribute && elem.getAttribute( "class" ) || "";
@@ -8721,12 +8617,11 @@ jQuery.fn.extend( {
 		}
 
 		if ( typeof value === "string" && value ) {
-			classes = value.match( rnotwhite ) || [];
+			classes = value.match( rnothtmlwhite ) || [];
 
 			while ( ( elem = this[ i++ ] ) ) {
 				curValue = getClass( elem );
-				cur = elem.nodeType === 1 &&
-					( " " + curValue + " " ).replace( rclass, " " );
+				cur = elem.nodeType === 1 && ( " " + stripAndCollapse( curValue ) + " " );
 
 				if ( cur ) {
 					j = 0;
@@ -8737,7 +8632,7 @@ jQuery.fn.extend( {
 					}
 
 					// Only assign if different to avoid unneeded rendering.
-					finalValue = jQuery.trim( cur );
+					finalValue = stripAndCollapse( cur );
 					if ( curValue !== finalValue ) {
 						elem.setAttribute( "class", finalValue );
 					}
@@ -8763,14 +8658,13 @@ jQuery.fn.extend( {
 		}
 
 		if ( typeof value === "string" && value ) {
-			classes = value.match( rnotwhite ) || [];
+			classes = value.match( rnothtmlwhite ) || [];
 
 			while ( ( elem = this[ i++ ] ) ) {
 				curValue = getClass( elem );
 
 				// This expression is here for better compressibility (see addClass)
-				cur = elem.nodeType === 1 &&
-					( " " + curValue + " " ).replace( rclass, " " );
+				cur = elem.nodeType === 1 && ( " " + stripAndCollapse( curValue ) + " " );
 
 				if ( cur ) {
 					j = 0;
@@ -8783,7 +8677,7 @@ jQuery.fn.extend( {
 					}
 
 					// Only assign if different to avoid unneeded rendering.
-					finalValue = jQuery.trim( cur );
+					finalValue = stripAndCollapse( cur );
 					if ( curValue !== finalValue ) {
 						elem.setAttribute( "class", finalValue );
 					}
@@ -8818,7 +8712,7 @@ jQuery.fn.extend( {
 				// Toggle individual class names
 				i = 0;
 				self = jQuery( this );
-				classNames = value.match( rnotwhite ) || [];
+				classNames = value.match( rnothtmlwhite ) || [];
 
 				while ( ( className = classNames[ i++ ] ) ) {
 
@@ -8861,10 +8755,8 @@ jQuery.fn.extend( {
 		className = " " + selector + " ";
 		while ( ( elem = this[ i++ ] ) ) {
 			if ( elem.nodeType === 1 &&
-				( " " + getClass( elem ) + " " ).replace( rclass, " " )
-					.indexOf( className ) > -1
-			) {
-				return true;
+				( " " + stripAndCollapse( getClass( elem ) ) + " " ).indexOf( className ) > -1 ) {
+					return true;
 			}
 		}
 
@@ -8875,8 +8767,7 @@ jQuery.fn.extend( {
 
 
 
-var rreturn = /\r/g,
-	rspaces = /[\x20\t\r\n\f]+/g;
+var rreturn = /\r/g;
 
 jQuery.fn.extend( {
 	val: function( value ) {
@@ -8897,13 +8788,13 @@ jQuery.fn.extend( {
 
 				ret = elem.value;
 
-				return typeof ret === "string" ?
+				// Handle most common string cases
+				if ( typeof ret === "string" ) {
+					return ret.replace( rreturn, "" );
+				}
 
-					// Handle most common string cases
-					ret.replace( rreturn, "" ) :
-
-					// Handle cases where value is null/undef or number
-					ret == null ? "" : ret;
+				// Handle cases where value is null/undef or number
+				return ret == null ? "" : ret;
 			}
 
 			return;
@@ -8960,20 +8851,24 @@ jQuery.extend( {
 					// option.text throws exceptions (#14686, #14858)
 					// Strip and collapse whitespace
 					// https://html.spec.whatwg.org/#strip-and-collapse-whitespace
-					jQuery.trim( jQuery.text( elem ) ).replace( rspaces, " " );
+					stripAndCollapse( jQuery.text( elem ) );
 			}
 		},
 		select: {
 			get: function( elem ) {
-				var value, option,
+				var value, option, i,
 					options = elem.options,
 					index = elem.selectedIndex,
 					one = elem.type === "select-one",
 					values = one ? null : [],
-					max = one ? index + 1 : options.length,
-					i = index < 0 ?
-						max :
-						one ? index : 0;
+					max = one ? index + 1 : options.length;
+
+				if ( index < 0 ) {
+					i = max;
+
+				} else {
+					i = one ? index : 0;
+				}
 
 				// Loop through all the selected options
 				for ( ; i < max; i++ ) {
@@ -9427,13 +9322,17 @@ jQuery.fn.extend( {
 		.map( function( i, elem ) {
 			var val = jQuery( this ).val();
 
-			return val == null ?
-				null :
-				jQuery.isArray( val ) ?
-					jQuery.map( val, function( val ) {
-						return { name: elem.name, value: val.replace( rCRLF, "\r\n" ) };
-					} ) :
-					{ name: elem.name, value: val.replace( rCRLF, "\r\n" ) };
+			if ( val == null ) {
+				return null;
+			}
+
+			if ( jQuery.isArray( val ) ) {
+				return jQuery.map( val, function( val ) {
+					return { name: elem.name, value: val.replace( rCRLF, "\r\n" ) };
+				} );
+			}
+
+			return { name: elem.name, value: val.replace( rCRLF, "\r\n" ) };
 		} ).get();
 	}
 } );
@@ -9442,7 +9341,7 @@ jQuery.fn.extend( {
 var
 	r20 = /%20/g,
 	rhash = /#.*$/,
-	rts = /([?&])_=[^&]*/,
+	rantiCache = /([?&])_=[^&]*/,
 	rheaders = /^(.*?):[ \t]*([^\r\n]*)$/mg,
 
 	// #7653, #8125, #8152: local protocol detection
@@ -9488,7 +9387,7 @@ function addToPrefiltersOrTransports( structure ) {
 
 		var dataType,
 			i = 0,
-			dataTypes = dataTypeExpression.toLowerCase().match( rnotwhite ) || [];
+			dataTypes = dataTypeExpression.toLowerCase().match( rnothtmlwhite ) || [];
 
 		if ( jQuery.isFunction( func ) ) {
 
@@ -9956,7 +9855,7 @@ jQuery.extend( {
 		s.type = options.method || options.type || s.method || s.type;
 
 		// Extract dataTypes list
-		s.dataTypes = ( s.dataType || "*" ).toLowerCase().match( rnotwhite ) || [ "" ];
+		s.dataTypes = ( s.dataType || "*" ).toLowerCase().match( rnothtmlwhite ) || [ "" ];
 
 		// A cross-domain request is in order when the origin doesn't match the current origin.
 		if ( s.crossDomain == null ) {
@@ -10028,9 +9927,9 @@ jQuery.extend( {
 				delete s.data;
 			}
 
-			// Add anti-cache in uncached url if needed
+			// Add or update anti-cache param if needed
 			if ( s.cache === false ) {
-				cacheURL = cacheURL.replace( rts, "" );
+				cacheURL = cacheURL.replace( rantiCache, "$1" );
 				uncached = ( rquery.test( cacheURL ) ? "&" : "?" ) + "_=" + ( nonce++ ) + uncached;
 			}
 
@@ -10769,7 +10668,7 @@ jQuery.fn.load = function( url, params, callback ) {
 		off = url.indexOf( " " );
 
 	if ( off > -1 ) {
-		selector = jQuery.trim( url.slice( off ) );
+		selector = stripAndCollapse( url.slice( off ) );
 		url = url.slice( 0, off );
 	}
 
@@ -11161,7 +11060,6 @@ if ( typeof define === "function" && define.amd ) {
 
 
 
-
 var
 
 	// Map over jQuery in case of overwrite
@@ -11190,10 +11088,13 @@ if ( !noGlobal ) {
 }
 
 
+
+
+
 return jQuery;
 } );
 
-},{}],14:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 var isarray = require('isarray')
 
 /**
@@ -11226,14 +11127,16 @@ var PATH_REGEXP = new RegExp([
 /**
  * Parse a string for the raw tokens.
  *
- * @param  {string} str
+ * @param  {string}  str
+ * @param  {Object=} options
  * @return {!Array}
  */
-function parse (str) {
+function parse (str, options) {
   var tokens = []
   var key = 0
   var index = 0
   var path = ''
+  var defaultDelimiter = options && options.delimiter || '/'
   var res
 
   while ((res = PATH_REGEXP.exec(str)) != null) {
@@ -11266,8 +11169,8 @@ function parse (str) {
     var partial = prefix != null && next != null && next !== prefix
     var repeat = modifier === '+' || modifier === '*'
     var optional = modifier === '?' || modifier === '*'
-    var delimiter = res[2] || '/'
-    var pattern = capture || group || (asterisk ? '.*' : '[^' + delimiter + ']+?')
+    var delimiter = res[2] || defaultDelimiter
+    var pattern = capture || group
 
     tokens.push({
       name: name || key++,
@@ -11277,7 +11180,7 @@ function parse (str) {
       repeat: repeat,
       partial: partial,
       asterisk: !!asterisk,
-      pattern: escapeGroup(pattern)
+      pattern: pattern ? escapeGroup(pattern) : (asterisk ? '.*' : '[^' + escapeString(delimiter) + ']+?')
     })
   }
 
@@ -11298,10 +11201,11 @@ function parse (str) {
  * Compile a string to a template function for the path.
  *
  * @param  {string}             str
+ * @param  {Object=}            options
  * @return {!function(Object=, Object=)}
  */
-function compile (str) {
-  return tokensToFunction(parse(str))
+function compile (str, options) {
+  return tokensToFunction(parse(str, options))
 }
 
 /**
@@ -11512,34 +11416,28 @@ function arrayToRegexp (path, keys, options) {
  * @return {!RegExp}
  */
 function stringToRegexp (path, keys, options) {
-  var tokens = parse(path)
-  var re = tokensToRegExp(tokens, options)
-
-  // Attach keys back to the regexp.
-  for (var i = 0; i < tokens.length; i++) {
-    if (typeof tokens[i] !== 'string') {
-      keys.push(tokens[i])
-    }
-  }
-
-  return attachKeys(re, keys)
+  return tokensToRegExp(parse(path, options), keys, options)
 }
 
 /**
  * Expose a function for taking tokens and returning a RegExp.
  *
- * @param  {!Array}  tokens
- * @param  {Object=} options
+ * @param  {!Array}          tokens
+ * @param  {(Array|Object)=} keys
+ * @param  {Object=}         options
  * @return {!RegExp}
  */
-function tokensToRegExp (tokens, options) {
+function tokensToRegExp (tokens, keys, options) {
+  if (!isarray(keys)) {
+    options = /** @type {!Object} */ (keys || options)
+    keys = []
+  }
+
   options = options || {}
 
   var strict = options.strict
   var end = options.end !== false
   var route = ''
-  var lastToken = tokens[tokens.length - 1]
-  var endsWithSlash = typeof lastToken === 'string' && /\/$/.test(lastToken)
 
   // Iterate over the tokens and create our regexp string.
   for (var i = 0; i < tokens.length; i++) {
@@ -11550,6 +11448,8 @@ function tokensToRegExp (tokens, options) {
     } else {
       var prefix = escapeString(token.prefix)
       var capture = '(?:' + token.pattern + ')'
+
+      keys.push(token)
 
       if (token.repeat) {
         capture += '(?:' + prefix + capture + ')*'
@@ -11569,12 +11469,15 @@ function tokensToRegExp (tokens, options) {
     }
   }
 
+  var delimiter = escapeString(options.delimiter || '/')
+  var endsWithDelimiter = route.slice(-delimiter.length) === delimiter
+
   // In non-strict mode we allow a slash at the end of match. If the path to
   // match already ends with a slash, we remove it for consistency. The slash
   // is valid at the end of a path match, not in the middle. This is important
   // in non-ending mode, where "/test/" shouldn't match "/test//route".
   if (!strict) {
-    route = (endsWithSlash ? route.slice(0, -2) : route) + '(?:\\/(?=$))?'
+    route = (endsWithDelimiter ? route.slice(0, -delimiter.length) : route) + '(?:' + delimiter + '(?=$))?'
   }
 
   if (end) {
@@ -11582,10 +11485,10 @@ function tokensToRegExp (tokens, options) {
   } else {
     // In non-ending mode, we need the capturing groups to match as much as
     // possible by using a positive lookahead to the end or next path segment.
-    route += strict && endsWithSlash ? '' : '(?=\\/|$)'
+    route += strict && endsWithDelimiter ? '' : '(?=' + delimiter + '|$)'
   }
 
-  return new RegExp('^' + route, flags(options))
+  return attachKeys(new RegExp('^' + route, flags(options)), keys)
 }
 
 /**
@@ -11601,14 +11504,12 @@ function tokensToRegExp (tokens, options) {
  * @return {!RegExp}
  */
 function pathToRegexp (path, keys, options) {
-  keys = keys || []
-
   if (!isarray(keys)) {
-    options = /** @type {!Object} */ (keys)
+    options = /** @type {!Object} */ (keys || options)
     keys = []
-  } else if (!options) {
-    options = {}
   }
+
+  options = options || {}
 
   if (path instanceof RegExp) {
     return regexpToRegexp(path, /** @type {!Array} */ (keys))
@@ -11621,17 +11522,18 @@ function pathToRegexp (path, keys, options) {
   return stringToRegexp(/** @type {string} */ (path), /** @type {!Array} */ (keys), options)
 }
 
-},{"isarray":15}],15:[function(require,module,exports){
-module.exports = Array.isArray || function (arr) {
-  return Object.prototype.toString.call(arr) == '[object Array]';
-};
-
-},{}],16:[function(require,module,exports){
+},{"isarray":8}],11:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _dec, _dec2, _class, _desc, _value, _class2;
+var _dec, _class, _desc, _value, _class2;
+
+var _trigger = require('../util/trigger');
+
+var _trigger2 = _interopRequireDefault(_trigger);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -11664,10 +11566,10 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
 	return desc;
 }
 
-var _$$cc = $.cc;
-var component = _$$cc.component;
-var on = _$$cc.on;
-var ClearCompleted = (_dec = component('clear-completed'), _dec2 = on('click'), _dec(_class = (_class2 = function () {
+var _$$cc = $.cc,
+    component = _$$cc.component,
+    on = _$$cc.on;
+var ClearCompleted = (_dec = on('click'), component(_class = (_class2 = function () {
 	function ClearCompleted() {
 		_classCallCheck(this, ClearCompleted);
 	}
@@ -11675,7 +11577,7 @@ var ClearCompleted = (_dec = component('clear-completed'), _dec2 = on('click'), 
 	_createClass(ClearCompleted, [{
 		key: 'onClick',
 		value: function onClick() {
-			this.elem.trigger('todo-clear-completed');
+			(0, _trigger2.default)(this.el, 'todo-clear-completed');
 		}
 
 		/**
@@ -11685,22 +11587,28 @@ var ClearCompleted = (_dec = component('clear-completed'), _dec2 = on('click'), 
 	}, {
 		key: 'onUpdate',
 		value: function onUpdate(todos) {
-			this.elem.css('display', todos.completed().isEmpty() ? 'none' : 'inline');
+			this.$el.css('display', todos.completed().isEmpty() ? 'none' : 'inline');
 		}
 	}]);
 
 	return ClearCompleted;
-}(), (_applyDecoratedDescriptor(_class2.prototype, 'onClick', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'onClick'), _class2.prototype)), _class2)) || _class);
+}(), (_applyDecoratedDescriptor(_class2.prototype, 'onClick', [_dec], Object.getOwnPropertyDescriptor(_class2.prototype, 'onClick'), _class2.prototype)), _class2)) || _class);
 
 
 module.exports = ClearCompleted;
 
-},{}],17:[function(require,module,exports){
+},{"../util/trigger":28}],12:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _dec, _dec2, _dec3, _dec4, _class, _desc, _value, _class2;
+var _dec, _dec2, _dec3, _class, _desc, _value, _class2;
+
+var _trigger = require('../util/trigger');
+
+var _trigger2 = _interopRequireDefault(_trigger);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -11733,18 +11641,18 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
 	return desc;
 }
 
-var _require = require('../const');
+var _require = require('../const'),
+    KEYCODE = _require.KEYCODE;
 
-var KEYCODE = _require.KEYCODE;
-var _$$cc = $.cc;
-var on = _$$cc.on;
-var component = _$$cc.component;
+var _$$cc = $.cc,
+    on = _$$cc.on,
+    component = _$$cc.component;
 
 /**
  * TodoEdit controls the edit area of each todo item.
  */
 
-var Edit = (_dec = component('edit'), _dec2 = on('keypress'), _dec3 = on('keydown'), _dec4 = on('blur'), _dec(_class = (_class2 = function () {
+var Edit = (_dec = on('keypress'), _dec2 = on('keydown'), _dec3 = on('blur'), component(_class = (_class2 = function () {
 	function Edit() {
 		_classCallCheck(this, Edit);
 	}
@@ -11752,7 +11660,7 @@ var Edit = (_dec = component('edit'), _dec2 = on('keypress'), _dec3 = on('keydow
 	_createClass(Edit, [{
 		key: 'onStart',
 		value: function onStart() {
-			this.elem.focus();
+			this.$el.focus();
 		}
 
 		/**
@@ -11762,8 +11670,8 @@ var Edit = (_dec = component('edit'), _dec2 = on('keypress'), _dec3 = on('keydow
 	}, {
 		key: 'onUpdate',
 		value: function onUpdate(value) {
-			this.elem.val(value);
-			this.elem.data('prev-value', value);
+			this.$el.val(value);
+			this.$el.data('prev-value', value);
 		}
 
 		/**
@@ -11789,10 +11697,10 @@ var Edit = (_dec = component('edit'), _dec2 = on('keypress'), _dec3 = on('keydow
 	}, {
 		key: 'onFinish',
 		value: function onFinish() {
-			var value = this.elem.val();
+			var value = this.$el.val();
 
 			this.onUpdate(value);
-			this.elem.trigger('todo-edited', value);
+			(0, _trigger2.default)(this.el, 'todo-edited', value);
 		}
 
 		/**
@@ -11802,25 +11710,25 @@ var Edit = (_dec = component('edit'), _dec2 = on('keypress'), _dec3 = on('keydow
 	}, {
 		key: 'onCancel',
 		value: function onCancel() {
-			var value = this.elem.data('prev-value');
+			var value = this.$el.data('prev-value');
 
 			this.onUpdate(value);
-			this.elem.trigger('todo-edited', value);
+			(0, _trigger2.default)(this.el, 'todo-edited', value);
 		}
 	}]);
 
 	return Edit;
-}(), (_applyDecoratedDescriptor(_class2.prototype, 'onKeypress', [_dec2, _dec3], Object.getOwnPropertyDescriptor(_class2.prototype, 'onKeypress'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'onFinish', [_dec4], Object.getOwnPropertyDescriptor(_class2.prototype, 'onFinish'), _class2.prototype)), _class2)) || _class);
+}(), (_applyDecoratedDescriptor(_class2.prototype, 'onKeypress', [_dec, _dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'onKeypress'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'onFinish', [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, 'onFinish'), _class2.prototype)), _class2)) || _class);
 
 
 module.exports = Edit;
 
-},{"../const":24}],18:[function(require,module,exports){
+},{"../const":19,"../util/trigger":28}],13:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _dec, _class;
+var _class;
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -11832,7 +11740,7 @@ var component = $.cc.component;
  * The todo filter controls.
  */
 
-var Filters = (_dec = component('filters'), _dec(_class = function () {
+var Filters = component(_class = function () {
 	function Filters() {
 		_classCallCheck(this, Filters);
 	}
@@ -11859,17 +11767,22 @@ var Filters = (_dec = component('filters'), _dec(_class = function () {
 	}]);
 
 	return Filters;
-}()) || _class);
-
+}()) || _class;
 
 module.exports = Filters;
 
-},{"../domain/filter":25}],19:[function(require,module,exports){
+},{"../domain/filter":20}],14:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _dec, _dec2, _class, _desc, _value, _class2;
+var _dec, _class, _desc, _value, _class2;
+
+var _trigger = require('../util/trigger');
+
+var _trigger2 = _interopRequireDefault(_trigger);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -11904,15 +11817,15 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
 
 var Const = require('../const');
 
-var _$$cc = $.cc;
-var on = _$$cc.on;
-var component = _$$cc.component;
+var _$$cc = $.cc,
+    on = _$$cc.on,
+    component = _$$cc.component;
 
 /**
  * TodoInput class controls the input for adding todos.
  */
 
-var NewTodo = (_dec = component('new-todo'), _dec2 = on('keypress'), _dec(_class = (_class2 = function () {
+var NewTodo = (_dec = on('keypress'), component(_class = (_class2 = function () {
 	function NewTodo() {
 		_classCallCheck(this, NewTodo);
 	}
@@ -11931,35 +11844,35 @@ var NewTodo = (_dec = component('new-todo'), _dec2 = on('keypress'), _dec(_class
 			var title = this.elem.val().trim();
 			this.elem.val('');
 
-			this.elem.trigger('todo-new-item', title);
+			(0, _trigger2.default)(this.el, 'todo-new-item', title);
 		}
 	}]);
 
 	return NewTodo;
-}(), (_applyDecoratedDescriptor(_class2.prototype, 'onKeypress', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'onKeypress'), _class2.prototype)), _class2)) || _class);
+}(), (_applyDecoratedDescriptor(_class2.prototype, 'onKeypress', [_dec], Object.getOwnPropertyDescriptor(_class2.prototype, 'onKeypress'), _class2.prototype)), _class2)) || _class);
 
 
 module.exports = NewTodo;
 
-},{"../const":24}],20:[function(require,module,exports){
+},{"../const":19,"../util/trigger":28}],15:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _dec, _class;
+var _class;
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var _require = require('dom-gen');
+var _require = require('dom-gen'),
+    strong = _require.strong;
 
-var strong = _require.strong;
 var component = $.cc.component;
 
 /**
  * The todo counting element.
  */
 
-var TodoCount = (_dec = component('todo-count'), _dec(_class = function () {
+var TodoCount = component(_class = function () {
 	function TodoCount() {
 		_classCallCheck(this, TodoCount);
 	}
@@ -11978,17 +11891,22 @@ var TodoCount = (_dec = component('todo-count'), _dec(_class = function () {
 	}]);
 
 	return TodoCount;
-}()) || _class);
-
+}()) || _class;
 
 module.exports = TodoCount;
 
-},{"dom-gen":9}],21:[function(require,module,exports){
+},{"dom-gen":4}],16:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _dec, _dec2, _dec3, _dec4, _dec5, _class, _desc, _value, _class2;
+var _dec, _dec2, _dec3, _dec4, _class, _desc, _value, _class2;
+
+var _trigger = require('../util/trigger');
+
+var _trigger2 = _interopRequireDefault(_trigger);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -12021,42 +11939,51 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
 	return desc;
 }
 
-var _require = require('dom-gen');
+var _require = require('dom-gen'),
+    div = _require.div,
+    input = _require.input,
+    label = _require.label,
+    button = _require.button;
 
-var div = _require.div;
-var input = _require.input;
-var label = _require.label;
-var button = _require.button;
-var _$$cc = $.cc;
-var on = _$$cc.on;
-var component = _$$cc.component;
+var _$$cc = $.cc,
+    on = _$$cc.on,
+    wire = _$$cc.wire,
+    component = _$$cc.component;
 
 /**
  * TodoItem class controls todo item in a list.
  */
 
-var TodoItem = (_dec = component('todo-item'), _dec2 = on('click').at('.toggle'), _dec3 = on('click').at('.destroy'), _dec4 = on('dblclick').at('label'), _dec5 = on('todo-edited'), _dec(_class = (_class2 = function () {
-	function TodoItem(elem) {
+var TodoItem = (_dec = on('click', { at: '.toggle' }), _dec2 = on('click', { at: '.destroy' }), _dec3 = on('dblclick', { at: 'label' }), _dec4 = on('todo-edited'), component(_class = (_class2 = function () {
+	function TodoItem() {
 		_classCallCheck(this, TodoItem);
-
-		elem.append(div(input({ attr: { type: 'checkbox' } }).addClass('toggle'), label(), button().addClass('destroy')).addClass('view'), input().cc('edit'));
 	}
 
-	/**
-  * Updates the todo title by todo model.
-  * @param {Todo} todo The todo
-  * @param {String} todo.id The id
-  * @param {String} todo.title The title
-  * @param {Boolean} todo.completed If completed or not
-  */
-
-
 	_createClass(TodoItem, [{
+		key: '__init__',
+		value: function __init__() {
+			this.$el.append(div(input({ attr: { type: 'checkbox' } }).addClass('toggle'), label(), button().addClass('destroy')).addClass('view'), input().cc('edit'));
+		}
+
+		/**
+   * @return {Edit}
+   */
+
+	}, {
 		key: 'update',
+
+
+		/**
+   * Updates the todo title by todo model.
+   * @param {Todo} todo The todo
+   * @param {String} todo.id The id
+   * @param {String} todo.title The title
+   * @param {Boolean} todo.completed If completed or not
+   */
 		value: function update(todo) {
 			this.elem.attr('id', todo.id);
 			this.elem.find('label').text(todo.title);
-			this.elem.find('.edit').cc.get('edit').onUpdate(todo.title);
+			this.edit.onUpdate(todo.title);
 
 			this.completed = todo.completed;
 			this.updateView();
@@ -12070,7 +11997,7 @@ var TodoItem = (_dec = component('todo-item'), _dec2 = on('click').at('.toggle')
 	}, {
 		key: 'toggleCompleted',
 		value: function toggleCompleted() {
-			this.elem.trigger('todo-item-toggle', this.elem.attr('id'));
+			(0, _trigger2.default)(this.el, 'todo-item-toggle', this.elem.attr('id'));
 
 			this.completed = !this.completed;
 			this.updateView();
@@ -12084,9 +12011,9 @@ var TodoItem = (_dec = component('todo-item'), _dec2 = on('click').at('.toggle')
 	}, {
 		key: 'destroy',
 		value: function destroy() {
-			this.elem.parent().trigger('todo-item-destroy', this.elem.attr('id'));
+			(0, _trigger2.default)(this.el.parentElement, 'todo-item-destroy', this.$el.attr('id'));
 
-			this.elem.remove();
+			this.$el.remove();
 		}
 
 		/**
@@ -12137,7 +12064,7 @@ var TodoItem = (_dec = component('todo-item'), _dec2 = on('click').at('.toggle')
 		key: 'startEditing',
 		value: function startEditing() {
 			this.elem.addClass('editing');
-			this.elem.find('.edit').cc.get('edit').onStart();
+			this.edit.onStart();
 		}
 
 		/**
@@ -12147,8 +12074,10 @@ var TodoItem = (_dec = component('todo-item'), _dec2 = on('click').at('.toggle')
 
 	}, {
 		key: 'stopEditing',
-		value: function stopEditing(e, title) {
-			this.elem.removeClass('editing');
+		value: function stopEditing(e) {
+			var title = e.detail;
+
+			this.$el.removeClass('editing');
 
 			if (!title) {
 				this.destroy();
@@ -12156,37 +12085,40 @@ var TodoItem = (_dec = component('todo-item'), _dec2 = on('click').at('.toggle')
 				return;
 			}
 
-			this.elem.find('label').text(title);
+			this.$el.find('label').text(title);
 
-			this.elem.trigger('todo-item-edited', [this.elem.attr('id'), title]);
+			(0, _trigger2.default)(this.el, 'todo-item-edited', { id: this.$el.attr('id'), title: title });
 		}
+	}, {
+		key: 'edit',
+		get: function get() {}
 	}]);
 
 	return TodoItem;
-}(), (_applyDecoratedDescriptor(_class2.prototype, 'toggleCompleted', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggleCompleted'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'destroy', [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, 'destroy'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'startEditing', [_dec4], Object.getOwnPropertyDescriptor(_class2.prototype, 'startEditing'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'stopEditing', [_dec5], Object.getOwnPropertyDescriptor(_class2.prototype, 'stopEditing'), _class2.prototype)), _class2)) || _class);
+}(), (_applyDecoratedDescriptor(_class2.prototype, 'edit', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'edit'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'toggleCompleted', [_dec], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggleCompleted'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'destroy', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'destroy'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'startEditing', [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, 'startEditing'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'stopEditing', [_dec4], Object.getOwnPropertyDescriptor(_class2.prototype, 'stopEditing'), _class2.prototype)), _class2)) || _class);
 
 
 module.exports = TodoItem;
 
-},{"dom-gen":9}],22:[function(require,module,exports){
+},{"../util/trigger":28,"dom-gen":4}],17:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _dec, _class;
+var _class;
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var _require = require('dom-gen');
+var _require = require('dom-gen'),
+    li = _require.li;
 
-var li = _require.li;
 var component = $.cc.component;
 
 /**
  * The todo list component.
  */
 
-var TodoList = (_dec = component('todo-list'), _dec(_class = function () {
+var TodoList = component(_class = function () {
 	function TodoList() {
 		_classCallCheck(this, TodoList);
 	}
@@ -12225,17 +12157,22 @@ var TodoList = (_dec = component('todo-list'), _dec(_class = function () {
 	}]);
 
 	return TodoList;
-}()) || _class);
-
+}()) || _class;
 
 module.exports = TodoList;
 
-},{"dom-gen":9}],23:[function(require,module,exports){
+},{"dom-gen":4}],18:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _dec, _dec2, _class, _desc, _value, _class2;
+var _dec, _class, _desc, _value, _class2;
+
+var _trigger = require('../util/trigger');
+
+var _trigger2 = _interopRequireDefault(_trigger);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -12268,15 +12205,15 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
 	return desc;
 }
 
-var _$$cc = $.cc;
-var on = _$$cc.on;
-var component = _$$cc.component;
+var _$$cc = $.cc,
+    on = _$$cc.on,
+    component = _$$cc.component;
 
 /**
  * The toggle all button.
  */
 
-var ToggleAll = (_dec = component('toggle-all'), _dec2 = on('click'), _dec(_class = (_class2 = function () {
+var ToggleAll = (_dec = on('click'), component(_class = (_class2 = function () {
 	function ToggleAll() {
 		_classCallCheck(this, ToggleAll);
 	}
@@ -12285,9 +12222,9 @@ var ToggleAll = (_dec = component('toggle-all'), _dec2 = on('click'), _dec(_clas
 		key: 'toggleAll',
 		value: function toggleAll() {
 			if (this.elem.prop('checked')) {
-				this.elem.trigger('toggle-all-check');
+				(0, _trigger2.default)(this.el, 'toggle-all-check');
 			} else {
-				this.elem.trigger('toggle-all-uncheck');
+				(0, _trigger2.default)(this.el, 'toggle-all-uncheck');
 			}
 		}
 
@@ -12304,12 +12241,12 @@ var ToggleAll = (_dec = component('toggle-all'), _dec2 = on('click'), _dec(_clas
 	}]);
 
 	return ToggleAll;
-}(), (_applyDecoratedDescriptor(_class2.prototype, 'toggleAll', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggleAll'), _class2.prototype)), _class2)) || _class);
+}(), (_applyDecoratedDescriptor(_class2.prototype, 'toggleAll', [_dec], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggleAll'), _class2.prototype)), _class2)) || _class);
 
 
 module.exports = ToggleAll;
 
-},{}],24:[function(require,module,exports){
+},{"../util/trigger":28}],19:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -12323,7 +12260,7 @@ module.exports = {
 	}
 };
 
-},{}],25:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -12359,7 +12296,7 @@ var AllFilter = function (_Filter) {
 	function AllFilter() {
 		_classCallCheck(this, AllFilter);
 
-		return _possibleConstructorReturn(this, Object.getPrototypeOf(AllFilter).apply(this, arguments));
+		return _possibleConstructorReturn(this, (AllFilter.__proto__ || Object.getPrototypeOf(AllFilter)).apply(this, arguments));
 	}
 
 	_createClass(AllFilter, [{
@@ -12378,7 +12315,7 @@ Filter.COMPLETED = new Filter();
 
 module.exports = Filter;
 
-},{}],26:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -12395,7 +12332,6 @@ var TodoCollection = function () {
 	/**
   * @param {Todo[]} todos The todo items
   */
-
 	function TodoCollection(todos) {
 		var _this = this;
 
@@ -12610,7 +12546,7 @@ var TodoCollection = function () {
 
 module.exports = TodoCollection;
 
-},{"./filter":25}],27:[function(require,module,exports){
+},{"./filter":20}],22:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -12674,7 +12610,7 @@ var TodoFactory = function () {
 
 module.exports = TodoFactory;
 
-},{"./todo":29}],28:[function(require,module,exports){
+},{"./todo":24}],23:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -12768,7 +12704,7 @@ var TodoRepository = function () {
 
 module.exports = TodoRepository;
 
-},{"../const":24,"./todo-collection":26}],29:[function(require,module,exports){
+},{"../const":19,"./todo-collection":21}],24:[function(require,module,exports){
 "use strict";
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -12776,7 +12712,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 /**
  * Todo class is the model of single todo item.
  */
-
 var Todo =
 /**
  * @param {String} id The todo's id
@@ -12793,12 +12728,15 @@ function Todo(id, title, completed) {
 
 module.exports = Todo;
 
-},{}],30:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 (function (global){
 'use strict';
 
-global.$ = global.jQuery = require('jquery');
-require('class-component');
+var $ = global.$ = require('jquery');
+var cc = require('classcaps');
+var ccj = require('classcaps/jquery');
+
+ccj(cc, $);
 
 require('./component/todo-item');
 require('./component/new-todo');
@@ -12812,12 +12750,18 @@ require('./service/router');
 require('./service/todoapp');
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./component/clear-completed":16,"./component/edit":17,"./component/filters":18,"./component/new-todo":19,"./component/todo-count":20,"./component/todo-item":21,"./component/todo-list":22,"./component/toggle-all":23,"./service/router":31,"./service/todoapp":32,"class-component":5,"jquery":13}],31:[function(require,module,exports){
+},{"./component/clear-completed":11,"./component/edit":12,"./component/filters":13,"./component/new-todo":14,"./component/todo-count":15,"./component/todo-item":16,"./component/todo-list":17,"./component/toggle-all":18,"./service/router":26,"./service/todoapp":27,"classcaps":1,"classcaps/jquery":3,"jquery":9}],26:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _dec, _dec2, _class, _desc, _value, _class2;
+var _class, _desc, _value, _class2;
+
+var _trigger = require('../util/trigger');
+
+var _trigger2 = _interopRequireDefault(_trigger);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -12850,30 +12794,24 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
 	return desc;
 }
 
-var _require = require('hash-route');
-
-var route = _require.route;
-var dispatch = _require.dispatch;
-
+var _require = require('hash-route'),
+    route = _require.route,
+    dispatch = _require.dispatch;
 
 var Filter = require('../domain/filter');
 
-var _$$cc = $.cc;
-var component = _$$cc.component;
-var on = _$$cc.on;
+var component = $.cc.component;
 
 /**
  * The observer of the filter and invokes filterchange event when it's changed.
  */
 
-var FilterObserver = (_dec = component('router'), _dec2 = on('hashchange'), _dec(_class = (_class2 = function () {
-	function FilterObserver(elem) {
-		_classCallCheck(this, FilterObserver);
-
-		this.target = elem.data('target');
+var Router = component(_class = (_class2 = function () {
+	function Router() {
+		_classCallCheck(this, Router);
 	}
 
-	_createClass(FilterObserver, [{
+	_createClass(Router, [{
 		key: 'onHashchange',
 		value: function onHashchange() {
 			dispatch(this);
@@ -12881,37 +12819,36 @@ var FilterObserver = (_dec = component('router'), _dec2 = on('hashchange'), _dec
 	}, {
 		key: '#/all',
 		value: function all() {
-			this.target.trigger('filterchange', Filter.ALL);
+			(0, _trigger2.default)(this.el, 'filterchange', Filter.ALL);
 		}
 	}, {
 		key: '#/active',
 		value: function active() {
-			this.target.trigger('filterchange', Filter.ACTIVE);
+			(0, _trigger2.default)(this.el, 'filterchange', Filter.ACTIVE);
 		}
 	}, {
 		key: '#/completed',
 		value: function completed() {
-			this.target.trigger('filterchange', Filter.COMPLETED);
+			(0, _trigger2.default)(this.el, 'filterchange', Filter.COMPLETED);
 		}
 	}, {
 		key: '*',
 		value: function _() {
-			this.target.trigger('filterchange', Filter.ALL);
+			(0, _trigger2.default)(this.el, 'filterchange', Filter.ALL);
 		}
 	}]);
 
-	return FilterObserver;
-}(), (_applyDecoratedDescriptor(_class2.prototype, 'onHashchange', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'onHashchange'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, '#/all', [route], Object.getOwnPropertyDescriptor(_class2.prototype, '#/all'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, '#/active', [route], Object.getOwnPropertyDescriptor(_class2.prototype, '#/active'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, '#/completed', [route], Object.getOwnPropertyDescriptor(_class2.prototype, '#/completed'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, '*', [route], Object.getOwnPropertyDescriptor(_class2.prototype, '*'), _class2.prototype)), _class2)) || _class);
+	return Router;
+}(), (_applyDecoratedDescriptor(_class2.prototype, '#/all', [route], Object.getOwnPropertyDescriptor(_class2.prototype, '#/all'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, '#/active', [route], Object.getOwnPropertyDescriptor(_class2.prototype, '#/active'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, '#/completed', [route], Object.getOwnPropertyDescriptor(_class2.prototype, '#/completed'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, '*', [route], Object.getOwnPropertyDescriptor(_class2.prototype, '*'), _class2.prototype)), _class2)) || _class;
 
+module.exports = Router;
 
-module.exports = FilterObserver;
-
-},{"../domain/filter":25,"hash-route":12}],32:[function(require,module,exports){
+},{"../domain/filter":20,"../util/trigger":28,"hash-route":7}],27:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _class, _desc, _value, _class2;
+var _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _class, _desc, _value, _class2;
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -12947,35 +12884,38 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
 var TodoFactory = require('../domain/todo-factory');
 var TodoRepository = require('../domain/todo-repository');
 
-var _$$cc = $.cc;
-var on = _$$cc.on;
-var component = _$$cc.component;
-var wire = _$$cc.wire;
+var _$$cc = $.cc,
+    on = _$$cc.on,
+    component = _$$cc.component,
+    wire = _$$cc.wire;
 
 /**
  * The todo application class.
  */
 
-var Todoapp = (_dec = component('todoapp'), _dec2 = on('filterchange'), _dec3 = on('todo-new-item'), _dec4 = on('todo-item-toggle'), _dec5 = on('todo-item-destroy'), _dec6 = on('todo-item-edited'), _dec7 = on('todo-clear-completed'), _dec8 = on('toggle-all-uncheck'), _dec9 = on('toggle-all-check'), _dec(_class = (_class2 = function () {
-	/**
-  * @param {jQuery} elem The element
-  */
-
-	function Todoapp(elem) {
+var Todoapp = (_dec = on('filterchange'), _dec2 = on('todo-new-item'), _dec3 = on('todo-item-toggle'), _dec4 = on('todo-item-destroy'), _dec5 = on('todo-item-edited'), _dec6 = on('todo-clear-completed'), _dec7 = on('toggle-all-uncheck'), _dec8 = on('toggle-all-check'), component(_class = (_class2 = function () {
+	function Todoapp() {
 		_classCallCheck(this, Todoapp);
-
-		this.todoFactory = new TodoFactory();
-		this.todoRepository = new TodoRepository();
-		this.todoCollection = this.todoRepository.getAll();
-
-		var router = $(window).data('target', elem).cc('router');
-
-		setTimeout(function () {
-			return router.trigger('hashchange');
-		});
 	}
 
 	_createClass(Todoapp, [{
+		key: '__init__',
+		value: function __init__() {
+			this.todoFactory = new TodoFactory();
+			this.todoRepository = new TodoRepository();
+			this.todoCollection = this.todoRepository.getAll();
+
+			var router = $.cc.co('router', this.el);
+
+			setTimeout(function () {
+				return router.onHashchange();
+			});
+
+			$(window).on('hashchange', function () {
+				return router.onHashchange();
+			});
+		}
+	}, {
 		key: 'refreshControls',
 		value: function refreshControls() {
 			// updates filter buttons
@@ -13002,8 +12942,8 @@ var Todoapp = (_dec = component('todoapp'), _dec2 = on('filterchange'), _dec3 = 
 		}
 	}, {
 		key: 'onFilterchange',
-		value: function onFilterchange(e, filter) {
-			this.filter = filter;
+		value: function onFilterchange(e) {
+			this.filter = e.detail;
 
 			this.refreshAll();
 		}
@@ -13017,7 +12957,8 @@ var Todoapp = (_dec = component('todoapp'), _dec2 = on('filterchange'), _dec3 = 
 
 	}, {
 		key: 'addTodo',
-		value: function addTodo(e, title) {
+		value: function addTodo(e) {
+			var title = e.detail;
 			var todo = this.todoFactory.createByTitle(title);
 
 			this.todoCollection.push(todo);
@@ -13044,7 +12985,8 @@ var Todoapp = (_dec = component('todoapp'), _dec2 = on('filterchange'), _dec3 = 
 
 	}, {
 		key: 'toggle',
-		value: function toggle(e, id) {
+		value: function toggle(e) {
+			var id = e.detail;
 			this.todoCollection.toggleById(id);
 			this.save();
 
@@ -13063,7 +13005,9 @@ var Todoapp = (_dec = component('todoapp'), _dec2 = on('filterchange'), _dec3 = 
 
 	}, {
 		key: 'remove',
-		value: function remove(e, id) {
+		value: function remove(e) {
+			var id = e.detail;
+
 			this.todoCollection.removeById(id);
 			this.save();
 
@@ -13079,7 +13023,12 @@ var Todoapp = (_dec = component('todoapp'), _dec2 = on('filterchange'), _dec3 = 
 
 	}, {
 		key: 'editItem',
-		value: function editItem(e, id, title) {
+		value: function editItem(e) {
+			var _e$detail = e.detail,
+			    id = _e$detail.id,
+			    title = _e$detail.title;
+
+
 			this.todoCollection.getById(id).title = title;
 			this.save();
 		}
@@ -13150,9 +13099,20 @@ var Todoapp = (_dec = component('todoapp'), _dec2 = on('filterchange'), _dec3 = 
 	}]);
 
 	return Todoapp;
-}(), (_applyDecoratedDescriptor(_class2.prototype, 'todo-list', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'todo-list'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'filters', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'filters'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'clear-completed', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'clear-completed'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'todo-count', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'todo-count'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'toggle-all', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggle-all'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'onFilterchange', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'onFilterchange'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'addTodo', [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, 'addTodo'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'toggle', [_dec4], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggle'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'remove', [_dec5], Object.getOwnPropertyDescriptor(_class2.prototype, 'remove'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'editItem', [_dec6], Object.getOwnPropertyDescriptor(_class2.prototype, 'editItem'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'clearCompleted', [_dec7], Object.getOwnPropertyDescriptor(_class2.prototype, 'clearCompleted'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'uncompleteAll', [_dec8], Object.getOwnPropertyDescriptor(_class2.prototype, 'uncompleteAll'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'completeAll', [_dec9], Object.getOwnPropertyDescriptor(_class2.prototype, 'completeAll'), _class2.prototype)), _class2)) || _class);
+}(), (_applyDecoratedDescriptor(_class2.prototype, 'todo-list', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'todo-list'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'filters', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'filters'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'clear-completed', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'clear-completed'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'todo-count', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'todo-count'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'toggle-all', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggle-all'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'onFilterchange', [_dec], Object.getOwnPropertyDescriptor(_class2.prototype, 'onFilterchange'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'addTodo', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'addTodo'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'toggle', [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggle'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'remove', [_dec4], Object.getOwnPropertyDescriptor(_class2.prototype, 'remove'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'editItem', [_dec5], Object.getOwnPropertyDescriptor(_class2.prototype, 'editItem'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'clearCompleted', [_dec6], Object.getOwnPropertyDescriptor(_class2.prototype, 'clearCompleted'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'uncompleteAll', [_dec7], Object.getOwnPropertyDescriptor(_class2.prototype, 'uncompleteAll'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'completeAll', [_dec8], Object.getOwnPropertyDescriptor(_class2.prototype, 'completeAll'), _class2.prototype)), _class2)) || _class);
 
 
 module.exports = Todoapp;
 
-},{"../domain/todo-factory":27,"../domain/todo-repository":28}]},{},[30]);
+},{"../domain/todo-factory":22,"../domain/todo-repository":23}],28:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+exports.default = function (el, type, detail) {
+	$(el)[0].dispatchEvent(new CustomEvent(type, { detail: detail, bubbles: true }));
+};
+
+},{}]},{},[25]);

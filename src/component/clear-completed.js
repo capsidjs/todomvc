@@ -1,6 +1,6 @@
 import trigger from '../util/trigger';
 
-const {component, on} = $.cc;
+const {component, on} = require('capsid');
 
 @component
 class ClearCompleted {

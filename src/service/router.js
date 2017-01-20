@@ -4,7 +4,7 @@ const {route, dispatch} = require('hash-route');
 
 const Filter = require('../domain/filter');
 
-const {component} = $.cc;
+const {component} = require('capsid');
 
 /**
  * The observer of the filter and invokes filterchange event when it's changed.

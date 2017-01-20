@@ -2,7 +2,7 @@ import trigger from '../util/trigger';
 
 const {KEYCODE} = require('../const');
 
-const {on, component} = $.cc;
+const {on, component} = require('capsid');
 
 /**
  * TodoEdit controls the edit area of each todo item.
