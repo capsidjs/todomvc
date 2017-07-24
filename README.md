@@ -5,4 +5,4 @@
 
 # Resources
 
-- https://github.com/kt3k/capsid
+- https://github.com/capsidjs/capsid
