@@ -1,147 +1,147 @@
-const {expect} = require('chai');
+const {expect} = require('chai')
 
-const Todo = require('../../src/domain/todo');
-const TodoCollection = require('../../src/domain/todo-collection');
-const Filter = require('../../src/domain/filter');
+const Todo = require('../../src/domain/todo')
+const TodoCollection = require('../../src/domain/todo-collection')
+const Filter = require('../../src/domain/filter')
 
-let collection;
-let todo0;
-let todo1;
-let todo2;
+let collection
+let todo0
+let todo1
+let todo2
 
 describe('TodoCollection', () => {
-	beforeEach(() => {
-		todo0 = new Todo('a0', 'spam', true);
-		todo1 = new Todo('a1', 'ham', false);
-		todo2 = new Todo('a2', 'egg', true);
+  beforeEach(() => {
+    todo0 = new Todo('a0', 'spam', true)
+    todo1 = new Todo('a1', 'ham', false)
+    todo2 = new Todo('a2', 'egg', true)
 
-		collection = new TodoCollection([todo0, todo1, todo2]);
-	});
+    collection = new TodoCollection([todo0, todo1, todo2])
+  })
 
-	describe('constructor', () => {
-		it('craete an empty contructor if the give array is null', () => {
-			collection = new TodoCollection();
+  describe('constructor', () => {
+    it('craete an empty contructor if the give array is null', () => {
+      collection = new TodoCollection()
 
-			expect(collection.isEmpty()).to.be.true;
-		});
-	});
+      expect(collection.isEmpty()).to.be.true()
+    })
+  })
 
-	describe('getById', () => {
-		it('gets the todo by the given id', () => {
-			expect(collection.getById('a0')).to.equal(todo0);
-			expect(collection.getById('a1')).to.equal(todo1);
-			expect(collection.getById('a2')).to.equal(todo2);
-		});
-	});
+  describe('getById', () => {
+    it('gets the todo by the given id', () => {
+      expect(collection.getById('a0')).to.equal(todo0)
+      expect(collection.getById('a1')).to.equal(todo1)
+      expect(collection.getById('a2')).to.equal(todo2)
+    })
+  })
 
-	describe('toggleById', () => {
-		it('toggles the completed state of the todo of the given id', () => {
-			collection.toggleById('a0');
+  describe('toggleById', () => {
+    it('toggles the completed state of the todo of the given id', () => {
+      collection.toggleById('a0')
 
-			expect(collection.getById('a0').completed).to.be.false;
-		});
-	});
+      expect(collection.getById('a0').completed).to.be.false()
+    })
+  })
 
-	describe('forEach', () => {
-		it('iterates calling the given func in the given context', () => {
-			let a = '';
+  describe('forEach', () => {
+    it('iterates calling the given func in the given context', () => {
+      let a = ''
 
-			const Ctx = function () {};
+      const Ctx = function () {}
 
-			Ctx.prototype.method = function (title) {
-				a += title;
-			};
+      Ctx.prototype.method = function (title) {
+        a += title
+      }
 
-			collection.forEach(function (todo) {
-				this.method(todo.title);
-			}, new Ctx());
+      collection.forEach(function (todo) {
+        this.method(todo.title)
+      }, new Ctx())
 
-			expect(a).to.equal('spamhamegg');
-		});
-	});
+      expect(a).to.equal('spamhamegg')
+    })
+  })
 
-	describe('push', () => {
-		it('pushes the given todo at the end of the collection', () => {
-			collection.push(new Todo('a3', 'spam ham', false));
+  describe('push', () => {
+    it('pushes the given todo at the end of the collection', () => {
+      collection.push(new Todo('a3', 'spam ham', false))
 
-			expect(collection.toArray()).to.have.length(4);
-		});
-	});
+      expect(collection.toArray()).to.have.length(4)
+    })
+  })
 
-	describe('remove', () => {
-		it('removes the given todo', () => {
-			collection.remove(todo0);
+  describe('remove', () => {
+    it('removes the given todo', () => {
+      collection.remove(todo0)
 
-			expect(collection.toArray()).to.have.length(2);
-		});
+      expect(collection.toArray()).to.have.length(2)
+    })
 
-		it('throws when the given todo does not exist', () => {
-			expect(function () {
-				collection.remove(new Todo('a3', 'spam ham', false));
-			}).to.throw(Error);
-		});
-	});
+    it('throws when the given todo does not exist', () => {
+      expect(function () {
+        collection.remove(new Todo('a3', 'spam ham', false))
+      }).to.throw(Error)
+    })
+  })
 
-	describe('removeById', () => {
-		it('removes the todo by the id', () => {
-			collection.removeById('a0');
+  describe('removeById', () => {
+    it('removes the todo by the id', () => {
+      collection.removeById('a0')
 
-			expect(collection.toArray()).to.have.length(2);
-		});
-	});
+      expect(collection.toArray()).to.have.length(2)
+    })
+  })
 
-	describe('completed', () => {
-		it('returns the collection of the completed todos', () => {
-			var completed = collection.completed();
+  describe('completed', () => {
+    it('returns the collection of the completed todos', () => {
+      var completed = collection.completed()
 
-			expect(completed).to.be.instanceof(TodoCollection);
-			expect(completed.toArray()).to.have.length(2);
-			expect(completed.toArray()[0].id).to.equal('a0');
-			expect(completed.toArray()[1].id).to.equal('a2');
-		});
-	});
+      expect(completed).to.be.instanceof(TodoCollection)
+      expect(completed.toArray()).to.have.length(2)
+      expect(completed.toArray()[0].id).to.equal('a0')
+      expect(completed.toArray()[1].id).to.equal('a2')
+    })
+  })
 
-	describe('uncompleted', () => {
-		it('returns the collection of the uncompleted todos', () => {
-			var uncompleted = collection.uncompleted();
+  describe('uncompleted', () => {
+    it('returns the collection of the uncompleted todos', () => {
+      var uncompleted = collection.uncompleted()
 
-			expect(uncompleted).to.be.instanceof(TodoCollection);
-			expect(uncompleted.toArray()).to.have.length(1);
-			expect(uncompleted.toArray()[0].id).to.equal('a1');
-		});
-	});
+      expect(uncompleted).to.be.instanceof(TodoCollection)
+      expect(uncompleted.toArray()).to.have.length(1)
+      expect(uncompleted.toArray()[0].id).to.equal('a1')
+    })
+  })
 
-	describe('toArray', () => {
-		it('returns the array of the todos', () => {
-			expect(collection.toArray()).to.be.an('array');
-			expect(collection.toArray()).to.have.length(3);
-			expect(collection.toArray()[0]).to.equal(todo0);
-			expect(collection.toArray()[1]).to.equal(todo1);
-			expect(collection.toArray()[2]).to.equal(todo2);
-		});
-	});
+  describe('toArray', () => {
+    it('returns the array of the todos', () => {
+      expect(collection.toArray()).to.be.an('array')
+      expect(collection.toArray()).to.have.length(3)
+      expect(collection.toArray()[0]).to.equal(todo0)
+      expect(collection.toArray()[1]).to.equal(todo1)
+      expect(collection.toArray()[2]).to.equal(todo2)
+    })
+  })
 
-	describe('completeAll', () => {
-		it('completes all the todos', () => {
-			collection.completeAll();
+  describe('completeAll', () => {
+    it('completes all the todos', () => {
+      collection.completeAll()
 
-			expect(collection.completed().toArray()).to.have.length(3);
-		});
-	});
+      expect(collection.completed().toArray()).to.have.length(3)
+    })
+  })
 
-	describe('uncompleteAll', () => {
-		it('uncompletes all the todos', () => {
-			collection.uncompleteAll();
+  describe('uncompleteAll', () => {
+    it('uncompletes all the todos', () => {
+      collection.uncompleteAll()
 
-			expect(collection.completed().toArray()).to.have.length(0);
-		});
-	});
+      expect(collection.completed().toArray()).to.have.length(0)
+    })
+  })
 
-	describe('filterBy', () => {
-		it('filters the todos by the given filter', () => {
-			expect(collection.filterBy(Filter.All).toArray()).to.have.length(3);
-			expect(collection.filterBy(Filter.ACTIVE).toArray()).to.have.length(1);
-			expect(collection.filterBy(Filter.COMPLETED).toArray()).to.have.length(2);
-		});
-	});
-});
+  describe('filterBy', () => {
+    it('filters the todos by the given filter', () => {
+      expect(collection.filterBy(Filter.All).toArray()).to.have.length(3)
+      expect(collection.filterBy(Filter.ACTIVE).toArray()).to.have.length(1)
+      expect(collection.filterBy(Filter.COMPLETED).toArray()).to.have.length(2)
+    })
+  })
+})

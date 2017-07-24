@@ -1,4 +1,8 @@
-require('../src');
+require('../src')
+
+const chai = require('chai')
+const dirtyChai = require('dirty-chai')
+chai.use(dirtyChai)
 
 /**
  * Triggers the event of the type at the given element with the given detail.
@@ -7,5 +11,5 @@ require('../src');
  * @param {any} detail The detail of the event
  */
 exports.trigger = (el, type, detail) => {
-	$(el)[0].dispatchEvent(new CustomEvent(type, {detail, bubbles: true}));
-};
+  $(el)[0].dispatchEvent(new CustomEvent(type, {detail, bubbles: true}))
+}

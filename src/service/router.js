@@ -1,35 +1,39 @@
-import trigger from '../util/trigger';
+import trigger from '../util/trigger'
 
-const {route, dispatch} = require('hash-route');
+const { route, dispatch } = require('hash-route')
 
-const Filter = require('../domain/filter');
+const Filter = require('../domain/filter')
 
-const {component} = require('capsid');
+const { component } = require('capsid')
 
 /**
  * The observer of the filter and invokes filterchange event when it's changed.
  */
 @component
 class Router {
-	onHashchange() {
-		dispatch(this);
-	}
+  onHashchange () {
+    dispatch(this)
+  }
 
-	@route '#/all'() {
-		trigger(this.el, 'filterchange', Filter.ALL);
-	}
+  @route
+  '#/all' () {
+    trigger(this.el, 'filterchange', Filter.ALL)
+  }
 
-	@route '#/active'() {
-		trigger(this.el, 'filterchange', Filter.ACTIVE);
-	}
+  @route
+  '#/active' () {
+    trigger(this.el, 'filterchange', Filter.ACTIVE)
+  }
 
-	@route '#/completed'() {
-		trigger(this.el, 'filterchange', Filter.COMPLETED);
-	}
+  @route
+  '#/completed' () {
+    trigger(this.el, 'filterchange', Filter.COMPLETED)
+  }
 
-	@route '*'() {
-		trigger(this.el, 'filterchange', Filter.ALL);
-	}
+  @route
+  '*' () {
+    trigger(this.el, 'filterchange', Filter.ALL)
+  }
 }
 
-module.exports = Router;
+module.exports = Router

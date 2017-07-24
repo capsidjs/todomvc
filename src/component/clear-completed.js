@@ -1,23 +1,23 @@
-import trigger from '../util/trigger';
+import trigger from '../util/trigger'
 
-const {component, on} = require('capsid');
+const {component, on} = require('capsid')
 
 @component
 class ClearCompleted {
-	/**
-	 * Handles the click event. Triggers the todo-clear-completed event.
-	 */
-	@on('click')
-	onClick() {
-		trigger(this.el, 'todo-clear-completed');
-	}
+  /**
+   * Handles the click event. Triggers the todo-clear-completed event.
+   */
+  @on('click')
+  onClick () {
+    trigger(this.el, 'todo-clear-completed')
+  }
 
-	/**
-	 * @param {TodoCollection} todos The todo collection
-	 */
-	onUpdate(todos) {
-		this.$el.css('display', todos.completed().isEmpty() ? 'none' : 'inline');
-	}
+  /**
+   * @param {TodoCollection} todos The todo collection
+   */
+  onUpdate (todos) {
+    this.$el.css('display', todos.completed().isEmpty() ? 'none' : 'inline')
+  }
 }
 
-module.exports = ClearCompleted;
+module.exports = ClearCompleted

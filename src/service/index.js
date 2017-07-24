@@ -1,2 +1,2 @@
-require('./router');
-require('./todoapp');
+require('./router')
+require('./todoapp')
