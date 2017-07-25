@@ -164,9 +164,9 @@ class Todoapp {
   }
 
   /**
-  * Completes all the todo items.
-  * @private
-  */
+   * Completes all the todo items.
+   * @private
+   */
   @on('toggle-all-check')
   completeAll () {
     if (this.filter.isAll()) {
