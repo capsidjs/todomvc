@@ -1,272 +1,12 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
-//      
-/**
- * Transform camelCase string to kebab-case string
- * @param camelString The string in camelCase
- * @return The string in kebab-case
- */
-
-var camelToKebab = function camelToKebab(camelString) {
-  return camelString.replace(/(?!^)[A-Z]/g, '-$&').toLowerCase();
-};
-
-//      
-
-
-/**
- * The mapping from class-component name to its initializer function.
- */
-var ccc = {};
-
-//      
-/**
- * Asserts the given condition holds, otherwise throws.
- * @param assertion The assertion expression
- * @param message The assertion message
- */
-function check(assertion, message) {
-  if (!assertion) {
-    throw new Error(message);
-  }
-}
-
-/**
- * @param classNames The class names
- */
-function checkClassNamesAreStringOrNull(classNames) {
-  check(typeof classNames === 'string' || classNames == null, 'classNames must be a string or undefined/null.');
-}
-
-/**
- * Asserts the given name is a valid component name.
- * @param name The component name
- */
-function checkComponentNameIsValid(name) {
-  check(typeof name === 'string', 'The name should not be a string');
-  check(!!ccc[name], 'The coelement of the given name is not registered: ' + name);
-}
-
-//      
-
-var READY_STATE_CHANGE = 'readystatechange';
-var doc = document;
-
-var ready = new Promise(function (resolve) {
-  var checkReady = function checkReady() {
-    if (doc.readyState === 'complete') {
-      resolve();
-      doc.removeEventListener(READY_STATE_CHANGE, checkReady);
-    }
-  };
-
-  doc.addEventListener(READY_STATE_CHANGE, checkReady);
-
-  checkReady();
-});
-
-var documentElement = doc.documentElement;
-
-//      
-/**
- * Initializes the class components of the given name in the given element.
- * @param classNames The class names
- * @param el The dom where class componets are initialized
- * @throws when the class name is invalid type.
- */
-var init = function init(classNames, el) {
-  checkClassNamesAreStringOrNull(classNames);(classNames ? classNames.split(/\s+/) : Object.keys(ccc)).map(function (className) {
-    var initializer = ccc[className];
-
-    check(!!initializer, 'Class componet ' + className + ' is not defined.');[].map.call((el || doc).querySelectorAll(initializer.selector), initializer);
-  });
-};
-
-//      
-
-
-var plugins = [];
+Object.defineProperty(exports, '__esModule', { value: true });
 
 //      
 var COELEMENT_DATA_KEY_PREFIX = '__coelement:';
 var KEY_EVENT_LISTENERS = '__cc_listeners__';
-
-//      
-/**
- * Registers the class-component for the given name and constructor and returns the constructor.
- * @param name The component name
- * @param Constructor The constructor of the class component
- * @return The registered component class
- */
-var def = function def(name, Constructor) {
-  check(typeof name === 'string', '`name` of a class component has to be a string.');
-  check(typeof Constructor === 'function', '`Constructor` of a class component has to be a function');
-
-  var initClass = name + '-initialized';
-
-  /**
-   * Initializes the html element by the configuration.
-   * @param el The html element
-   * @param coelem The dummy parameter, don't use
-   */
-  var initializer = function initializer(el, coelem) {
-    var classList = el.classList;
-
-    if (!classList.contains(initClass)) {
-      el[COELEMENT_DATA_KEY_PREFIX + name] = coelem = new Constructor();
-
-      plugins.forEach(function (plugin) {
-        plugin(el, coelem);
-      });
-
-      coelem.el = el;
-
-      if (typeof coelem.__init__ === 'function') {
-        coelem.__init__();
-      }
-
-      (Constructor[KEY_EVENT_LISTENERS] || []).map(function (listenerBinder) {
-        listenerBinder(el, coelem);
-      });
-
-      classList.add(initClass);
-    }
-  };
-
-  initializer.selector = '.' + name + ':not(.' + initClass + ')';
-
-  ccc[name] = initializer;
-
-  ready.then(function () {
-    init(name);
-  });
-
-  return Constructor;
-};
-
-//      
-/**
- * Triggers the event.
- * @param el The element
- * @param type The event type
- * @param detail The optional detail object
- */
-var trigger = function trigger(el, type, detail) {
-  el.dispatchEvent(new CustomEvent(type, { detail: detail, bubbles: true }));
-};
-
-//      
-
-var matches = documentElement.matches || documentElement.webkitMatchesSelector || documentElement.msMatchesSelector;
-
-//      
-
-/**
- * `@emit(event)` decorator.
- * This decorator adds the event emission at the beginning of the method.
- * @param event The event name
- */
-var emit = function emit(event) {
-  return function (target, key, descriptor) {
-    var method = descriptor.value;
-
-    descriptor.value = function () {
-      trigger(this.el, event, arguments[0]);
-
-      return method.apply(this, arguments);
-    };
-  };
-};
-
-/**
- * `@emit.last(event)` decorator
- *
- * This decorator adds the event emission at the end of the method.
- * If the method returns the promise, then the event is emitted when it is resolved.
- * @param event The event name
- */
-emit.last = function (event) {
-  return function (target, key, descriptor) {
-    var method = descriptor.value;
-
-    descriptor.value = function () {
-      var _this = this;
-
-      var result = method.apply(this, arguments);
-
-      var emit = function emit(x) {
-        return trigger(_this.el, event, x);
-      };
-
-      if (result && result.then) {
-        result.then(emit);
-      } else {
-        emit(result);
-      }
-
-      return result;
-    };
-  };
-};
-
-/**
- * Replaces the getter with the function which accesses the class-component of the given name.
- * @param {string} name The class component name
- * @param {string} [selector] The selector to access class component dom. Optional. Default is '.[name]'.
- * @param {object} target The prototype of the target class
- * @param {string} key The name of the property
- * @param {object} descriptor The property descriptor
- */
-var wireByNameAndSelector = function wireByNameAndSelector(name, selector) {
-  return function (target, key, descriptor) {
-    var sel = selector || '.' + name;
-
-    descriptor.get = function () {
-      if (matches.call(this.el, sel)) {
-        return def.get(name, this.el);
-      }
-
-      var nodes = this.el.querySelectorAll(sel);
-
-      if (nodes.length) {
-        return def.get(name, nodes[0]);
-      }
-
-      throw new Error('wired class-component "' + name + '" is not available at ' + this.el.tagName + '(class=[' + this.constructor.name + ']');
-    };
-  };
-};
-
-/**
- * Wires the class component of the name of the key to the property of the same name.
- */
-var wire = function wire(target, key, descriptor) {
-  if (typeof target === 'string') {
-    // If target is a string, then we suppose this is called as @wire(componentName, selector) and therefore
-    // we need to return the following expression (it works as another decorator).
-    return wireByNameAndSelector(target, key);
-  }
-
-  wireByNameAndSelector(camelToKebab(key))(target, key, descriptor);
-};
-
-/**
- * The decorator for class component registration.
- *
- * if `name` is function, then use it as class itself and the component name is kebabized version of its name.
- * @param name The class name or the implementation class itself
- * @return The decorator if the class name is given, undefined if the implementation class is given
- */
-var component = function component(name) {
-  if (typeof name !== 'function') {
-    return function (Cls) {
-      return def(name, Cls);
-    };
-  }
-
-  return def(camelToKebab(name.name), name);
-};
+var INITIALIZED_KEY = '__cc_initialized__';
 
 //      
 /**
@@ -299,53 +39,110 @@ var on = function on(event) {
   };
 };
 
+var onClick = on('click');
+
+//      
+/**
+ * Triggers the event.
+ * @param el The element
+ * @param type The event type
+ * @param detail The optional detail object
+ */
+var trigger = function trigger(el, type, detail) {
+  el.dispatchEvent(new CustomEvent(type, { detail: detail, bubbles: true }));
+};
+
 //      
 
-var cc = def;
-
-cc.def = def;
-cc.init = init;
-
-cc.on = on;
-cc.emit = emit;
-cc.wire = wire;
-cc.component = component;
-
-// Expose __ccc__
-cc.__ccc__ = ccc;
-
-// Expose plugins
-cc.plugins = plugins;
-
 /**
- * Initializes the given element as the class-component.
- * @param name The name of the class component
- * @param el The element to initialize
+ * `@emit(event)` decorator
+ *
+ * This decorator adds the event emission at the end of the method.
+ * If the method returns the promise, then the event is emitted when it is resolved.
+ * @param event The event name
  */
-cc.el = function (name, el) {
-  checkComponentNameIsValid(name);
+var emit = function emit(event) {
+  return function (target, key, descriptor) {
+    var method = descriptor.value;
 
-  ccc[name](el);
+    descriptor.value = function () {
+      var _this = this;
+
+      var result = method.apply(this, arguments);
+
+      var emit = function emit(x) {
+        return trigger(_this.el, event, x);
+      };
+
+      if (result && result.then) {
+        result.then(emit);
+      } else {
+        emit(result);
+      }
+
+      return result;
+    };
+  };
 };
 
 /**
- * Initializes the given element as the class-component.
- * @param name The name of the class component
- * @param el The element to initialize
- * @return
+ * `@emit.first(event)` decorator.
+ * This decorator adds the event emission at the beginning of the method.
+ * @param event The event name
  */
-cc.co = function (name, el) {
-  cc.el(name, el);
+emit.first = function (event) {
+  return function (target, key, descriptor) {
+    var method = descriptor.value;
 
-  return cc.get(name, el);
+    descriptor.value = function () {
+      trigger(this.el, event, arguments[0]);
+
+      return method.apply(this, arguments);
+    };
+  };
 };
+
+//      
+
+
+/**
+ * The mapping from class-component name to its initializer function.
+ */
+var ccc = {};
+
+//      
+/**
+ * Asserts the given condition holds, otherwise throws.
+ * @param assertion The assertion expression
+ * @param message The assertion message
+ */
+function check(assertion, message) {
+  if (!assertion) {
+    throw new Error(message);
+  }
+}
+
+/**
+ * @param classNames The class names
+ */
+
+/**
+ * Asserts the given name is a valid component name.
+ * @param name The component name
+ */
+function checkComponentNameIsValid(name) {
+  check(typeof name === 'string', 'The name should be a string');
+  check(!!ccc[name], 'The coelement of the given name is not registered: ' + name);
+}
+
+//      
 
 /**
  * Gets the eoelement instance of the class-component of the given name
  * @param name The class-component name
  * @param el The element
  */
-cc.get = function (name, el) {
+var get = function get(name, el) {
   checkComponentNameIsValid(name);
 
   var coelement = el[COELEMENT_DATA_KEY_PREFIX + name];
@@ -355,10 +152,293 @@ cc.get = function (name, el) {
   return coelement;
 };
 
-module.exports = cc;
-},{}],2:[function(require,module,exports){
-'use strict';
+//      
 
+var READY_STATE_CHANGE = 'readystatechange';
+var doc = document;
+
+var ready = new Promise(function (resolve) {
+  var checkReady = function checkReady() {
+    if (doc.readyState === 'complete') {
+      resolve();
+      doc.removeEventListener(READY_STATE_CHANGE, checkReady);
+    }
+  };
+
+  doc.addEventListener(READY_STATE_CHANGE, checkReady);
+
+  checkReady();
+});
+
+var documentElement = doc.documentElement;
+
+//      
+
+var matches = documentElement.matches || documentElement.webkitMatchesSelector || documentElement.msMatchesSelector;
+
+//      
+/**
+ * Transform camelCase string to kebab-case string
+ * @param camelString The string in camelCase
+ * @return The string in kebab-case
+ */
+var camelToKebab = function camelToKebab(camelString) {
+  return camelString.replace(/(?!^)[A-Z]/g, '-$&').toLowerCase();
+};
+
+//      
+
+/**
+ * Replaces the getter with the function which accesses the class-component of the given name.
+ * @param {string} name The class component name
+ * @param {string} [selector] The selector to access class component dom. Optional. Default is '.[name]'.
+ * @param {object} target The prototype of the target class
+ * @param {string} key The name of the property
+ * @param {object} descriptor The property descriptor
+ */
+var wireByNameAndSelector = function wireByNameAndSelector(name, selector) {
+  return function (target, key, descriptor) {
+    var sel = selector || '.' + name;
+
+    descriptor.get = function () {
+      if (matches.call(this.el, sel)) {
+        return get(name, this.el);
+      }
+
+      var nodes = this.el.querySelectorAll(sel);
+
+      if (nodes.length) {
+        return get(name, nodes[0]);
+      }
+
+      throw new Error('wired class-component "' + name + '" is not available at ' + this.el.tagName + '(class=[' + this.constructor.name + ']');
+    };
+  };
+};
+
+/**
+ * Wires the class component of the name of the key to the property of the same name.
+ */
+var wireComponent = function wireComponent(target, key, descriptor) {
+  if (typeof target === 'string') {
+    // If target is a string, then we suppose this is called as @wire(componentName, selector) and therefore
+    // we need to return the following expression (it works as another decorator).
+    return wireByNameAndSelector(target, key);
+  }
+
+  wireByNameAndSelector(camelToKebab(key))(target, key, descriptor);
+};
+
+var wireElement = function wireElement(sel) {
+  return function (target, key, descriptor) {
+    descriptor.get = function () {
+      return this.el.querySelector(sel);
+    };
+  };
+};
+
+var wireElementAll = function wireElementAll(sel) {
+  return function (target, key, descriptor) {
+    descriptor.get = function () {
+      return this.el.querySelectorAll(sel);
+    };
+  };
+};
+
+wireComponent.el = wireElement;
+wireComponent.elAll = wireElementAll;
+
+//      
+/**
+ * Initializes the class components of the given name in the range of the given element.
+ * @param name The class name
+ * @param el The dom where class componets are initialized
+ * @throws when the class name is invalid type.
+ */
+var prep = function prep(name, el) {
+  var classNames = void 0;
+
+  if (!name) {
+    classNames = Object.keys(ccc);
+  } else {
+    checkComponentNameIsValid(name);
+
+    classNames = [name];
+  }
+
+  classNames.map(function (className) {
+    [].map.call((el || doc).querySelectorAll(ccc[className].sel), ccc[className]);
+  });
+};
+
+//      
+
+
+var pluginHooks = [];
+
+//      
+
+var initConstructor = function initConstructor(constructor) {
+  constructor[INITIALIZED_KEY] = true;
+
+  // Expose capsid here
+  constructor.capsid = capsid;
+
+  // If the constructor has the static __init__, then calls it.
+  if (typeof constructor.__init__ === 'function') {
+    constructor.__init__();
+  }
+};
+
+//      
+
+/**
+ * Initialize component.
+ * @param Constructor The coelement class
+ * @param el The element
+ * @return The created coelement instance
+ */
+var initComponent = function initComponent(Constructor, el) {
+  if (!Constructor[INITIALIZED_KEY]) {
+    initConstructor(Constructor);
+  }
+
+  var coelem = new Constructor();
+
+  pluginHooks.forEach(function (pluginHook) {
+    pluginHook(el, coelem);
+  });
+
+  coelem.el = el;
+
+  if (typeof coelem.__init__ === 'function') {
+    coelem.__init__();
+  }
+
+  (Constructor[KEY_EVENT_LISTENERS] || []).map(function (listenerBinder) {
+    listenerBinder(el, coelem);
+  });
+
+  return coelem;
+};
+
+//      
+
+/**
+ * Registers the class-component for the given name and constructor and returns the constructor.
+ * @param name The component name
+ * @param Constructor The constructor of the class component
+ * @return The registered component class
+ */
+var def = function def(name, Constructor) {
+  check(typeof name === 'string', '`name` of a class component has to be a string.');
+  check(typeof Constructor === 'function', '`Constructor` of a class component has to be a function');
+
+  var initClass = name + '-initialized';
+
+  /**
+   * Initializes the html element by the configuration.
+   * @param el The html element
+   * @param coelem The dummy parameter, don't use
+   */
+  var initializer = function initializer(el, coelem) {
+    var classList = el.classList;
+
+    if (!classList.contains(initClass)) {
+      classList.add(name, initClass);el[COELEMENT_DATA_KEY_PREFIX + name] = initComponent(Constructor, el);
+    }
+  };
+
+  // The selector
+  initializer.sel = '.' + name + ':not(.' + initClass + ')';
+
+  ccc[name] = initializer;
+
+  ready.then(function () {
+    prep(name);
+  });
+};
+
+//      
+
+/**
+ * The decorator for class component registration.
+ *
+ * if `name` is function, then use it as class itself and the component name is kebabized version of its name.
+ * @param name The class name or the implementation class itself
+ * @return The decorator if the class name is given, undefined if the implementation class is given
+ */
+var component = function component(name) {
+  if (typeof name !== 'function') {
+    return function (Cls) {
+      def(name, Cls);
+      return Cls;
+    };
+  }
+
+  return component(camelToKebab(name.name))(name);
+};
+
+on.click = onClick;
+
+//      
+
+/**
+ * Initializes the given element as the class-component.
+ * @param name The name of the class component
+ * @param el The element to initialize
+ */
+var init = function init(name, el) {
+  checkComponentNameIsValid(name);
+
+  ccc[name](el);
+};
+
+//      
+
+/**
+ * Initializes the given element as the class-component.
+ * @param name The name of the class component
+ * @param el The element to initialize
+ * @return
+ */
+var make = function make(name, elm) {
+  init(name, elm);
+
+  return get(name, elm);
+};
+
+//      
+
+
+var capsid = Object.freeze({
+  on: on,
+  emit: emit,
+  wire: wireComponent,
+  component: component,
+  def: def,
+  prep: prep,
+  init: init,
+  initComponent: initComponent,
+  __ccc__: ccc,
+  make: make,
+  pluginHooks: pluginHooks,
+  get: get
+});
+
+exports.on = on;
+exports.emit = emit;
+exports.wire = wireComponent;
+exports.component = component;
+exports.def = def;
+exports.prep = prep;
+exports.init = init;
+exports.initComponent = initComponent;
+exports.__ccc__ = ccc;
+exports.make = make;
+exports.pluginHooks = pluginHooks;
+exports.get = get;
+},{}],2:[function(require,module,exports){
 (function () {
   'use strict';
 
@@ -404,12 +484,15 @@ module.exports = cc;
   var init = function init(capsid, $) {
     var ccc = capsid.__ccc__;
     var _get = capsid.get;
+    var init = capsid.init;
+    var wire = capsid.wire;
 
     var descriptor = { get: function get() {
-        var $el = this;
-        var dom = $el[0];
+        var _this = this;
 
-        check(dom != null, 'cc (class-component context) is unavailable at empty dom selection');
+        var dom = this[0];
+
+        check(dom != null, 'cc (capsid context) is unavailable at empty dom selection');
 
         var cc = dom.cc;
 
@@ -422,11 +505,11 @@ module.exports = cc;
           cc = dom.cc = function (classNames) {
             checkClassNamesAreStringOrNull(classNames);(classNames || dom.className).split(/\s+/).map(function (className) {
               if (ccc[className]) {
-                ccc[className]($el.addClass(className)[0]);
+                init(className, dom);
               }
             });
 
-            return $el;
+            return _this;
           };
 
           /**
@@ -450,10 +533,19 @@ module.exports = cc;
     Object.defineProperty($.fn, 'cc', descriptor);
 
     // Applies jQuery initializer plugin
-    capsid.plugins.push(function (el, coel) {
+    capsid.pluginHooks.push(function (el, coel) {
       coel.$el = $(el);
       coel.elem = coel.$el; // backward compat, will be removed
     });
+
+    // Define wire.$el decorator
+    wire.$el = function (sel) {
+      return function (target, key, descriptor) {
+        descriptor.get = function () {
+          return this.$el.find(sel);
+        };
+      };
+    };
   };
 
   if (typeof module !== 'undefined' && module.exports) {
@@ -809,7 +901,7 @@ var HashRoute = function () {
 }();
 
 module.exports = HashRoute;
-},{"path-to-regexp":10}],7:[function(require,module,exports){
+},{"path-to-regexp":9}],7:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -866,11 +958,6 @@ exports.dispatch = function (obj, path) {
   routes.dispatch(obj, path);
 };
 },{"./hash-route":6,"./hash-route-collection":5}],8:[function(require,module,exports){
-module.exports = Array.isArray || function (arr) {
-  return Object.prototype.toString.call(arr) == '[object Array]';
-};
-
-},{}],9:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v3.1.1
  * https://jquery.com/
@@ -11092,7 +11179,7 @@ if ( !noGlobal ) {
 return jQuery;
 } );
 
-},{}],10:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 var isarray = require('isarray')
 
 /**
@@ -11520,7 +11607,12 @@ function pathToRegexp (path, keys, options) {
   return stringToRegexp(/** @type {string} */ (path), /** @type {!Array} */ (keys), options)
 }
 
-},{"isarray":8}],11:[function(require,module,exports){
+},{"isarray":10}],10:[function(require,module,exports){
+module.exports = Array.isArray || function (arr) {
+  return Object.prototype.toString.call(arr) == '[object Array]';
+};
+
+},{}],11:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -11536,32 +11628,32 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
-	var desc = {};
-	Object['ke' + 'ys'](descriptor).forEach(function (key) {
-		desc[key] = descriptor[key];
-	});
-	desc.enumerable = !!desc.enumerable;
-	desc.configurable = !!desc.configurable;
+  var desc = {};
+  Object['ke' + 'ys'](descriptor).forEach(function (key) {
+    desc[key] = descriptor[key];
+  });
+  desc.enumerable = !!desc.enumerable;
+  desc.configurable = !!desc.configurable;
 
-	if ('value' in desc || desc.initializer) {
-		desc.writable = true;
-	}
+  if ('value' in desc || desc.initializer) {
+    desc.writable = true;
+  }
 
-	desc = decorators.slice().reverse().reduce(function (desc, decorator) {
-		return decorator(target, property, desc) || desc;
-	}, desc);
+  desc = decorators.slice().reverse().reduce(function (desc, decorator) {
+    return decorator(target, property, desc) || desc;
+  }, desc);
 
-	if (context && desc.initializer !== void 0) {
-		desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
-		desc.initializer = undefined;
-	}
+  if (context && desc.initializer !== void 0) {
+    desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
+    desc.initializer = undefined;
+  }
 
-	if (desc.initializer === void 0) {
-		Object['define' + 'Property'](target, property, desc);
-		desc = null;
-	}
+  if (desc.initializer === void 0) {
+    Object['define' + 'Property'](target, property, desc);
+    desc = null;
+  }
 
-	return desc;
+  return desc;
 }
 
 var _require = require('capsid'),
@@ -11569,28 +11661,28 @@ var _require = require('capsid'),
     on = _require.on;
 
 var ClearCompleted = (_dec = on('click'), component(_class = (_class2 = function () {
-	function ClearCompleted() {
-		_classCallCheck(this, ClearCompleted);
-	}
+  function ClearCompleted() {
+    _classCallCheck(this, ClearCompleted);
+  }
 
-	_createClass(ClearCompleted, [{
-		key: 'onClick',
-		value: function onClick() {
-			(0, _trigger2.default)(this.el, 'todo-clear-completed');
-		}
+  _createClass(ClearCompleted, [{
+    key: 'onClick',
+    value: function onClick() {
+      (0, _trigger2.default)(this.el, 'todo-clear-completed');
+    }
 
-		/**
-   * @param {TodoCollection} todos The todo collection
-   */
+    /**
+     * @param {TodoCollection} todos The todo collection
+     */
 
-	}, {
-		key: 'onUpdate',
-		value: function onUpdate(todos) {
-			this.$el.css('display', todos.completed().isEmpty() ? 'none' : 'inline');
-		}
-	}]);
+  }, {
+    key: 'onUpdate',
+    value: function onUpdate(todos) {
+      this.$el.css('display', todos.completed().isEmpty() ? 'none' : 'inline');
+    }
+  }]);
 
-	return ClearCompleted;
+  return ClearCompleted;
 }(), (_applyDecoratedDescriptor(_class2.prototype, 'onClick', [_dec], Object.getOwnPropertyDescriptor(_class2.prototype, 'onClick'), _class2.prototype)), _class2)) || _class);
 
 
@@ -11612,32 +11704,32 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
-	var desc = {};
-	Object['ke' + 'ys'](descriptor).forEach(function (key) {
-		desc[key] = descriptor[key];
-	});
-	desc.enumerable = !!desc.enumerable;
-	desc.configurable = !!desc.configurable;
+  var desc = {};
+  Object['ke' + 'ys'](descriptor).forEach(function (key) {
+    desc[key] = descriptor[key];
+  });
+  desc.enumerable = !!desc.enumerable;
+  desc.configurable = !!desc.configurable;
 
-	if ('value' in desc || desc.initializer) {
-		desc.writable = true;
-	}
+  if ('value' in desc || desc.initializer) {
+    desc.writable = true;
+  }
 
-	desc = decorators.slice().reverse().reduce(function (desc, decorator) {
-		return decorator(target, property, desc) || desc;
-	}, desc);
+  desc = decorators.slice().reverse().reduce(function (desc, decorator) {
+    return decorator(target, property, desc) || desc;
+  }, desc);
 
-	if (context && desc.initializer !== void 0) {
-		desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
-		desc.initializer = undefined;
-	}
+  if (context && desc.initializer !== void 0) {
+    desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
+    desc.initializer = undefined;
+  }
 
-	if (desc.initializer === void 0) {
-		Object['define' + 'Property'](target, property, desc);
-		desc = null;
-	}
+  if (desc.initializer === void 0) {
+    Object['define' + 'Property'](target, property, desc);
+    desc = null;
+  }
 
-	return desc;
+  return desc;
 }
 
 var _require = require('../const'),
@@ -11653,71 +11745,71 @@ var _require2 = require('capsid'),
 
 
 var Edit = (_dec = on('keypress'), _dec2 = on('keydown'), _dec3 = on('blur'), component(_class = (_class2 = function () {
-	function Edit() {
-		_classCallCheck(this, Edit);
-	}
+  function Edit() {
+    _classCallCheck(this, Edit);
+  }
 
-	_createClass(Edit, [{
-		key: 'onStart',
-		value: function onStart() {
-			this.$el.focus();
-		}
+  _createClass(Edit, [{
+    key: 'onStart',
+    value: function onStart() {
+      this.$el.focus();
+    }
 
-		/**
-   * Updates the view with the given value.
-   */
+    /**
+     * Updates the view with the given value.
+     */
 
-	}, {
-		key: 'onUpdate',
-		value: function onUpdate(value) {
-			this.$el.val(value);
-			this.$el.data('prev-value', value);
-		}
+  }, {
+    key: 'onUpdate',
+    value: function onUpdate(value) {
+      this.$el.val(value);
+      this.$el.data('prev-value', value);
+    }
 
-		/**
-   * Handler for the key press events.
-   *
-   * @param {Event} e The event
-   */
+    /**
+     * Handler for the key press events.
+     *
+     * @param {Event} e The event
+     */
 
-	}, {
-		key: 'onKeypress',
-		value: function onKeypress(e) {
-			if (e.which === KEYCODE.ENTER) {
-				this.onFinish();
-			} else if (e.which === KEYCODE.ESCAPE) {
-				this.onCancel();
-			}
-		}
+  }, {
+    key: 'onKeypress',
+    value: function onKeypress(e) {
+      if (e.which === KEYCODE.ENTER) {
+        this.onFinish();
+      } else if (e.which === KEYCODE.ESCAPE) {
+        this.onCancel();
+      }
+    }
 
-		/**
-   * Finishes editing with current value.
-   */
+    /**
+     * Finishes editing with current value.
+     */
 
-	}, {
-		key: 'onFinish',
-		value: function onFinish() {
-			var value = this.$el.val();
+  }, {
+    key: 'onFinish',
+    value: function onFinish() {
+      var value = this.$el.val();
 
-			this.onUpdate(value);
-			(0, _trigger2.default)(this.el, 'todo-edited', value);
-		}
+      this.onUpdate(value);
+      (0, _trigger2.default)(this.el, 'todo-edited', value);
+    }
 
-		/**
-   * Cancels editing and revert the change of the value.
-   */
+    /**
+     * Cancels editing and revert the change of the value.
+     */
 
-	}, {
-		key: 'onCancel',
-		value: function onCancel() {
-			var value = this.$el.data('prev-value');
+  }, {
+    key: 'onCancel',
+    value: function onCancel() {
+      var value = this.$el.data('prev-value');
 
-			this.onUpdate(value);
-			(0, _trigger2.default)(this.el, 'todo-edited', value);
-		}
-	}]);
+      this.onUpdate(value);
+      (0, _trigger2.default)(this.el, 'todo-edited', value);
+    }
+  }]);
 
-	return Edit;
+  return Edit;
 }(), (_applyDecoratedDescriptor(_class2.prototype, 'onKeypress', [_dec, _dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'onKeypress'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'onFinish', [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, 'onFinish'), _class2.prototype)), _class2)) || _class);
 
 
@@ -11743,32 +11835,31 @@ var _require = require('capsid'),
 
 
 var Filters = component(_class = function () {
-	function Filters() {
-		_classCallCheck(this, Filters);
-	}
+  function Filters() {
+    _classCallCheck(this, Filters);
+  }
 
-	_createClass(Filters, [{
-		key: 'setFilter',
+  _createClass(Filters, [{
+    key: 'setFilter',
 
+    /**
+     * Sets the given filter button active.
+     * @param {Filter} filter The name of the filter
+     */
+    value: function setFilter(filter) {
+      this.elem.find('a').removeClass('selected');
 
-		/**
-   * Sets the given filter button active.
-   * @param {Filter} filter The name of the filter
-   */
-		value: function setFilter(filter) {
-			this.elem.find('a').removeClass('selected');
+      if (filter === Filter.ACTIVE) {
+        this.elem.find('a[href="#/active"]').addClass('selected');
+      } else if (filter === Filter.COMPLETED) {
+        this.elem.find('a[href="#/completed"]').addClass('selected');
+      } else {
+        this.elem.find('a[href="#/"]').addClass('selected');
+      }
+    }
+  }]);
 
-			if (filter === Filter.ACTIVE) {
-				this.elem.find('a[href="#/active"]').addClass('selected');
-			} else if (filter === Filter.COMPLETED) {
-				this.elem.find('a[href="#/completed"]').addClass('selected');
-			} else {
-				this.elem.find('a[href="#/"]').addClass('selected');
-			}
-		}
-	}]);
-
-	return Filters;
+  return Filters;
 }()) || _class;
 
 module.exports = Filters;
@@ -11801,32 +11892,32 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
-	var desc = {};
-	Object['ke' + 'ys'](descriptor).forEach(function (key) {
-		desc[key] = descriptor[key];
-	});
-	desc.enumerable = !!desc.enumerable;
-	desc.configurable = !!desc.configurable;
+  var desc = {};
+  Object['ke' + 'ys'](descriptor).forEach(function (key) {
+    desc[key] = descriptor[key];
+  });
+  desc.enumerable = !!desc.enumerable;
+  desc.configurable = !!desc.configurable;
 
-	if ('value' in desc || desc.initializer) {
-		desc.writable = true;
-	}
+  if ('value' in desc || desc.initializer) {
+    desc.writable = true;
+  }
 
-	desc = decorators.slice().reverse().reduce(function (desc, decorator) {
-		return decorator(target, property, desc) || desc;
-	}, desc);
+  desc = decorators.slice().reverse().reduce(function (desc, decorator) {
+    return decorator(target, property, desc) || desc;
+  }, desc);
 
-	if (context && desc.initializer !== void 0) {
-		desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
-		desc.initializer = undefined;
-	}
+  if (context && desc.initializer !== void 0) {
+    desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
+    desc.initializer = undefined;
+  }
 
-	if (desc.initializer === void 0) {
-		Object['define' + 'Property'](target, property, desc);
-		desc = null;
-	}
+  if (desc.initializer === void 0) {
+    Object['define' + 'Property'](target, property, desc);
+    desc = null;
+  }
 
-	return desc;
+  return desc;
 }
 
 var Const = require('../const');
@@ -11841,29 +11932,29 @@ var _require = require('capsid'),
 
 
 var NewTodo = (_dec = on('keypress'), component(_class = (_class2 = function () {
-	function NewTodo() {
-		_classCallCheck(this, NewTodo);
-	}
+  function NewTodo() {
+    _classCallCheck(this, NewTodo);
+  }
 
-	_createClass(NewTodo, [{
-		key: 'onKeypress',
-		value: function onKeypress(e) {
-			if (e.which !== Const.KEYCODE.ENTER) {
-				return;
-			}
+  _createClass(NewTodo, [{
+    key: 'onKeypress',
+    value: function onKeypress(e) {
+      if (e.which !== Const.KEYCODE.ENTER) {
+        return;
+      }
 
-			if (!this.elem.val() || !this.elem.val().trim()) {
-				return;
-			}
+      if (!this.elem.val() || !this.elem.val().trim()) {
+        return;
+      }
 
-			var title = this.elem.val().trim();
-			this.elem.val('');
+      var title = this.elem.val().trim();
+      this.elem.val('');
 
-			(0, _trigger2.default)(this.el, 'todo-new-item', title);
-		}
-	}]);
+      (0, _trigger2.default)(this.el, 'todo-new-item', title);
+    }
+  }]);
 
-	return NewTodo;
+  return NewTodo;
 }(), (_applyDecoratedDescriptor(_class2.prototype, 'onKeypress', [_dec], Object.getOwnPropertyDescriptor(_class2.prototype, 'onKeypress'), _class2.prototype)), _class2)) || _class);
 
 
@@ -11890,24 +11981,24 @@ var _require2 = require('capsid'),
 
 
 var TodoCount = component(_class = function () {
-	function TodoCount() {
-		_classCallCheck(this, TodoCount);
-	}
+  function TodoCount() {
+    _classCallCheck(this, TodoCount);
+  }
 
-	_createClass(TodoCount, [{
-		key: 'setCount',
+  _createClass(TodoCount, [{
+    key: 'setCount',
 
-		/**
-   * @param {number} count The number of todos
-   */
-		value: function setCount(count) {
-			this.elem.empty();
+    /**
+     * @param {number} count The number of todos
+     */
+    value: function setCount(count) {
+      this.elem.empty();
 
-			this.elem.append(strong(count), ' item' + (count === 1 ? '' : 's') + ' left');
-		}
-	}]);
+      this.elem.append(strong(count), ' item' + (count === 1 ? '' : 's') + ' left');
+    }
+  }]);
 
-	return TodoCount;
+  return TodoCount;
 }()) || _class;
 
 module.exports = TodoCount;
@@ -11928,32 +12019,32 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
-	var desc = {};
-	Object['ke' + 'ys'](descriptor).forEach(function (key) {
-		desc[key] = descriptor[key];
-	});
-	desc.enumerable = !!desc.enumerable;
-	desc.configurable = !!desc.configurable;
+  var desc = {};
+  Object['ke' + 'ys'](descriptor).forEach(function (key) {
+    desc[key] = descriptor[key];
+  });
+  desc.enumerable = !!desc.enumerable;
+  desc.configurable = !!desc.configurable;
 
-	if ('value' in desc || desc.initializer) {
-		desc.writable = true;
-	}
+  if ('value' in desc || desc.initializer) {
+    desc.writable = true;
+  }
 
-	desc = decorators.slice().reverse().reduce(function (desc, decorator) {
-		return decorator(target, property, desc) || desc;
-	}, desc);
+  desc = decorators.slice().reverse().reduce(function (desc, decorator) {
+    return decorator(target, property, desc) || desc;
+  }, desc);
 
-	if (context && desc.initializer !== void 0) {
-		desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
-		desc.initializer = undefined;
-	}
+  if (context && desc.initializer !== void 0) {
+    desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
+    desc.initializer = undefined;
+  }
 
-	if (desc.initializer === void 0) {
-		Object['define' + 'Property'](target, property, desc);
-		desc = null;
-	}
+  if (desc.initializer === void 0) {
+    Object['define' + 'Property'](target, property, desc);
+    desc = null;
+  }
 
-	return desc;
+  return desc;
 }
 
 var _require = require('dom-gen'),
@@ -11973,146 +12064,146 @@ var _require2 = require('capsid'),
 
 
 var TodoItem = (_dec = on('click', { at: '.toggle' }), _dec2 = on('click', { at: '.destroy' }), _dec3 = on('dblclick', { at: 'label' }), _dec4 = on('todo-edited'), component(_class = (_class2 = function () {
-	function TodoItem() {
-		_classCallCheck(this, TodoItem);
-	}
+  function TodoItem() {
+    _classCallCheck(this, TodoItem);
+  }
 
-	_createClass(TodoItem, [{
-		key: '__init__',
-		value: function __init__() {
-			this.$el.append(div(input({ attr: { type: 'checkbox' } }).addClass('toggle'), label(), button().addClass('destroy')).addClass('view'), input().cc('edit'));
-		}
+  _createClass(TodoItem, [{
+    key: '__init__',
+    value: function __init__() {
+      this.$el.append(div(input({ attr: { type: 'checkbox' } }).addClass('toggle'), label(), button().addClass('destroy')).addClass('view'), input().cc('edit'));
+    }
 
-		/**
-   * @return {Edit}
-   */
+    /**
+     * @return {Edit}
+     */
 
-	}, {
-		key: 'update',
+  }, {
+    key: 'update',
 
 
-		/**
-   * Updates the todo title by todo model.
-   * @param {Todo} todo The todo
-   * @param {String} todo.id The id
-   * @param {String} todo.title The title
-   * @param {Boolean} todo.completed If completed or not
-   */
-		value: function update(todo) {
-			this.elem.attr('id', todo.id);
-			this.elem.find('label').text(todo.title);
-			this.edit.onUpdate(todo.title);
+    /**
+     * Updates the todo title by todo model.
+     * @param {Todo} todo The todo
+     * @param {String} todo.id The id
+     * @param {String} todo.title The title
+     * @param {Boolean} todo.completed If completed or not
+     */
+    value: function update(todo) {
+      this.elem.attr('id', todo.id);
+      this.elem.find('label').text(todo.title);
+      this.edit.onUpdate(todo.title);
 
-			this.completed = todo.completed;
-			this.updateView();
-		}
+      this.completed = todo.completed;
+      this.updateView();
+    }
 
-		/**
-   * Toggles the completed state of the item.
-   * @private
-   */
+    /**
+     * Toggles the completed state of the item.
+     * @private
+     */
 
-	}, {
-		key: 'toggleCompleted',
-		value: function toggleCompleted() {
-			(0, _trigger2.default)(this.el, 'todo-item-toggle', this.elem.attr('id'));
+  }, {
+    key: 'toggleCompleted',
+    value: function toggleCompleted() {
+      (0, _trigger2.default)(this.el, 'todo-item-toggle', this.elem.attr('id'));
 
-			this.completed = !this.completed;
-			this.updateView();
-		}
+      this.completed = !this.completed;
+      this.updateView();
+    }
 
-		/**
-   * Destroys the item.
-   * @private
-   */
+    /**
+     * Destroys the item.
+     * @private
+     */
 
-	}, {
-		key: 'destroy',
-		value: function destroy() {
-			(0, _trigger2.default)(this.el.parentElement, 'todo-item-destroy', this.$el.attr('id'));
+  }, {
+    key: 'destroy',
+    value: function destroy() {
+      (0, _trigger2.default)(this.el.parentElement, 'todo-item-destroy', this.$el.attr('id'));
 
-			this.$el.remove();
-		}
+      this.$el.remove();
+    }
 
-		/**
-   * Updates the view state according to the current completed state.
-   * @private
-   */
+    /**
+     * Updates the view state according to the current completed state.
+     * @private
+     */
 
-	}, {
-		key: 'updateView',
-		value: function updateView() {
-			if (this.completed) {
-				this.complete();
-			} else {
-				this.uncomplete();
-			}
-		}
+  }, {
+    key: 'updateView',
+    value: function updateView() {
+      if (this.completed) {
+        this.complete();
+      } else {
+        this.uncomplete();
+      }
+    }
 
-		/**
-   * Completes the item state.
-   * @private
-   */
+    /**
+     * Completes the item state.
+     * @private
+     */
 
-	}, {
-		key: 'complete',
-		value: function complete() {
-			this.elem.find('.toggle').prop('checked', true);
-			this.elem.addClass('completed');
-		}
+  }, {
+    key: 'complete',
+    value: function complete() {
+      this.elem.find('.toggle').prop('checked', true);
+      this.elem.addClass('completed');
+    }
 
-		/**
-   * Uncompletes the item state.
-   * @private
-   */
+    /**
+     * Uncompletes the item state.
+     * @private
+     */
 
-	}, {
-		key: 'uncomplete',
-		value: function uncomplete() {
-			this.elem.find('.toggle').prop('checked', false);
-			this.elem.removeClass('completed');
-		}
+  }, {
+    key: 'uncomplete',
+    value: function uncomplete() {
+      this.elem.find('.toggle').prop('checked', false);
+      this.elem.removeClass('completed');
+    }
 
-		/**
-   * Starts editing.
-   * @private
-   */
+    /**
+     * Starts editing.
+     * @private
+     */
 
-	}, {
-		key: 'startEditing',
-		value: function startEditing() {
-			this.elem.addClass('editing');
-			this.edit.onStart();
-		}
+  }, {
+    key: 'startEditing',
+    value: function startEditing() {
+      this.elem.addClass('editing');
+      this.edit.onStart();
+    }
 
-		/**
-   * Stops editing.
-   * @private
-   */
+    /**
+     * Stops editing.
+     * @private
+     */
 
-	}, {
-		key: 'stopEditing',
-		value: function stopEditing(e) {
-			var title = e.detail;
+  }, {
+    key: 'stopEditing',
+    value: function stopEditing(e) {
+      var title = e.detail;
 
-			this.$el.removeClass('editing');
+      this.$el.removeClass('editing');
 
-			if (!title) {
-				this.destroy();
+      if (!title) {
+        this.destroy();
 
-				return;
-			}
+        return;
+      }
 
-			this.$el.find('label').text(title);
+      this.$el.find('label').text(title);
 
-			(0, _trigger2.default)(this.el, 'todo-item-edited', { id: this.$el.attr('id'), title: title });
-		}
-	}, {
-		key: 'edit',
-		get: function get() {}
-	}]);
+      (0, _trigger2.default)(this.el, 'todo-item-edited', { id: this.$el.attr('id'), title: title });
+    }
+  }, {
+    key: 'edit',
+    get: function get() {}
+  }]);
 
-	return TodoItem;
+  return TodoItem;
 }(), (_applyDecoratedDescriptor(_class2.prototype, 'edit', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'edit'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'toggleCompleted', [_dec], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggleCompleted'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'destroy', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'destroy'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'startEditing', [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, 'startEditing'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'stopEditing', [_dec4], Object.getOwnPropertyDescriptor(_class2.prototype, 'stopEditing'), _class2.prototype)), _class2)) || _class);
 
 
@@ -12139,44 +12230,44 @@ var _require2 = require('capsid'),
 
 
 var TodoList = component(_class = function () {
-	function TodoList() {
-		_classCallCheck(this, TodoList);
-	}
+  function TodoList() {
+    _classCallCheck(this, TodoList);
+  }
 
-	_createClass(TodoList, [{
-		key: 'onRefresh',
+  _createClass(TodoList, [{
+    key: 'onRefresh',
 
-		/**
-   * Updates the todo items by the given todo model list.
-   * @param {TodoCollection} todos The todo list
-   */
-		value: function onRefresh(todos, filter) {
-			var _this = this;
+    /**
+     * Updates the todo items by the given todo model list.
+     * @param {TodoCollection} todos The todo list
+     */
+    value: function onRefresh(todos, filter) {
+      var _this = this;
 
-			this.elem.empty();
+      this.elem.empty();
 
-			todos.filterBy(filter).forEach(function (todo) {
-				li().appendTo(_this.elem).cc.init('todo-item').update(todo);
-			});
-		}
+      todos.filterBy(filter).forEach(function (todo) {
+        li().appendTo(_this.elem).cc.init('todo-item').update(todo);
+      });
+    }
 
-		/**
-   * Toggles the given todos.
-   * @param {TodoCollecion} todos The todo list
-   */
+    /**
+     * Toggles the given todos.
+     * @param {TodoCollecion} todos The todo list
+     */
 
-	}, {
-		key: 'toggleAll',
-		value: function toggleAll(todos) {
-			var _this2 = this;
+  }, {
+    key: 'toggleAll',
+    value: function toggleAll(todos) {
+      var _this2 = this;
 
-			todos.forEach(function (todo) {
-				_this2.elem.find('#' + todo.id).cc.get('todo-item').toggleCompleted();
-			});
-		}
-	}]);
+      todos.forEach(function (todo) {
+        _this2.elem.find('#' + todo.id).cc.get('todo-item').toggleCompleted();
+      });
+    }
+  }]);
 
-	return TodoList;
+  return TodoList;
 }()) || _class;
 
 module.exports = TodoList;
@@ -12197,32 +12288,32 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
-	var desc = {};
-	Object['ke' + 'ys'](descriptor).forEach(function (key) {
-		desc[key] = descriptor[key];
-	});
-	desc.enumerable = !!desc.enumerable;
-	desc.configurable = !!desc.configurable;
+  var desc = {};
+  Object['ke' + 'ys'](descriptor).forEach(function (key) {
+    desc[key] = descriptor[key];
+  });
+  desc.enumerable = !!desc.enumerable;
+  desc.configurable = !!desc.configurable;
 
-	if ('value' in desc || desc.initializer) {
-		desc.writable = true;
-	}
+  if ('value' in desc || desc.initializer) {
+    desc.writable = true;
+  }
 
-	desc = decorators.slice().reverse().reduce(function (desc, decorator) {
-		return decorator(target, property, desc) || desc;
-	}, desc);
+  desc = decorators.slice().reverse().reduce(function (desc, decorator) {
+    return decorator(target, property, desc) || desc;
+  }, desc);
 
-	if (context && desc.initializer !== void 0) {
-		desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
-		desc.initializer = undefined;
-	}
+  if (context && desc.initializer !== void 0) {
+    desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
+    desc.initializer = undefined;
+  }
 
-	if (desc.initializer === void 0) {
-		Object['define' + 'Property'](target, property, desc);
-		desc = null;
-	}
+  if (desc.initializer === void 0) {
+    Object['define' + 'Property'](target, property, desc);
+    desc = null;
+  }
 
-	return desc;
+  return desc;
 }
 
 var _require = require('capsid'),
@@ -12235,33 +12326,33 @@ var _require = require('capsid'),
 
 
 var ToggleAll = (_dec = on('click'), component(_class = (_class2 = function () {
-	function ToggleAll() {
-		_classCallCheck(this, ToggleAll);
-	}
+  function ToggleAll() {
+    _classCallCheck(this, ToggleAll);
+  }
 
-	_createClass(ToggleAll, [{
-		key: 'toggleAll',
-		value: function toggleAll() {
-			if (this.elem.prop('checked')) {
-				(0, _trigger2.default)(this.el, 'toggle-all-check');
-			} else {
-				(0, _trigger2.default)(this.el, 'toggle-all-uncheck');
-			}
-		}
+  _createClass(ToggleAll, [{
+    key: 'toggleAll',
+    value: function toggleAll() {
+      if (this.elem.prop('checked')) {
+        (0, _trigger2.default)(this.el, 'toggle-all-check');
+      } else {
+        (0, _trigger2.default)(this.el, 'toggle-all-uncheck');
+      }
+    }
 
-		/**
-   * Updates the button state by the given active items' condition.
-   * @param {boolean} activeItemExists true if any active item exists, false otherwise
-   */
+    /**
+     * Updates the button state by the given active items' condition.
+     * @param {boolean} activeItemExists true if any active item exists, false otherwise
+     */
 
-	}, {
-		key: 'updateBtnState',
-		value: function updateBtnState(activeItemExists) {
-			this.elem.prop('checked', !activeItemExists);
-		}
-	}]);
+  }, {
+    key: 'updateBtnState',
+    value: function updateBtnState(activeItemExists) {
+      this.elem.prop('checked', !activeItemExists);
+    }
+  }]);
 
-	return ToggleAll;
+  return ToggleAll;
 }(), (_applyDecoratedDescriptor(_class2.prototype, 'toggleAll', [_dec], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggleAll'), _class2.prototype)), _class2)) || _class);
 
 
@@ -12271,14 +12362,14 @@ module.exports = ToggleAll;
 'use strict';
 
 module.exports = {
-	KEYCODE: {
-		ENTER: 13,
-		ESCAPE: 27
-	},
+  KEYCODE: {
+    ENTER: 13,
+    ESCAPE: 27
+  },
 
-	STORAGE_KEY: {
-		TODO_LIST: 'todos-class-component'
-	}
+  STORAGE_KEY: {
+    TODO_LIST: 'todos-class-component'
+  }
 };
 
 },{}],21:[function(require,module,exports){
@@ -12293,41 +12384,41 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Filter = function () {
-	function Filter() {
-		_classCallCheck(this, Filter);
-	}
+  function Filter() {
+    _classCallCheck(this, Filter);
+  }
 
-	_createClass(Filter, [{
-		key: "isAll",
+  _createClass(Filter, [{
+    key: "isAll",
 
-		/**
-   * @return {boolean}
-   */
-		value: function isAll() {
-			return false;
-		}
-	}]);
+    /**
+     * @return {boolean}
+     */
+    value: function isAll() {
+      return false;
+    }
+  }]);
 
-	return Filter;
+  return Filter;
 }();
 
 var AllFilter = function (_Filter) {
-	_inherits(AllFilter, _Filter);
+  _inherits(AllFilter, _Filter);
 
-	function AllFilter() {
-		_classCallCheck(this, AllFilter);
+  function AllFilter() {
+    _classCallCheck(this, AllFilter);
 
-		return _possibleConstructorReturn(this, (AllFilter.__proto__ || Object.getPrototypeOf(AllFilter)).apply(this, arguments));
-	}
+    return _possibleConstructorReturn(this, (AllFilter.__proto__ || Object.getPrototypeOf(AllFilter)).apply(this, arguments));
+  }
 
-	_createClass(AllFilter, [{
-		key: "isAll",
-		value: function isAll() {
-			return true;
-		}
-	}]);
+  _createClass(AllFilter, [{
+    key: "isAll",
+    value: function isAll() {
+      return true;
+    }
+  }]);
 
-	return AllFilter;
+  return AllFilter;
 }(Filter);
 
 Filter.ALL = new AllFilter();
@@ -12350,219 +12441,219 @@ var Filter = require('./filter');
  */
 
 var TodoCollection = function () {
-	/**
-  * @param {Todo[]} todos The todo items
-  */
-	function TodoCollection(todos) {
-		var _this = this;
-
-		_classCallCheck(this, TodoCollection);
-
-		todos = todos || [];
-
-		this.items = todos;
-
-		this.map = {};
-
-		this.items.forEach(function (todo) {
-			_this.map[todo.id] = todo;
-		});
-	}
-
-	/**
-  * Gets the todo by the id.
-  *
-  * @param {String} id The todo id
-  * @return {Todo}
-  */
-
-
-	_createClass(TodoCollection, [{
-		key: 'getById',
-		value: function getById(id) {
-			return this.map[id];
-		}
-
-		/**
-   * Toggles the todo's completed flag by the given id.
-   * @param {String} id The todo id
+  /**
+   * @param {Todo[]} todos The todo items
    */
+  function TodoCollection(todos) {
+    var _this = this;
 
-	}, {
-		key: 'toggleById',
-		value: function toggleById(id) {
-			var todo = this.getById(id);
+    _classCallCheck(this, TodoCollection);
 
-			todo.completed = !todo.completed;
-		}
+    todos = todos || [];
 
-		/**
-   * Iterates calling of func in the given context.
-   * @param {Function} func The iteration function
-   * @param {Object} ctx The context
-   */
+    this.items = todos;
 
-	}, {
-		key: 'forEach',
-		value: function forEach(func, ctx) {
-			this.items.forEach(func, ctx);
-		}
+    this.map = {};
 
-		/**
-   * Pushes (appends) the given todo at the end of the list
+    this.items.forEach(function (todo) {
+      _this.map[todo.id] = todo;
+    });
+  }
+
+  /**
+   * Gets the todo by the id.
    *
-   * @param {Todo} todo The todo
-   */
-
-	}, {
-		key: 'push',
-		value: function push(todo) {
-			this.items.push(todo);
-
-			this.map[todo.id] = todo;
-		}
-
-		/**
-   * Removes the todo.
-   * @param {Todo} todo The todo to remvoe
-   */
-
-	}, {
-		key: 'remove',
-		value: function remove(todo) {
-			if (!this.has(todo)) {
-				throw new Error('The colletion does not have the todo: ' + todo.toString());
-			}
-
-			this.items.splice(this.items.indexOf(todo), 1);
-		}
-
-		/**
-   * Removes the item by the id.
    * @param {String} id The todo id
+   * @return {Todo}
    */
 
-	}, {
-		key: 'removeById',
-		value: function removeById(id) {
-			this.remove(this.getById(id));
-		}
 
-		/**
-   * Checks if the given todo is included by the list
-   * @private
-   * @param {Todo} todo The todo
-   */
+  _createClass(TodoCollection, [{
+    key: 'getById',
+    value: function getById(id) {
+      return this.map[id];
+    }
 
-	}, {
-		key: 'has',
-		value: function has(todo) {
-			return this.items.indexOf(todo) !== -1;
-		}
+    /**
+     * Toggles the todo's completed flag by the given id.
+     * @param {String} id The todo id
+     */
 
-		/**
-   * Returns a todo subcollection of completed items.
-   * @return {TodoCollection}
-   */
+  }, {
+    key: 'toggleById',
+    value: function toggleById(id) {
+      var todo = this.getById(id);
 
-	}, {
-		key: 'completed',
-		value: function completed() {
-			return new TodoCollection(this.items.filter(function (todo) {
-				return todo.completed;
-			}));
-		}
+      todo.completed = !todo.completed;
+    }
 
-		/**
-   * Returns a todo subcollection of uncompleted items.
-   * @return {TodoCollection}
-   */
+    /**
+     * Iterates calling of func in the given context.
+     * @param {Function} func The iteration function
+     * @param {Object} ctx The context
+     */
 
-	}, {
-		key: 'uncompleted',
-		value: function uncompleted() {
-			return new TodoCollection(this.items.filter(function (todo) {
-				return !todo.completed;
-			}));
-		}
+  }, {
+    key: 'forEach',
+    value: function forEach(func, ctx) {
+      this.items.forEach(func, ctx);
+    }
 
-		/**
-   * Gets the array of todos
-   * @return {Todo[]}
-   */
+    /**
+     * Pushes (appends) the given todo at the end of the list
+     *
+     * @param {Todo} todo The todo
+     */
 
-	}, {
-		key: 'toArray',
-		value: function toArray() {
-			return this.items.slice(0);
-		}
+  }, {
+    key: 'push',
+    value: function push(todo) {
+      this.items.push(todo);
 
-		/**
-   * Checks if the collection is empty.
-   * @param {Boolean}
-   */
+      this.map[todo.id] = todo;
+    }
 
-	}, {
-		key: 'isEmpty',
-		value: function isEmpty() {
-			return this.length === 0;
-		}
+    /**
+     * Removes the todo.
+     * @param {Todo} todo The todo to remvoe
+     */
 
-		/**
-   * Returns the length.
-   * @return {number}
-   */
+  }, {
+    key: 'remove',
+    value: function remove(todo) {
+      if (!this.has(todo)) {
+        throw new Error('The colletion does not have the todo: ' + todo.toString());
+      }
 
-	}, {
-		key: 'completeAll',
+      this.items.splice(this.items.indexOf(todo), 1);
+    }
+
+    /**
+     * Removes the item by the id.
+     * @param {String} id The todo id
+     */
+
+  }, {
+    key: 'removeById',
+    value: function removeById(id) {
+      this.remove(this.getById(id));
+    }
+
+    /**
+     * Checks if the given todo is included by the list
+     * @private
+     * @param {Todo} todo The todo
+     */
+
+  }, {
+    key: 'has',
+    value: function has(todo) {
+      return this.items.indexOf(todo) !== -1;
+    }
+
+    /**
+     * Returns a todo subcollection of completed items.
+     * @return {TodoCollection}
+     */
+
+  }, {
+    key: 'completed',
+    value: function completed() {
+      return new TodoCollection(this.items.filter(function (todo) {
+        return todo.completed;
+      }));
+    }
+
+    /**
+     * Returns a todo subcollection of uncompleted items.
+     * @return {TodoCollection}
+     */
+
+  }, {
+    key: 'uncompleted',
+    value: function uncompleted() {
+      return new TodoCollection(this.items.filter(function (todo) {
+        return !todo.completed;
+      }));
+    }
+
+    /**
+     * Gets the array of todos
+     * @return {Todo[]}
+     */
+
+  }, {
+    key: 'toArray',
+    value: function toArray() {
+      return this.items.slice(0);
+    }
+
+    /**
+     * Checks if the collection is empty.
+     * @param {Boolean}
+     */
+
+  }, {
+    key: 'isEmpty',
+    value: function isEmpty() {
+      return this.length === 0;
+    }
+
+    /**
+     * Returns the length.
+     * @return {number}
+     */
+
+  }, {
+    key: 'completeAll',
 
 
-		/**
-   * Completes all the todos.
-   */
-		value: function completeAll() {
-			this.items.forEach(function (todo) {
-				todo.completed = true;
-			});
-		}
+    /**
+     * Completes all the todos.
+     */
+    value: function completeAll() {
+      this.items.forEach(function (todo) {
+        todo.completed = true;
+      });
+    }
 
-		/**
-   * Uncompletes all the todos.
-   */
+    /**
+     * Uncompletes all the todos.
+     */
 
-	}, {
-		key: 'uncompleteAll',
-		value: function uncompleteAll() {
-			this.items.forEach(function (todo) {
-				todo.completed = false;
-			});
-		}
+  }, {
+    key: 'uncompleteAll',
+    value: function uncompleteAll() {
+      this.items.forEach(function (todo) {
+        todo.completed = false;
+      });
+    }
 
-		/**
-   * Returns the filtered todos by the given filter object.
-   * @param {Filter} filter The filter
-   * @return {TodoCollection}
-   */
+    /**
+     * Returns the filtered todos by the given filter object.
+     * @param {Filter} filter The filter
+     * @return {TodoCollection}
+     */
 
-	}, {
-		key: 'filterBy',
-		value: function filterBy(filter) {
-			if (filter === Filter.ACTIVE) {
-				return this.uncompleted();
-			} else if (filter === Filter.COMPLETED) {
-				return this.completed();
-			}
+  }, {
+    key: 'filterBy',
+    value: function filterBy(filter) {
+      if (filter === Filter.ACTIVE) {
+        return this.uncompleted();
+      } else if (filter === Filter.COMPLETED) {
+        return this.completed();
+      }
 
-			return this;
-		}
-	}, {
-		key: 'length',
-		get: function get() {
-			return this.items.length;
-		}
-	}]);
+      return this;
+    }
+  }, {
+    key: 'length',
+    get: function get() {
+      return this.items.length;
+    }
+  }]);
 
-	return TodoCollection;
+  return TodoCollection;
 }();
 
 module.exports = TodoCollection;
@@ -12581,52 +12672,52 @@ var Todo = require('./todo');
  */
 
 var TodoFactory = function () {
-	function TodoFactory() {
-		_classCallCheck(this, TodoFactory);
-	}
+  function TodoFactory() {
+    _classCallCheck(this, TodoFactory);
+  }
 
-	_createClass(TodoFactory, [{
-		key: 'createByTitle',
+  _createClass(TodoFactory, [{
+    key: 'createByTitle',
 
-		/**
-   * Creates a todo model from the given todo title.
-   *
-   * @param {String} title The todo title
-   * @return {Todo}
-   */
-		value: function createByTitle(title) {
-			return this.createFromObject({
-				id: this.generateId(),
-				title: title,
-				completed: false
-			});
-		}
+    /**
+     * Creates a todo model from the given todo title.
+     *
+     * @param {String} title The todo title
+     * @return {Todo}
+     */
+    value: function createByTitle(title) {
+      return this.createFromObject({
+        id: this.generateId(),
+        title: title,
+        completed: false
+      });
+    }
 
-		/**
-   * Creates Todo model from the object
-   * @param {Object} obj The source object
-   * @return {Todo}
-   */
+    /**
+     * Creates Todo model from the object
+     * @param {Object} obj The source object
+     * @return {Todo}
+     */
 
-	}, {
-		key: 'createFromObject',
-		value: function createFromObject(obj) {
-			return new Todo(obj.id, obj.title, obj.completed);
-		}
+  }, {
+    key: 'createFromObject',
+    value: function createFromObject(obj) {
+      return new Todo(obj.id, obj.title, obj.completed);
+    }
 
-		/**
-   * Generates a random id.
-   * @private
-   */
+    /**
+     * Generates a random id.
+     * @private
+     */
 
-	}, {
-		key: 'generateId',
-		value: function generateId() {
-			return Math.floor(Math.random() * 1000000000).toString();
-		}
-	}]);
+  }, {
+    key: 'generateId',
+    value: function generateId() {
+      return Math.floor(Math.random() * 1000000000).toString();
+    }
+  }]);
 
-	return TodoFactory;
+  return TodoFactory;
 }();
 
 module.exports = TodoFactory;
@@ -12642,85 +12733,85 @@ var Const = require('../const');
 var TodoCollection = require('./todo-collection');
 
 var TodoRepository = function () {
-	function TodoRepository() {
-		_classCallCheck(this, TodoRepository);
-	}
+  function TodoRepository() {
+    _classCallCheck(this, TodoRepository);
+  }
 
-	_createClass(TodoRepository, [{
-		key: 'getAll',
+  _createClass(TodoRepository, [{
+    key: 'getAll',
 
-		/**
-   * Gets all the todo items.
-   *
-   * @return {TodoList}
-   */
-		value: function getAll() {
-			var json = window.localStorage[Const.STORAGE_KEY.TODO_LIST];
+    /**
+     * Gets all the todo items.
+     *
+     * @return {TodoList}
+     */
+    value: function getAll() {
+      var json = window.localStorage[Const.STORAGE_KEY.TODO_LIST];
 
-			if (!json) {
-				return new TodoCollection([]);
-			}
+      if (!json) {
+        return new TodoCollection([]);
+      }
 
-			var array = void 0;
+      var array = void 0;
 
-			try {
-				array = JSON.parse(json);
-			} catch (err) {
-				array = [];
-			}
+      try {
+        array = JSON.parse(json);
+      } catch (err) {
+        array = [];
+      }
 
-			return new TodoCollection(array);
-		}
+      return new TodoCollection(array);
+    }
 
-		/**
-   * Saves all the todo items.
-   * @param {domain.TodoCollection} todos
-   */
+    /**
+     * Saves all the todo items.
+     * @param {domain.TodoCollection} todos
+     */
 
-	}, {
-		key: 'saveAll',
-		value: function saveAll(todos) {
-			var json = JSON.stringify(this.collectionToArray(todos));
+  }, {
+    key: 'saveAll',
+    value: function saveAll(todos) {
+      var json = JSON.stringify(this.collectionToArray(todos));
 
-			window.localStorage[Const.STORAGE_KEY.TODO_LIST] = json;
-		}
+      window.localStorage[Const.STORAGE_KEY.TODO_LIST] = json;
+    }
 
-		/**
-   * Converts the todo collections into js array of objects.
-   * @private
-   * @param {TodoCollection} todos The todo collection
-   * @return {Array<Object>}
-   */
+    /**
+     * Converts the todo collections into js array of objects.
+     * @private
+     * @param {TodoCollection} todos The todo collection
+     * @return {Array<Object>}
+     */
 
-	}, {
-		key: 'collectionToArray',
-		value: function collectionToArray(todos) {
-			var _this = this;
+  }, {
+    key: 'collectionToArray',
+    value: function collectionToArray(todos) {
+      var _this = this;
 
-			return todos.toArray().map(function (todo) {
-				return _this.toObject(todo);
-			});
-		}
+      return todos.toArray().map(function (todo) {
+        return _this.toObject(todo);
+      });
+    }
 
-		/**
-   * Converts the todo item into js object.
-   * @private
-   * @param {Todo} todo The todo item
-   * @return {Object}
-   */
+    /**
+     * Converts the todo item into js object.
+     * @private
+     * @param {Todo} todo The todo item
+     * @return {Object}
+     */
 
-	}, {
-		key: 'toObject',
-		value: function toObject(todo) {
-			return {
-				id: todo.id,
-				title: todo.title,
-				completed: todo.completed
-			};
-		}
-	}]);
+  }, {
+    key: 'toObject',
+    value: function toObject(todo) {
+      return {
+        id: todo.id,
+        title: todo.title,
+        completed: todo.completed
+      };
+    }
+  }]);
 
-	return TodoRepository;
+  return TodoRepository;
 }();
 
 module.exports = TodoRepository;
@@ -12740,11 +12831,11 @@ var Todo =
  * @param {Boolean} completed The flag indicates if it's done or not
  */
 function Todo(id, title, completed) {
-	_classCallCheck(this, Todo);
+  _classCallCheck(this, Todo);
 
-	this.id = id;
-	this.title = title;
-	this.completed = completed;
+  this.id = id;
+  this.title = title;
+  this.completed = completed;
 };
 
 module.exports = Todo;
@@ -12762,7 +12853,7 @@ require('./component');
 require('./service');
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./component":14,"./service":27,"capsid":1,"capsid/jquery":3,"jquery":9}],27:[function(require,module,exports){
+},{"./component":14,"./service":27,"capsid":1,"capsid/jquery":3,"jquery":8}],27:[function(require,module,exports){
 'use strict';
 
 require('./router');
@@ -12784,32 +12875,32 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
-	var desc = {};
-	Object['ke' + 'ys'](descriptor).forEach(function (key) {
-		desc[key] = descriptor[key];
-	});
-	desc.enumerable = !!desc.enumerable;
-	desc.configurable = !!desc.configurable;
+  var desc = {};
+  Object['ke' + 'ys'](descriptor).forEach(function (key) {
+    desc[key] = descriptor[key];
+  });
+  desc.enumerable = !!desc.enumerable;
+  desc.configurable = !!desc.configurable;
 
-	if ('value' in desc || desc.initializer) {
-		desc.writable = true;
-	}
+  if ('value' in desc || desc.initializer) {
+    desc.writable = true;
+  }
 
-	desc = decorators.slice().reverse().reduce(function (desc, decorator) {
-		return decorator(target, property, desc) || desc;
-	}, desc);
+  desc = decorators.slice().reverse().reduce(function (desc, decorator) {
+    return decorator(target, property, desc) || desc;
+  }, desc);
 
-	if (context && desc.initializer !== void 0) {
-		desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
-		desc.initializer = undefined;
-	}
+  if (context && desc.initializer !== void 0) {
+    desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
+    desc.initializer = undefined;
+  }
 
-	if (desc.initializer === void 0) {
-		Object['define' + 'Property'](target, property, desc);
-		desc = null;
-	}
+  if (desc.initializer === void 0) {
+    Object['define' + 'Property'](target, property, desc);
+    desc = null;
+  }
 
-	return desc;
+  return desc;
 }
 
 var _require = require('hash-route'),
@@ -12827,38 +12918,38 @@ var _require2 = require('capsid'),
 
 
 var Router = component(_class = (_class2 = function () {
-	function Router() {
-		_classCallCheck(this, Router);
-	}
+  function Router() {
+    _classCallCheck(this, Router);
+  }
 
-	_createClass(Router, [{
-		key: 'onHashchange',
-		value: function onHashchange() {
-			dispatch(this);
-		}
-	}, {
-		key: '#/all',
-		value: function all() {
-			(0, _trigger2.default)(this.el, 'filterchange', Filter.ALL);
-		}
-	}, {
-		key: '#/active',
-		value: function active() {
-			(0, _trigger2.default)(this.el, 'filterchange', Filter.ACTIVE);
-		}
-	}, {
-		key: '#/completed',
-		value: function completed() {
-			(0, _trigger2.default)(this.el, 'filterchange', Filter.COMPLETED);
-		}
-	}, {
-		key: '*',
-		value: function _() {
-			(0, _trigger2.default)(this.el, 'filterchange', Filter.ALL);
-		}
-	}]);
+  _createClass(Router, [{
+    key: 'onHashchange',
+    value: function onHashchange() {
+      dispatch(this);
+    }
+  }, {
+    key: '#/all',
+    value: function all() {
+      (0, _trigger2.default)(this.el, 'filterchange', Filter.ALL);
+    }
+  }, {
+    key: '#/active',
+    value: function active() {
+      (0, _trigger2.default)(this.el, 'filterchange', Filter.ACTIVE);
+    }
+  }, {
+    key: '#/completed',
+    value: function completed() {
+      (0, _trigger2.default)(this.el, 'filterchange', Filter.COMPLETED);
+    }
+  }, {
+    key: '*',
+    value: function _() {
+      (0, _trigger2.default)(this.el, 'filterchange', Filter.ALL);
+    }
+  }]);
 
-	return Router;
+  return Router;
 }(), (_applyDecoratedDescriptor(_class2.prototype, '#/all', [route], Object.getOwnPropertyDescriptor(_class2.prototype, '#/all'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, '#/active', [route], Object.getOwnPropertyDescriptor(_class2.prototype, '#/active'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, '#/completed', [route], Object.getOwnPropertyDescriptor(_class2.prototype, '#/completed'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, '*', [route], Object.getOwnPropertyDescriptor(_class2.prototype, '*'), _class2.prototype)), _class2)) || _class;
 
 module.exports = Router;
@@ -12873,39 +12964,39 @@ var _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _class, _desc, _value
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
-	var desc = {};
-	Object['ke' + 'ys'](descriptor).forEach(function (key) {
-		desc[key] = descriptor[key];
-	});
-	desc.enumerable = !!desc.enumerable;
-	desc.configurable = !!desc.configurable;
+  var desc = {};
+  Object['ke' + 'ys'](descriptor).forEach(function (key) {
+    desc[key] = descriptor[key];
+  });
+  desc.enumerable = !!desc.enumerable;
+  desc.configurable = !!desc.configurable;
 
-	if ('value' in desc || desc.initializer) {
-		desc.writable = true;
-	}
+  if ('value' in desc || desc.initializer) {
+    desc.writable = true;
+  }
 
-	desc = decorators.slice().reverse().reduce(function (desc, decorator) {
-		return decorator(target, property, desc) || desc;
-	}, desc);
+  desc = decorators.slice().reverse().reduce(function (desc, decorator) {
+    return decorator(target, property, desc) || desc;
+  }, desc);
 
-	if (context && desc.initializer !== void 0) {
-		desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
-		desc.initializer = undefined;
-	}
+  if (context && desc.initializer !== void 0) {
+    desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
+    desc.initializer = undefined;
+  }
 
-	if (desc.initializer === void 0) {
-		Object['define' + 'Property'](target, property, desc);
-		desc = null;
-	}
+  if (desc.initializer === void 0) {
+    Object['define' + 'Property'](target, property, desc);
+    desc = null;
+  }
 
-	return desc;
+  return desc;
 }
 
 var TodoFactory = require('../domain/todo-factory');
 var TodoRepository = require('../domain/todo-repository');
 
 var _require = require('capsid'),
-    co = _require.co,
+    make = _require.make,
     on = _require.on,
     component = _require.component,
     wire = _require.wire;
@@ -12916,211 +13007,211 @@ var _require = require('capsid'),
 
 
 var Todoapp = (_dec = on('filterchange'), _dec2 = on('todo-new-item'), _dec3 = on('todo-item-toggle'), _dec4 = on('todo-item-destroy'), _dec5 = on('todo-item-edited'), _dec6 = on('todo-clear-completed'), _dec7 = on('toggle-all-uncheck'), _dec8 = on('toggle-all-check'), component(_class = (_class2 = function () {
-	function Todoapp() {
-		_classCallCheck(this, Todoapp);
-	}
+  function Todoapp() {
+    _classCallCheck(this, Todoapp);
+  }
 
-	_createClass(Todoapp, [{
-		key: '__init__',
-		value: function __init__() {
-			this.todoFactory = new TodoFactory();
-			this.todoRepository = new TodoRepository();
-			this.todoCollection = this.todoRepository.getAll();
+  _createClass(Todoapp, [{
+    key: '__init__',
+    value: function __init__() {
+      this.todoFactory = new TodoFactory();
+      this.todoRepository = new TodoRepository();
+      this.todoCollection = this.todoRepository.getAll();
 
-			var router = co('router', this.el);
+      var router = make('router', this.el);
 
-			setTimeout(function () {
-				return router.onHashchange();
-			});
+      setTimeout(function () {
+        return router.onHashchange();
+      });
 
-			$(window).on('hashchange', function () {
-				return router.onHashchange();
-			});
-		}
-	}, {
-		key: 'refreshControls',
-		value: function refreshControls() {
-			// updates filter buttons
-			this.filters.setFilter(this.filter);
+      $(window).on('hashchange', function () {
+        return router.onHashchange();
+      });
+    }
+  }, {
+    key: 'refreshControls',
+    value: function refreshControls() {
+      // updates filter buttons
+      this.filters.setFilter(this.filter);
 
-			// updates visibility of clear-completed area
-			this['clear-completed'].onUpdate(this.todoCollection);
+      // updates visibility of clear-completed area
+      this['clear-completed'].onUpdate(this.todoCollection);
 
-			// updates todo count
-			this['todo-count'].setCount(this.todoCollection.uncompleted().length);
+      // updates todo count
+      this['todo-count'].setCount(this.todoCollection.uncompleted().length);
 
-			// updates visibility of main and footer area
-			this.elem.find('.main, .footer').css('display', this.todoCollection.isEmpty() ? 'none' : 'block');
+      // updates visibility of main and footer area
+      this.elem.find('.main, .footer').css('display', this.todoCollection.isEmpty() ? 'none' : 'block');
 
-			// updates toggle-all button state
-			this['toggle-all'].updateBtnState(!this.todoCollection.uncompleted().isEmpty());
-		}
-	}, {
-		key: 'refreshAll',
-		value: function refreshAll() {
-			this.refreshControls();
+      // updates toggle-all button state
+      this['toggle-all'].updateBtnState(!this.todoCollection.uncompleted().isEmpty());
+    }
+  }, {
+    key: 'refreshAll',
+    value: function refreshAll() {
+      this.refreshControls();
 
-			this['todo-list'].onRefresh(this.todoCollection, this.filter);
-		}
-	}, {
-		key: 'onFilterchange',
-		value: function onFilterchange(e) {
-			this.filter = e.detail;
+      this['todo-list'].onRefresh(this.todoCollection, this.filter);
+    }
+  }, {
+    key: 'onFilterchange',
+    value: function onFilterchange(e) {
+      this.filter = e.detail;
 
-			this.refreshAll();
-		}
+      this.refreshAll();
+    }
 
-		/**
-   * Adds new item by the given title.
-   * @private
-   * @param {Object} e The event object
-   * @param {String} title The todo title
-   */
+    /**
+     * Adds new item by the given title.
+     * @private
+     * @param {Object} e The event object
+     * @param {String} title The todo title
+     */
 
-	}, {
-		key: 'addTodo',
-		value: function addTodo(e) {
-			var title = e.detail;
-			var todo = this.todoFactory.createByTitle(title);
+  }, {
+    key: 'addTodo',
+    value: function addTodo(e) {
+      var title = e.detail;
+      var todo = this.todoFactory.createByTitle(title);
 
-			this.todoCollection.push(todo);
-			this.save();
+      this.todoCollection.push(todo);
+      this.save();
 
-			this.refreshAll();
-		}
+      this.refreshAll();
+    }
 
-		/**
-   * Saves the current todo collection state.
-   */
+    /**
+     * Saves the current todo collection state.
+     */
 
-	}, {
-		key: 'save',
-		value: function save() {
-			this.todoRepository.saveAll(this.todoCollection);
-		}
+  }, {
+    key: 'save',
+    value: function save() {
+      this.todoRepository.saveAll(this.todoCollection);
+    }
 
-		/**
-   * Toggles the todo state of the given id.
-   * @param {object} e The event object
-   * @param {String} id The todo id
-   */
+    /**
+     * Toggles the todo state of the given id.
+     * @param {object} e The event object
+     * @param {String} id The todo id
+     */
 
-	}, {
-		key: 'toggle',
-		value: function toggle(e) {
-			var id = e.detail;
-			this.todoCollection.toggleById(id);
-			this.save();
+  }, {
+    key: 'toggle',
+    value: function toggle(e) {
+      var id = e.detail;
+      this.todoCollection.toggleById(id);
+      this.save();
 
-			if (this.filter.isAll()) {
-				this.refreshControls();
-			} else {
-				this.refreshAll();
-			}
-		}
+      if (this.filter.isAll()) {
+        this.refreshControls();
+      } else {
+        this.refreshAll();
+      }
+    }
 
-		/**
-   * Removes the todo of the given id.
-   * @param {object} e The event object
-   * @param {String} id The todo id
-   */
+    /**
+     * Removes the todo of the given id.
+     * @param {object} e The event object
+     * @param {String} id The todo id
+     */
 
-	}, {
-		key: 'remove',
-		value: function remove(e) {
-			var id = e.detail;
+  }, {
+    key: 'remove',
+    value: function remove(e) {
+      var id = e.detail;
 
-			this.todoCollection.removeById(id);
-			this.save();
+      this.todoCollection.removeById(id);
+      this.save();
 
-			this.refreshAll();
-		}
+      this.refreshAll();
+    }
 
-		/**
-   * Edits the todo item of the given id by the given title.
-   * @param {object} e The event object
-   * @param {string} id The todo id
-   * @param {string} title The todo title
-   */
+    /**
+     * Edits the todo item of the given id by the given title.
+     * @param {object} e The event object
+     * @param {string} id The todo id
+     * @param {string} title The todo title
+     */
 
-	}, {
-		key: 'editItem',
-		value: function editItem(e) {
-			var _e$detail = e.detail,
-			    id = _e$detail.id,
-			    title = _e$detail.title;
+  }, {
+    key: 'editItem',
+    value: function editItem(e) {
+      var _e$detail = e.detail,
+          id = _e$detail.id,
+          title = _e$detail.title;
 
 
-			this.todoCollection.getById(id).title = title;
-			this.save();
-		}
+      this.todoCollection.getById(id).title = title;
+      this.save();
+    }
 
-		/**
-   * Clears the completed todos.
-   */
+    /**
+     * Clears the completed todos.
+     */
 
-	}, {
-		key: 'clearCompleted',
-		value: function clearCompleted() {
-			this.todoCollection = this.todoCollection.uncompleted();
-			this.save();
+  }, {
+    key: 'clearCompleted',
+    value: function clearCompleted() {
+      this.todoCollection = this.todoCollection.uncompleted();
+      this.save();
 
-			this.refreshAll();
-		}
+      this.refreshAll();
+    }
 
-		/**
-   * Uncompletes all the todo items.
-   * @private
-   */
+    /**
+     * Uncompletes all the todo items.
+     * @private
+     */
 
-	}, {
-		key: 'uncompleteAll',
-		value: function uncompleteAll() {
-			if (this.filter.isAll()) {
-				this['todo-list'].toggleAll(this.todoCollection.completed());
-			} else {
-				this.todoCollection.uncompleteAll();
-				this.save();
+  }, {
+    key: 'uncompleteAll',
+    value: function uncompleteAll() {
+      if (this.filter.isAll()) {
+        this['todo-list'].toggleAll(this.todoCollection.completed());
+      } else {
+        this.todoCollection.uncompleteAll();
+        this.save();
 
-				this.refreshAll();
-			}
-		}
+        this.refreshAll();
+      }
+    }
 
-		/**
-   * Completes all the todo items.
-   * @private
-   */
+    /**
+    * Completes all the todo items.
+    * @private
+    */
 
-	}, {
-		key: 'completeAll',
-		value: function completeAll() {
-			if (this.filter.isAll()) {
-				this['todo-list'].toggleAll(this.todoCollection.uncompleted());
-			} else {
-				this.todoCollection.completeAll();
-				this.save();
+  }, {
+    key: 'completeAll',
+    value: function completeAll() {
+      if (this.filter.isAll()) {
+        this['todo-list'].toggleAll(this.todoCollection.uncompleted());
+      } else {
+        this.todoCollection.completeAll();
+        this.save();
 
-				this.refreshAll();
-			}
-		}
-	}, {
-		key: 'todo-list',
-		get: function get() {}
-	}, {
-		key: 'filters',
-		get: function get() {}
-	}, {
-		key: 'clear-completed',
-		get: function get() {}
-	}, {
-		key: 'todo-count',
-		get: function get() {}
-	}, {
-		key: 'toggle-all',
-		get: function get() {}
-	}]);
+        this.refreshAll();
+      }
+    }
+  }, {
+    key: 'todo-list',
+    get: function get() {}
+  }, {
+    key: 'filters',
+    get: function get() {}
+  }, {
+    key: 'clear-completed',
+    get: function get() {}
+  }, {
+    key: 'todo-count',
+    get: function get() {}
+  }, {
+    key: 'toggle-all',
+    get: function get() {}
+  }]);
 
-	return Todoapp;
+  return Todoapp;
 }(), (_applyDecoratedDescriptor(_class2.prototype, 'todo-list', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'todo-list'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'filters', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'filters'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'clear-completed', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'clear-completed'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'todo-count', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'todo-count'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'toggle-all', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggle-all'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'onFilterchange', [_dec], Object.getOwnPropertyDescriptor(_class2.prototype, 'onFilterchange'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'addTodo', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'addTodo'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'toggle', [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggle'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'remove', [_dec4], Object.getOwnPropertyDescriptor(_class2.prototype, 'remove'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'editItem', [_dec5], Object.getOwnPropertyDescriptor(_class2.prototype, 'editItem'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'clearCompleted', [_dec6], Object.getOwnPropertyDescriptor(_class2.prototype, 'clearCompleted'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'uncompleteAll', [_dec7], Object.getOwnPropertyDescriptor(_class2.prototype, 'uncompleteAll'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'completeAll', [_dec8], Object.getOwnPropertyDescriptor(_class2.prototype, 'completeAll'), _class2.prototype)), _class2)) || _class);
 
 
@@ -13130,11 +13221,11 @@ module.exports = Todoapp;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
-	value: true
+  value: true
 });
 
 exports.default = function (el, type, detail) {
-	$(el)[0].dispatchEvent(new CustomEvent(type, { detail: detail, bubbles: true }));
+  $(el)[0].dispatchEvent(new CustomEvent(type, { detail: detail, bubbles: true }));
 };
 
 },{}]},{},[26]);

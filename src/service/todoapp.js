@@ -1,7 +1,7 @@
 const TodoFactory = require('../domain/todo-factory')
 const TodoRepository = require('../domain/todo-repository')
 
-const { co, on, component, wire } = require('capsid')
+const { make, on, component, wire } = require('capsid')
 
 /**
  * The todo application class.
@@ -13,7 +13,7 @@ class Todoapp {
     this.todoRepository = new TodoRepository()
     this.todoCollection = this.todoRepository.getAll()
 
-    const router = co('router', this.el)
+    const router = make('router', this.el)
 
     setTimeout(() => router.onHashchange())
 
