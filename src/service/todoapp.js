@@ -1,7 +1,9 @@
 const TodoFactory = require('../domain/todo-factory')
 const TodoRepository = require('../domain/todo-repository')
 
-const { make, on, component, wire } = require('capsid')
+const { ACTION: { MODEL_UPDATE } } = require('../const')
+
+const { pub, make, on, component, wire } = require('capsid')
 
 /**
  * The todo application class.
@@ -20,23 +22,16 @@ class Todoapp {
     $(window).on('hashchange', () => router.onHashchange())
   }
 
-  @wire
-  get 'todo-list' () {}
-  @wire
-  get filters () {}
-  @wire
-  get 'clear-completed' () {}
-  @wire
-  get 'todo-count' () {}
-  @wire
-  get 'toggle-all' () {}
+  @wire get 'todo-list' () {}
+  @wire get filters () {}
+  @wire get 'todo-count' () {}
+  @wire get 'toggle-all' () {}
 
+  @pub(MODEL_UPDATE, '.is-model-observer')
   refreshControls () {
+    console.log('model-update')
     // updates filter buttons
     this.filters.setFilter(this.filter)
-
-    // updates visibility of clear-completed area
-    this['clear-completed'].onUpdate(this.todoCollection)
 
     // updates todo count
     this['todo-count'].setCount(this.todoCollection.uncompleted().length)
@@ -50,6 +45,8 @@ class Todoapp {
     this['toggle-all'].updateBtnState(
       !this.todoCollection.uncompleted().isEmpty()
     )
+
+    return this
   }
 
   refreshAll () {

@@ -4,9 +4,230 @@
 Object.defineProperty(exports, '__esModule', { value: true });
 
 //      
+
+
+/**
+ * The mapping from class-component name to its initializer function.
+ */
+var ccc = {};
+
+//      
+/**
+ * Asserts the given condition holds, otherwise throws.
+ * @param assertion The assertion expression
+ * @param message The assertion message
+ */
+function check(assertion, message) {
+  if (!assertion) {
+    throw new Error(message);
+  }
+}
+
+/**
+ * @param classNames The class names
+ */
+
+/**
+ * Asserts the given name is a valid component name.
+ * @param name The component name
+ */
+function checkComponentNameIsValid(name) {
+  check(typeof name === 'string', 'The name should be a string');
+  check(!!ccc[name], 'The coelement of the given name is not registered: ' + name);
+}
+
+//      
+
+var READY_STATE_CHANGE = 'readystatechange';
+var doc = document;
+
+var ready = new Promise(function (resolve) {
+  var checkReady = function checkReady() {
+    if (doc.readyState === 'complete') {
+      resolve();
+      doc.removeEventListener(READY_STATE_CHANGE, checkReady);
+    }
+  };
+
+  doc.addEventListener(READY_STATE_CHANGE, checkReady);
+
+  checkReady();
+});
+
+var documentElement = doc.documentElement;
+
+//      
+/**
+ * Initializes the class components of the given name in the range of the given element.
+ * @param name The class name
+ * @param el The dom where class componets are initialized
+ * @throws when the class name is invalid type.
+ */
+var prep = function prep(name, el) {
+  var classNames = void 0;
+
+  if (!name) {
+    classNames = Object.keys(ccc);
+  } else {
+    checkComponentNameIsValid(name);
+
+    classNames = [name];
+  }
+
+  classNames.map(function (className) {
+    [].map.call((el || doc).querySelectorAll(ccc[className].sel), ccc[className]);
+  });
+};
+
+//      
+
+
+var pluginHooks = [];
+
+//      
 var COELEMENT_DATA_KEY_PREFIX = '__coelement:';
 var KEY_EVENT_LISTENERS = '__cc_listeners__';
 var INITIALIZED_KEY = '__cc_initialized__';
+
+//      
+
+var initConstructor = function initConstructor(constructor) {
+  constructor[INITIALIZED_KEY] = true;
+
+  // Expose capsid here
+  constructor.capsid = capsid;
+
+  // If the constructor has the static __init__, then calls it.
+  if (typeof constructor.__init__ === 'function') {
+    constructor.__init__();
+  }
+};
+
+//      
+
+/**
+ * Initialize component.
+ * @param Constructor The coelement class
+ * @param el The element
+ * @param name The coelement name
+ * @return The created coelement instance
+ */
+var mount = function mount(Constructor, el, name) {
+  if (!Constructor[INITIALIZED_KEY]) {
+    initConstructor(Constructor);
+  }
+
+  var coelem = new Constructor();
+
+  // Assigns element to coelement's .el property
+  coelem.el = el;
+
+  if (name) {
+    // Assigns coelement to element's "hidden" property
+    el[COELEMENT_DATA_KEY_PREFIX + name] = coelem;
+  }
+
+  // Initialize event listeners defined by @emit decorator
+  (Constructor[KEY_EVENT_LISTENERS] || []).map(function (listenerBinder) {
+    listenerBinder(el, coelem);
+  });
+
+  // Executes plugin hooks
+  pluginHooks.forEach(function (pluginHook) {
+    pluginHook(el, coelem);
+  });
+
+  if (typeof coelem.__init__ === 'function') {
+    coelem.__init__();
+  }
+
+  return coelem;
+};
+
+//      
+
+/**
+ * Registers the class-component for the given name and constructor and returns the constructor.
+ * @param name The component name
+ * @param Constructor The constructor of the class component
+ * @return The registered component class
+ */
+var def = function def(name, Constructor) {
+  check(typeof name === 'string', '`name` of a class component has to be a string.');
+  check(typeof Constructor === 'function', '`Constructor` of a class component has to be a function');
+
+  var initClass = name + '-initialized';
+
+  /**
+   * Initializes the html element by the configuration.
+   * @param el The html element
+   * @param coelem The dummy parameter, don't use
+   */
+  var initializer = function initializer(el, coelem) {
+    var classList = el.classList;
+
+    if (!classList.contains(initClass)) {
+      classList.add(name, initClass);
+
+      mount(Constructor, el, name);
+    }
+  };
+
+  // The selector
+  initializer.sel = '.' + name + ':not(.' + initClass + ')';
+
+  ccc[name] = initializer;
+
+  ready.then(function () {
+    prep(name);
+  });
+};
+
+//      
+
+/**
+ * Gets the eoelement instance of the class-component of the given name
+ * @param name The class-component name
+ * @param el The element
+ */
+var get = function get(name, el) {
+  checkComponentNameIsValid(name);
+
+  var coelement = el[COELEMENT_DATA_KEY_PREFIX + name];
+
+  check(coelement, 'no coelement named: ' + name + ', on the dom: ' + el.tagName);
+
+  return coelement;
+};
+
+//      
+
+/**
+ * Initializes the given element as the class-component.
+ * @param name The name of the class component
+ * @param el The element to initialize
+ */
+var init = function init(name, el) {
+  checkComponentNameIsValid(name);
+
+  ccc[name](el);
+};
+
+//      
+
+/**
+ * Initializes the given element as the class-component.
+ * @param name The name of the class component
+ * @param el The element to initialize
+ * @return
+ */
+var make = function make(name, elm) {
+  init(name, elm);
+
+  return get(name, elm);
+};
+
+//
 
 //      
 /**
@@ -48,8 +269,8 @@ var onClick = on('click');
  * @param type The event type
  * @param detail The optional detail object
  */
-var trigger = function trigger(el, type, detail) {
-  el.dispatchEvent(new CustomEvent(type, { detail: detail, bubbles: true }));
+var trigger = function trigger(el, type, bubbles, detail) {
+  el.dispatchEvent(new CustomEvent(type, { detail: detail, bubbles: bubbles }));
 };
 
 //      
@@ -71,7 +292,7 @@ var emit = function emit(event) {
       var result = method.apply(this, arguments);
 
       var emit = function emit(x) {
-        return trigger(_this.el, event, x);
+        return trigger(_this.el, event, true, x);
       };
 
       if (result && result.then) {
@@ -95,82 +316,12 @@ emit.first = function (event) {
     var method = descriptor.value;
 
     descriptor.value = function () {
-      trigger(this.el, event, arguments[0]);
+      trigger(this.el, event, true, arguments[0]);
 
       return method.apply(this, arguments);
     };
   };
 };
-
-//      
-
-
-/**
- * The mapping from class-component name to its initializer function.
- */
-var ccc = {};
-
-//      
-/**
- * Asserts the given condition holds, otherwise throws.
- * @param assertion The assertion expression
- * @param message The assertion message
- */
-function check(assertion, message) {
-  if (!assertion) {
-    throw new Error(message);
-  }
-}
-
-/**
- * @param classNames The class names
- */
-
-/**
- * Asserts the given name is a valid component name.
- * @param name The component name
- */
-function checkComponentNameIsValid(name) {
-  check(typeof name === 'string', 'The name should be a string');
-  check(!!ccc[name], 'The coelement of the given name is not registered: ' + name);
-}
-
-//      
-
-/**
- * Gets the eoelement instance of the class-component of the given name
- * @param name The class-component name
- * @param el The element
- */
-var get = function get(name, el) {
-  checkComponentNameIsValid(name);
-
-  var coelement = el[COELEMENT_DATA_KEY_PREFIX + name];
-
-  check(coelement, 'no coelement named: ' + name + ', on the dom: ' + el.tagName);
-
-  return coelement;
-};
-
-//      
-
-var READY_STATE_CHANGE = 'readystatechange';
-var doc = document;
-
-var ready = new Promise(function (resolve) {
-  var checkReady = function checkReady() {
-    if (doc.readyState === 'complete') {
-      resolve();
-      doc.removeEventListener(READY_STATE_CHANGE, checkReady);
-    }
-  };
-
-  doc.addEventListener(READY_STATE_CHANGE, checkReady);
-
-  checkReady();
-});
-
-var documentElement = doc.documentElement;
 
 //      
 
@@ -249,117 +400,6 @@ wireComponent.el = wireElement;
 wireComponent.elAll = wireElementAll;
 
 //      
-/**
- * Initializes the class components of the given name in the range of the given element.
- * @param name The class name
- * @param el The dom where class componets are initialized
- * @throws when the class name is invalid type.
- */
-var prep = function prep(name, el) {
-  var classNames = void 0;
-
-  if (!name) {
-    classNames = Object.keys(ccc);
-  } else {
-    checkComponentNameIsValid(name);
-
-    classNames = [name];
-  }
-
-  classNames.map(function (className) {
-    [].map.call((el || doc).querySelectorAll(ccc[className].sel), ccc[className]);
-  });
-};
-
-//      
-
-
-var pluginHooks = [];
-
-//      
-
-var initConstructor = function initConstructor(constructor) {
-  constructor[INITIALIZED_KEY] = true;
-
-  // Expose capsid here
-  constructor.capsid = capsid;
-
-  // If the constructor has the static __init__, then calls it.
-  if (typeof constructor.__init__ === 'function') {
-    constructor.__init__();
-  }
-};
-
-//      
-
-/**
- * Initialize component.
- * @param Constructor The coelement class
- * @param el The element
- * @return The created coelement instance
- */
-var initComponent = function initComponent(Constructor, el) {
-  if (!Constructor[INITIALIZED_KEY]) {
-    initConstructor(Constructor);
-  }
-
-  var coelem = new Constructor();
-
-  pluginHooks.forEach(function (pluginHook) {
-    pluginHook(el, coelem);
-  });
-
-  coelem.el = el;
-
-  if (typeof coelem.__init__ === 'function') {
-    coelem.__init__();
-  }
-
-  (Constructor[KEY_EVENT_LISTENERS] || []).map(function (listenerBinder) {
-    listenerBinder(el, coelem);
-  });
-
-  return coelem;
-};
-
-//      
-
-/**
- * Registers the class-component for the given name and constructor and returns the constructor.
- * @param name The component name
- * @param Constructor The constructor of the class component
- * @return The registered component class
- */
-var def = function def(name, Constructor) {
-  check(typeof name === 'string', '`name` of a class component has to be a string.');
-  check(typeof Constructor === 'function', '`Constructor` of a class component has to be a function');
-
-  var initClass = name + '-initialized';
-
-  /**
-   * Initializes the html element by the configuration.
-   * @param el The html element
-   * @param coelem The dummy parameter, don't use
-   */
-  var initializer = function initializer(el, coelem) {
-    var classList = el.classList;
-
-    if (!classList.contains(initClass)) {
-      classList.add(name, initClass);el[COELEMENT_DATA_KEY_PREFIX + name] = initComponent(Constructor, el);
-    }
-  };
-
-  // The selector
-  initializer.sel = '.' + name + ':not(.' + initClass + ')';
-
-  ccc[name] = initializer;
-
-  ready.then(function () {
-    prep(name);
-  });
-};
-
-//      
 
 /**
  * The decorator for class component registration.
@@ -379,65 +419,70 @@ var component = function component(name) {
   return component(camelToKebab(name.name))(name);
 };
 
+//      
+
+/**
+ * Adds the function to publish the given event to the descendent elements of the given selector to the decorated method.
+ */
+var pub = function pub(event, selector) {
+  return function (target, key, descriptor) {
+    var method = descriptor.value;
+
+    descriptor.value = function () {
+      var _this2 = this;
+
+      var result = method.apply(this, arguments);
+      var forEach = [].forEach;
+
+      var emit = function emit(x) {
+        forEach.call(_this2.el.querySelectorAll(selector), function (el) {
+          return trigger(el, event, false, x);
+        });
+      };
+
+      if (result && result.then) {
+        result.then(emit);
+      } else {
+        emit(result);
+      }
+
+      return result;
+    };
+  };
+};
+
 on.click = onClick;
-
-//      
-
-/**
- * Initializes the given element as the class-component.
- * @param name The name of the class component
- * @param el The element to initialize
- */
-var init = function init(name, el) {
-  checkComponentNameIsValid(name);
-
-  ccc[name](el);
-};
-
-//      
-
-/**
- * Initializes the given element as the class-component.
- * @param name The name of the class component
- * @param el The element to initialize
- * @return
- */
-var make = function make(name, elm) {
-  init(name, elm);
-
-  return get(name, elm);
-};
 
 //      
 
 
 var capsid = Object.freeze({
+  def: def,
+  prep: prep,
+  make: make,
+  mount: mount,
+  get: get,
   on: on,
   emit: emit,
   wire: wireComponent,
   component: component,
-  def: def,
-  prep: prep,
-  init: init,
-  initComponent: initComponent,
+  pub: pub,
   __ccc__: ccc,
-  make: make,
-  pluginHooks: pluginHooks,
-  get: get
+  pluginHooks: pluginHooks
 });
 
+exports.def = def;
+exports.prep = prep;
+exports.make = make;
+exports.mount = mount;
+exports.get = get;
 exports.on = on;
 exports.emit = emit;
 exports.wire = wireComponent;
 exports.component = component;
-exports.def = def;
-exports.prep = prep;
-exports.init = init;
-exports.initComponent = initComponent;
+exports.pub = pub;
 exports.__ccc__ = ccc;
-exports.make = make;
 exports.pluginHooks = pluginHooks;
-exports.get = get;
 },{}],2:[function(require,module,exports){
 (function () {
   'use strict';
@@ -484,7 +529,7 @@ exports.get = get;
   var init = function init(capsid, $) {
     var ccc = capsid.__ccc__;
     var _get = capsid.get;
-    var init = capsid.init;
+    var make = capsid.make;
     var wire = capsid.wire;
 
     var descriptor = { get: function get() {
@@ -505,7 +550,7 @@ exports.get = get;
           cc = dom.cc = function (classNames) {
             checkClassNamesAreStringOrNull(classNames);(classNames || dom.className).split(/\s+/).map(function (className) {
               if (ccc[className]) {
-                init(className, dom);
+                make(className, dom);
               }
             });
 
@@ -11617,13 +11662,7 @@ module.exports = Array.isArray || function (arr) {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _dec, _class, _desc, _value, _class2;
-
-var _trigger = require('../util/trigger');
-
-var _trigger2 = _interopRequireDefault(_trigger);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _dec, _dec2, _dec3, _dec4, _dec5, _class, _desc, _value, _class2;
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -11657,38 +11696,40 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
 }
 
 var _require = require('capsid'),
-    component = _require.component,
-    on = _require.on;
+    on = _require.on,
+    emit = _require.emit,
+    wire = _require.wire,
+    component = _require.component;
 
-var ClearCompleted = (_dec = on('click'), component(_class = (_class2 = function () {
-  function ClearCompleted() {
-    _classCallCheck(this, ClearCompleted);
+var BottomControl = (_dec = component('footer'), _dec2 = wire.el('.clear-completed'), _dec3 = on('click', { at: '.clear-completed' }), _dec4 = emit('todo-clear-completed'), _dec5 = on('model-update'), _dec(_class = (_class2 = function () {
+  function BottomControl() {
+    _classCallCheck(this, BottomControl);
   }
 
-  _createClass(ClearCompleted, [{
-    key: 'onClick',
-    value: function onClick() {
-      (0, _trigger2.default)(this.el, 'todo-clear-completed');
-    }
-
-    /**
-     * @param {TodoCollection} todos The todo collection
-     */
-
+  _createClass(BottomControl, [{
+    key: 'clearCompletedTodos',
+    value: function clearCompletedTodos() {}
   }, {
     key: 'onUpdate',
-    value: function onUpdate(todos) {
-      this.$el.css('display', todos.completed().isEmpty() ? 'none' : 'inline');
+    value: function onUpdate(e) {
+      console.log(e);
+      var todoCollection = e.detail.todoCollection;
+
+
+      this.clearCompletedButton.style.display = todoCollection.completed().isEmpty() ? 'none' : 'inline';
     }
+  }, {
+    key: 'clearCompletedButton',
+    get: function get() {}
   }]);
 
-  return ClearCompleted;
-}(), (_applyDecoratedDescriptor(_class2.prototype, 'onClick', [_dec], Object.getOwnPropertyDescriptor(_class2.prototype, 'onClick'), _class2.prototype)), _class2)) || _class);
+  return BottomControl;
+}(), (_applyDecoratedDescriptor(_class2.prototype, 'clearCompletedButton', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'clearCompletedButton'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'clearCompletedTodos', [_dec3, _dec4], Object.getOwnPropertyDescriptor(_class2.prototype, 'clearCompletedTodos'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'onUpdate', [_dec5], Object.getOwnPropertyDescriptor(_class2.prototype, 'onUpdate'), _class2.prototype)), _class2)) || _class);
 
 
-module.exports = ClearCompleted;
+module.exports = BottomControl;
 
-},{"../util/trigger":30,"capsid":1}],12:[function(require,module,exports){
+},{"capsid":1}],12:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -11870,13 +11911,13 @@ module.exports = Filters;
 require('./todo-item');
 require('./new-todo');
 require('./todo-list');
-require('./clear-completed');
 require('./filters');
 require('./edit');
 require('./todo-count');
 require('./toggle-all');
+require('./bottom-control');
 
-},{"./clear-completed":11,"./edit":12,"./filters":13,"./new-todo":15,"./todo-count":16,"./todo-item":17,"./todo-list":18,"./toggle-all":19}],15:[function(require,module,exports){
+},{"./bottom-control":11,"./edit":12,"./filters":13,"./new-todo":15,"./todo-count":16,"./todo-item":17,"./todo-list":18,"./toggle-all":19}],15:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -12959,7 +13000,7 @@ module.exports = Router;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _class, _desc, _value, _class2;
+var _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _class, _desc, _value, _class2;
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -12996,6 +13037,7 @@ var TodoFactory = require('../domain/todo-factory');
 var TodoRepository = require('../domain/todo-repository');
 
 var _require = require('capsid'),
+    pub = _require.pub,
     make = _require.make,
     on = _require.on,
     component = _require.component,
@@ -13006,7 +13048,7 @@ var _require = require('capsid'),
  */
 
 
-var Todoapp = (_dec = on('filterchange'), _dec2 = on('todo-new-item'), _dec3 = on('todo-item-toggle'), _dec4 = on('todo-item-destroy'), _dec5 = on('todo-item-edited'), _dec6 = on('todo-clear-completed'), _dec7 = on('toggle-all-uncheck'), _dec8 = on('toggle-all-check'), component(_class = (_class2 = function () {
+var Todoapp = (_dec = pub('model-update', '.is-model-observer'), _dec2 = on('filterchange'), _dec3 = on('todo-new-item'), _dec4 = on('todo-item-toggle'), _dec5 = on('todo-item-destroy'), _dec6 = on('todo-item-edited'), _dec7 = on('todo-clear-completed'), _dec8 = on('toggle-all-uncheck'), _dec9 = on('toggle-all-check'), component(_class = (_class2 = function () {
   function Todoapp() {
     _classCallCheck(this, Todoapp);
   }
@@ -13031,11 +13073,9 @@ var Todoapp = (_dec = on('filterchange'), _dec2 = on('todo-new-item'), _dec3 = o
   }, {
     key: 'refreshControls',
     value: function refreshControls() {
+      console.log('model-update');
       // updates filter buttons
       this.filters.setFilter(this.filter);
-
-      // updates visibility of clear-completed area
-      this['clear-completed'].onUpdate(this.todoCollection);
 
       // updates todo count
       this['todo-count'].setCount(this.todoCollection.uncompleted().length);
@@ -13045,6 +13085,8 @@ var Todoapp = (_dec = on('filterchange'), _dec2 = on('todo-new-item'), _dec3 = o
 
       // updates toggle-all button state
       this['toggle-all'].updateBtnState(!this.todoCollection.uncompleted().isEmpty());
+
+      return this;
     }
   }, {
     key: 'refreshAll',
@@ -13178,9 +13220,9 @@ var Todoapp = (_dec = on('filterchange'), _dec2 = on('todo-new-item'), _dec3 = o
     }
 
     /**
-    * Completes all the todo items.
-    * @private
-    */
+     * Completes all the todo items.
+     * @private
+     */
 
   }, {
     key: 'completeAll',
@@ -13201,9 +13243,6 @@ var Todoapp = (_dec = on('filterchange'), _dec2 = on('todo-new-item'), _dec3 = o
     key: 'filters',
     get: function get() {}
   }, {
-    key: 'clear-completed',
-    get: function get() {}
-  }, {
     key: 'todo-count',
     get: function get() {}
   }, {
@@ -13212,7 +13251,7 @@ var Todoapp = (_dec = on('filterchange'), _dec2 = on('todo-new-item'), _dec3 = o
   }]);
 
   return Todoapp;
-}(), (_applyDecoratedDescriptor(_class2.prototype, 'todo-list', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'todo-list'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'filters', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'filters'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'clear-completed', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'clear-completed'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'todo-count', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'todo-count'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'toggle-all', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggle-all'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'onFilterchange', [_dec], Object.getOwnPropertyDescriptor(_class2.prototype, 'onFilterchange'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'addTodo', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'addTodo'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'toggle', [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggle'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'remove', [_dec4], Object.getOwnPropertyDescriptor(_class2.prototype, 'remove'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'editItem', [_dec5], Object.getOwnPropertyDescriptor(_class2.prototype, 'editItem'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'clearCompleted', [_dec6], Object.getOwnPropertyDescriptor(_class2.prototype, 'clearCompleted'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'uncompleteAll', [_dec7], Object.getOwnPropertyDescriptor(_class2.prototype, 'uncompleteAll'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'completeAll', [_dec8], Object.getOwnPropertyDescriptor(_class2.prototype, 'completeAll'), _class2.prototype)), _class2)) || _class);
+}(), (_applyDecoratedDescriptor(_class2.prototype, 'todo-list', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'todo-list'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'filters', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'filters'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'todo-count', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'todo-count'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'toggle-all', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggle-all'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'refreshControls', [_dec], Object.getOwnPropertyDescriptor(_class2.prototype, 'refreshControls'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'onFilterchange', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'onFilterchange'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'addTodo', [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, 'addTodo'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'toggle', [_dec4], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggle'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'remove', [_dec5], Object.getOwnPropertyDescriptor(_class2.prototype, 'remove'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'editItem', [_dec6], Object.getOwnPropertyDescriptor(_class2.prototype, 'editItem'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'clearCompleted', [_dec7], Object.getOwnPropertyDescriptor(_class2.prototype, 'clearCompleted'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'uncompleteAll', [_dec8], Object.getOwnPropertyDescriptor(_class2.prototype, 'uncompleteAll'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'completeAll', [_dec9], Object.getOwnPropertyDescriptor(_class2.prototype, 'completeAll'), _class2.prototype)), _class2)) || _class);
 
 
 module.exports = Todoapp;

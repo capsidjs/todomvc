@@ -6,5 +6,9 @@ module.exports = {
 
   STORAGE_KEY: {
     TODO_LIST: 'todos-class-component'
+  },
+
+  ACTION: {
+    MODEL_UPDATE: 'model-update'
   }
 }
