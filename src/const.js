@@ -5,7 +5,7 @@ module.exports = {
   },
 
   STORAGE_KEY: {
-    TODO_LIST: 'todos-class-component'
+    TODO_LIST: 'todos-capsid'
   },
 
   ACTION: {
