@@ -11897,7 +11897,7 @@ require('./bottom-control');
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _dec, _class, _desc, _value, _class2;
+var _dec, _dec2, _class, _desc, _value, _class2;
 
 var _trigger = require('../util/trigger');
 
@@ -11938,7 +11938,11 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
 
 var Const = require('../const');
 
+var KEYCODE = Const.KEYCODE,
+    NEW_ITEM = Const.ACTION.NEW_ITEM;
+
 var _require = require('capsid'),
+    emit = _require.emit,
     on = _require.on,
     component = _require.component;
 
@@ -11947,7 +11951,7 @@ var _require = require('capsid'),
  */
 
 
-var NewTodo = (_dec = on('keypress'), component(_class = (_class2 = function () {
+var NewTodo = (_dec = on('keypress'), _dec2 = emit(NEW_ITEM), component(_class = (_class2 = function () {
   function NewTodo() {
     _classCallCheck(this, NewTodo);
   }
@@ -11955,23 +11959,29 @@ var NewTodo = (_dec = on('keypress'), component(_class = (_class2 = function () 
   _createClass(NewTodo, [{
     key: 'onKeypress',
     value: function onKeypress(e) {
-      if (e.which !== Const.KEYCODE.ENTER) {
+      if (e.which !== KEYCODE.ENTER) {
         return;
       }
 
-      if (!this.elem.val() || !this.elem.val().trim()) {
+      var title = this.el.value && this.el.value.trim();
+
+      if (!title) {
         return;
       }
 
-      var title = this.elem.val().trim();
-      this.elem.val('');
+      this.emitNewItem(title);
+    }
+  }, {
+    key: 'emitNewItem',
+    value: function emitNewItem(title) {
+      this.el.value = '';
 
-      (0, _trigger2.default)(this.el, 'todo-new-item', title);
+      return title;
     }
   }]);
 
   return NewTodo;
-}(), (_applyDecoratedDescriptor(_class2.prototype, 'onKeypress', [_dec], Object.getOwnPropertyDescriptor(_class2.prototype, 'onKeypress'), _class2.prototype)), _class2)) || _class);
+}(), (_applyDecoratedDescriptor(_class2.prototype, 'onKeypress', [_dec], Object.getOwnPropertyDescriptor(_class2.prototype, 'onKeypress'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'emitNewItem', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'emitNewItem'), _class2.prototype)), _class2)) || _class);
 
 
 module.exports = NewTodo;
@@ -12345,7 +12355,8 @@ module.exports = {
   },
 
   ACTION: {
-    MODEL_UPDATE: 'model-update'
+    MODEL_UPDATE: 'model-update',
+    NEW_ITEM: 'todo-new-item'
   }
 };
 
@@ -12982,7 +12993,9 @@ var TodoFactory = require('../domain/todo-factory');
 var TodoRepository = require('../domain/todo-repository');
 
 var _require = require('../const'),
-    MODEL_UPDATE = _require.ACTION.MODEL_UPDATE;
+    _require$ACTION = _require.ACTION,
+    MODEL_UPDATE = _require$ACTION.MODEL_UPDATE,
+    NEW_ITEM = _require$ACTION.NEW_ITEM;
 
 var _require2 = require('capsid'),
     pub = _require2.pub,
@@ -12996,7 +13009,7 @@ var _require2 = require('capsid'),
  */
 
 
-var Todoapp = (_dec = pub(MODEL_UPDATE, '.is-model-observer'), _dec2 = on('filterchange'), _dec3 = on('todo-new-item'), _dec4 = on('todo-item-toggle'), _dec5 = on('todo-item-destroy'), _dec6 = on('todo-item-edited'), _dec7 = on('todo-clear-completed'), _dec8 = on('toggle-all-uncheck'), _dec9 = on('toggle-all-check'), component(_class = (_class2 = function () {
+var Todoapp = (_dec = pub(MODEL_UPDATE, '.is-model-observer'), _dec2 = on('filterchange'), _dec3 = on(NEW_ITEM), _dec4 = on('todo-item-toggle'), _dec5 = on('todo-item-destroy'), _dec6 = on('todo-item-edited'), _dec7 = on('todo-clear-completed'), _dec8 = on('toggle-all-uncheck'), _dec9 = on('toggle-all-check'), component(_class = (_class2 = function () {
   function Todoapp() {
     _classCallCheck(this, Todoapp);
   }

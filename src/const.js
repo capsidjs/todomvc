@@ -9,6 +9,7 @@ module.exports = {
   },
 
   ACTION: {
-    MODEL_UPDATE: 'model-update'
+    MODEL_UPDATE: 'model-update',
+    NEW_ITEM: 'todo-new-item'
   }
 }

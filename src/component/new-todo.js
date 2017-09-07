@@ -1,8 +1,8 @@
-import trigger from '../util/trigger'
-
 const Const = require('../const')
 
-const {on, component} = require('capsid')
+const { KEYCODE, ACTION: { NEW_ITEM } } = Const
+
+const { emit, on, component } = require('capsid')
 
 /**
  * TodoInput class controls the input for adding todos.
@@ -15,18 +15,24 @@ class NewTodo {
    */
   @on('keypress')
   onKeypress (e) {
-    if (e.which !== Const.KEYCODE.ENTER) {
+    if (e.which !== KEYCODE.ENTER) {
       return
     }
 
-    if (!this.elem.val() || !this.elem.val().trim()) {
+    const title = this.el.value && this.el.value.trim()
+
+    if (!title) {
       return
     }
 
-    const title = this.elem.val().trim()
-    this.elem.val('')
+    this.emitNewItem(title)
+  }
 
-    trigger(this.el, 'todo-new-item', title)
+  @emit(NEW_ITEM)
+  emitNewItem (title) {
+    this.el.value = ''
+
+    return title
   }
 }
 

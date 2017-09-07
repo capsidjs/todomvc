@@ -1,7 +1,7 @@
 const TodoFactory = require('../domain/todo-factory')
 const TodoRepository = require('../domain/todo-repository')
 
-const { ACTION: { MODEL_UPDATE } } = require('../const')
+const { ACTION: { MODEL_UPDATE, NEW_ITEM } } = require('../const')
 
 const { pub, make, on, component, wire } = require('capsid')
 
@@ -59,7 +59,7 @@ class Todoapp {
    * @param {Object} e The event object
    * @param {String} title The todo title
    */
-  @on('todo-new-item')
+  @on(NEW_ITEM)
   addTodo (e) {
     const title = e.detail
     const todo = this.todoFactory.createByTitle(title)
