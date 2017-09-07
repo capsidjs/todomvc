@@ -23,16 +23,11 @@ class Todoapp {
   }
 
   @wire get 'todo-list' () {}
-  @wire get filters () {}
   @wire get 'todo-count' () {}
   @wire get 'toggle-all' () {}
 
   @pub(MODEL_UPDATE, '.is-model-observer')
   refreshControls () {
-    console.log('model-update')
-    // updates filter buttons
-    this.filters.setFilter(this.filter)
-
     // updates todo count
     this['todo-count'].setCount(this.todoCollection.uncompleted().length)
 
