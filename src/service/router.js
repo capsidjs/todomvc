@@ -4,7 +4,7 @@ const { route, dispatch } = require('hash-route')
 
 const Filter = require('../domain/filter')
 
-const { component } = require('capsid')
+const { component, emit } = require('capsid')
 
 /**
  * The observer of the filter and invokes filterchange event when it's changed.
@@ -16,23 +16,27 @@ class Router {
   }
 
   @route
+  @emit('filterchange')
   '#/all' () {
-    trigger(this.el, 'filterchange', Filter.ALL)
+    return Filter.ALL
   }
 
   @route
+  @emit('filterchange')
   '#/active' () {
-    trigger(this.el, 'filterchange', Filter.ACTIVE)
+    return Filter.ACTIVE
   }
 
   @route
+  @emit('filterchange')
   '#/completed' () {
-    trigger(this.el, 'filterchange', Filter.COMPLETED)
+    return Filter.COMPLETED
   }
 
   @route
+  @emit('filterchange')
   '*' () {
-    trigger(this.el, 'filterchange', Filter.ALL)
+    return Filter.ALL
   }
 }
 

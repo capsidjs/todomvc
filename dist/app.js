@@ -11899,12 +11899,6 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _dec, _dec2, _class, _desc, _value, _class2;
 
-var _trigger = require('../util/trigger');
-
-var _trigger2 = _interopRequireDefault(_trigger);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
@@ -11986,7 +11980,7 @@ var NewTodo = (_dec = on('keypress'), _dec2 = emit(NEW_ITEM), component(_class =
 
 module.exports = NewTodo;
 
-},{"../const":18,"../util/trigger":29,"capsid":1}],15:[function(require,module,exports){
+},{"../const":18,"capsid":1}],15:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -12861,7 +12855,7 @@ require('./todoapp');
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _class, _desc, _value, _class2;
+var _dec, _dec2, _dec3, _dec4, _class, _desc, _value, _class2;
 
 var _trigger = require('../util/trigger');
 
@@ -12907,14 +12901,15 @@ var _require = require('hash-route'),
 var Filter = require('../domain/filter');
 
 var _require2 = require('capsid'),
-    component = _require2.component;
+    component = _require2.component,
+    emit = _require2.emit;
 
 /**
  * The observer of the filter and invokes filterchange event when it's changed.
  */
 
 
-var Router = component(_class = (_class2 = function () {
+var Router = (_dec = emit('filterchange'), _dec2 = emit('filterchange'), _dec3 = emit('filterchange'), _dec4 = emit('filterchange'), component(_class = (_class2 = function () {
   function Router() {
     _classCallCheck(this, Router);
   }
@@ -12927,27 +12922,28 @@ var Router = component(_class = (_class2 = function () {
   }, {
     key: '#/all',
     value: function all() {
-      (0, _trigger2.default)(this.el, 'filterchange', Filter.ALL);
+      return Filter.ALL;
     }
   }, {
     key: '#/active',
     value: function active() {
-      (0, _trigger2.default)(this.el, 'filterchange', Filter.ACTIVE);
+      return Filter.ACTIVE;
     }
   }, {
     key: '#/completed',
     value: function completed() {
-      (0, _trigger2.default)(this.el, 'filterchange', Filter.COMPLETED);
+      return Filter.COMPLETED;
     }
   }, {
     key: '*',
     value: function _() {
-      (0, _trigger2.default)(this.el, 'filterchange', Filter.ALL);
+      return Filter.ALL;
     }
   }]);
 
   return Router;
-}(), (_applyDecoratedDescriptor(_class2.prototype, '#/all', [route], Object.getOwnPropertyDescriptor(_class2.prototype, '#/all'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, '#/active', [route], Object.getOwnPropertyDescriptor(_class2.prototype, '#/active'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, '#/completed', [route], Object.getOwnPropertyDescriptor(_class2.prototype, '#/completed'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, '*', [route], Object.getOwnPropertyDescriptor(_class2.prototype, '*'), _class2.prototype)), _class2)) || _class;
+}(), (_applyDecoratedDescriptor(_class2.prototype, '#/all', [route, _dec], Object.getOwnPropertyDescriptor(_class2.prototype, '#/all'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, '#/active', [route, _dec2], Object.getOwnPropertyDescriptor(_class2.prototype, '#/active'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, '#/completed', [route, _dec3], Object.getOwnPropertyDescriptor(_class2.prototype, '#/completed'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, '*', [route, _dec4], Object.getOwnPropertyDescriptor(_class2.prototype, '*'), _class2.prototype)), _class2)) || _class);
+
 
 module.exports = Router;
 
