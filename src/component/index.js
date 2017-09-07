@@ -1,6 +1,6 @@
 require('./todo-item')
 require('./new-todo')
 require('./todo-list')
+require('./main')
 require('./edit')
-require('./toggle-all')
 require('./bottom-control')

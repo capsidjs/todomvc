@@ -1,5 +1,3 @@
-import trigger from '../util/trigger'
-
 const { route, dispatch } = require('hash-route')
 
 const Filter = require('../domain/filter')

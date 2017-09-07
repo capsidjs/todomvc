@@ -11888,11 +11888,85 @@ module.exports = Edit;
 require('./todo-item');
 require('./new-todo');
 require('./todo-list');
+require('./main');
 require('./edit');
-require('./toggle-all');
 require('./bottom-control');
 
-},{"./bottom-control":11,"./edit":12,"./new-todo":14,"./todo-item":15,"./todo-list":16,"./toggle-all":17}],14:[function(require,module,exports){
+},{"./bottom-control":11,"./edit":12,"./main":14,"./new-todo":15,"./todo-item":16,"./todo-list":17}],14:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _dec, _dec2, _dec3, _dec4, _class, _desc, _value, _class2;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
+  var desc = {};
+  Object['ke' + 'ys'](descriptor).forEach(function (key) {
+    desc[key] = descriptor[key];
+  });
+  desc.enumerable = !!desc.enumerable;
+  desc.configurable = !!desc.configurable;
+
+  if ('value' in desc || desc.initializer) {
+    desc.writable = true;
+  }
+
+  desc = decorators.slice().reverse().reduce(function (desc, decorator) {
+    return decorator(target, property, desc) || desc;
+  }, desc);
+
+  if (context && desc.initializer !== void 0) {
+    desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
+    desc.initializer = undefined;
+  }
+
+  if (desc.initializer === void 0) {
+    Object['define' + 'Property'](target, property, desc);
+    desc = null;
+  }
+
+  return desc;
+}
+
+var _require = require('../const'),
+    _require$ACTION = _require.ACTION,
+    TOGGLE_ALL = _require$ACTION.TOGGLE_ALL,
+    MODEL_UPDATE = _require$ACTION.MODEL_UPDATE;
+
+var _require2 = require('capsid'),
+    component = _require2.component,
+    wire = _require2.wire,
+    emit = _require2.emit,
+    on = _require2.on;
+
+var Main = (_dec = wire.el('.toggle-all'), _dec2 = on('click', { at: '.toggle-all' }), _dec3 = emit(TOGGLE_ALL), _dec4 = on(MODEL_UPDATE), component(_class = (_class2 = function () {
+  function Main() {
+    _classCallCheck(this, Main);
+  }
+
+  _createClass(Main, [{
+    key: 'toggleAll',
+    value: function toggleAll() {
+      return this.toggleAllButton.checked;
+    }
+  }, {
+    key: 'onUpdate',
+    value: function onUpdate(_ref) {
+      var todoCollection = _ref.detail.todoCollection;
+
+      this.toggleAllButton.checked = todoCollection.uncompleted().isEmpty();
+    }
+  }, {
+    key: 'toggleAllButton',
+    get: function get() {}
+  }]);
+
+  return Main;
+}(), (_applyDecoratedDescriptor(_class2.prototype, 'toggleAllButton', [_dec], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggleAllButton'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'toggleAll', [_dec2, _dec3], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggleAll'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'onUpdate', [_dec4], Object.getOwnPropertyDescriptor(_class2.prototype, 'onUpdate'), _class2.prototype)), _class2)) || _class);
+
+},{"../const":18,"capsid":1}],15:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -11980,7 +12054,7 @@ var NewTodo = (_dec = on('keypress'), _dec2 = emit(NEW_ITEM), component(_class =
 
 module.exports = NewTodo;
 
-},{"../const":18,"capsid":1}],15:[function(require,module,exports){
+},{"../const":18,"capsid":1}],16:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -12186,7 +12260,7 @@ var TodoItem = (_dec = on('click', { at: '.toggle' }), _dec2 = on('click', { at:
 
 module.exports = TodoItem;
 
-},{"../util/trigger":29,"capsid":1,"dom-gen":4}],16:[function(require,module,exports){
+},{"../util/trigger":29,"capsid":1,"dom-gen":4}],17:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -12249,93 +12323,7 @@ var TodoList = component(_class = function () {
 
 module.exports = TodoList;
 
-},{"capsid":1,"dom-gen":4}],17:[function(require,module,exports){
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _dec, _class, _desc, _value, _class2;
-
-var _trigger = require('../util/trigger');
-
-var _trigger2 = _interopRequireDefault(_trigger);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
-  var desc = {};
-  Object['ke' + 'ys'](descriptor).forEach(function (key) {
-    desc[key] = descriptor[key];
-  });
-  desc.enumerable = !!desc.enumerable;
-  desc.configurable = !!desc.configurable;
-
-  if ('value' in desc || desc.initializer) {
-    desc.writable = true;
-  }
-
-  desc = decorators.slice().reverse().reduce(function (desc, decorator) {
-    return decorator(target, property, desc) || desc;
-  }, desc);
-
-  if (context && desc.initializer !== void 0) {
-    desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
-    desc.initializer = undefined;
-  }
-
-  if (desc.initializer === void 0) {
-    Object['define' + 'Property'](target, property, desc);
-    desc = null;
-  }
-
-  return desc;
-}
-
-var _require = require('capsid'),
-    on = _require.on,
-    component = _require.component;
-
-/**
- * The toggle all button.
- */
-
-
-var ToggleAll = (_dec = on('click'), component(_class = (_class2 = function () {
-  function ToggleAll() {
-    _classCallCheck(this, ToggleAll);
-  }
-
-  _createClass(ToggleAll, [{
-    key: 'toggleAll',
-    value: function toggleAll() {
-      if (this.elem.prop('checked')) {
-        (0, _trigger2.default)(this.el, 'toggle-all-check');
-      } else {
-        (0, _trigger2.default)(this.el, 'toggle-all-uncheck');
-      }
-    }
-
-    /**
-     * Updates the button state by the given active items' condition.
-     * @param {boolean} activeItemExists true if any active item exists, false otherwise
-     */
-
-  }, {
-    key: 'updateBtnState',
-    value: function updateBtnState(activeItemExists) {
-      this.elem.prop('checked', !activeItemExists);
-    }
-  }]);
-
-  return ToggleAll;
-}(), (_applyDecoratedDescriptor(_class2.prototype, 'toggleAll', [_dec], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggleAll'), _class2.prototype)), _class2)) || _class);
-
-
-module.exports = ToggleAll;
-
-},{"../util/trigger":29,"capsid":1}],18:[function(require,module,exports){
+},{"capsid":1,"dom-gen":4}],18:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -12350,7 +12338,10 @@ module.exports = {
 
   ACTION: {
     MODEL_UPDATE: 'model-update',
-    NEW_ITEM: 'todo-new-item'
+    NEW_ITEM: 'todo-new-item',
+    TOGGLE_ALL: 'todo-toggle-all',
+    CLEAR_COMPLETED: 'todo-clear-completed',
+    CHANGE_FILTER: 'change-filter'
   }
 };
 
@@ -12857,12 +12848,6 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _dec, _dec2, _dec3, _dec4, _class, _desc, _value, _class2;
 
-var _trigger = require('../util/trigger');
-
-var _trigger2 = _interopRequireDefault(_trigger);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
@@ -12947,12 +12932,12 @@ var Router = (_dec = emit('filterchange'), _dec2 = emit('filterchange'), _dec3 =
 
 module.exports = Router;
 
-},{"../domain/filter":19,"../util/trigger":29,"capsid":1,"hash-route":7}],28:[function(require,module,exports){
+},{"../domain/filter":19,"capsid":1,"hash-route":7}],28:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _class, _desc, _value, _class2;
+var _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _class, _desc, _value, _class2;
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -12991,7 +12976,9 @@ var TodoRepository = require('../domain/todo-repository');
 var _require = require('../const'),
     _require$ACTION = _require.ACTION,
     MODEL_UPDATE = _require$ACTION.MODEL_UPDATE,
-    NEW_ITEM = _require$ACTION.NEW_ITEM;
+    NEW_ITEM = _require$ACTION.NEW_ITEM,
+    TOGGLE_ALL = _require$ACTION.TOGGLE_ALL,
+    CLEAR_COMPLETED = _require$ACTION.CLEAR_COMPLETED;
 
 var _require2 = require('capsid'),
     pub = _require2.pub,
@@ -13005,7 +12992,7 @@ var _require2 = require('capsid'),
  */
 
 
-var Todoapp = (_dec = pub(MODEL_UPDATE, '.is-model-observer'), _dec2 = on('filterchange'), _dec3 = on(NEW_ITEM), _dec4 = on('todo-item-toggle'), _dec5 = on('todo-item-destroy'), _dec6 = on('todo-item-edited'), _dec7 = on('todo-clear-completed'), _dec8 = on('toggle-all-uncheck'), _dec9 = on('toggle-all-check'), component(_class = (_class2 = function () {
+var Todoapp = (_dec = pub(MODEL_UPDATE, '.is-model-observer'), _dec2 = on('filterchange'), _dec3 = on(NEW_ITEM), _dec4 = on('todo-item-toggle'), _dec5 = on('todo-item-destroy'), _dec6 = on('todo-item-edited'), _dec7 = on(CLEAR_COMPLETED), _dec8 = on(TOGGLE_ALL), component(_class = (_class2 = function () {
   function Todoapp() {
     _classCallCheck(this, Todoapp);
   }
@@ -13032,9 +13019,6 @@ var Todoapp = (_dec = pub(MODEL_UPDATE, '.is-model-observer'), _dec2 = on('filte
     value: function refreshControls() {
       // updates visibility of main and footer area
       this.elem.find('.main, .footer').css('display', this.todoCollection.isEmpty() ? 'none' : 'block');
-
-      // updates toggle-all button state
-      this['toggle-all'].updateBtnState(!this.todoCollection.uncompleted().isEmpty());
 
       return this;
     }
@@ -13150,6 +13134,17 @@ var Todoapp = (_dec = pub(MODEL_UPDATE, '.is-model-observer'), _dec2 = on('filte
 
       this.refreshAll();
     }
+  }, {
+    key: 'toggleAll',
+    value: function toggleAll(_ref) {
+      var toggle = _ref.detail;
+
+      if (toggle) {
+        this.completeAll();
+      } else {
+        this.uncompleteAll();
+      }
+    }
 
     /**
      * Uncompletes all the todo items.
@@ -13195,7 +13190,7 @@ var Todoapp = (_dec = pub(MODEL_UPDATE, '.is-model-observer'), _dec2 = on('filte
   }]);
 
   return Todoapp;
-}(), (_applyDecoratedDescriptor(_class2.prototype, 'todo-list', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'todo-list'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'toggle-all', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggle-all'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'refreshControls', [_dec], Object.getOwnPropertyDescriptor(_class2.prototype, 'refreshControls'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'onFilterchange', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'onFilterchange'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'addTodo', [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, 'addTodo'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'toggle', [_dec4], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggle'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'remove', [_dec5], Object.getOwnPropertyDescriptor(_class2.prototype, 'remove'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'editItem', [_dec6], Object.getOwnPropertyDescriptor(_class2.prototype, 'editItem'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'clearCompleted', [_dec7], Object.getOwnPropertyDescriptor(_class2.prototype, 'clearCompleted'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'uncompleteAll', [_dec8], Object.getOwnPropertyDescriptor(_class2.prototype, 'uncompleteAll'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'completeAll', [_dec9], Object.getOwnPropertyDescriptor(_class2.prototype, 'completeAll'), _class2.prototype)), _class2)) || _class);
+}(), (_applyDecoratedDescriptor(_class2.prototype, 'todo-list', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'todo-list'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'toggle-all', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggle-all'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'refreshControls', [_dec], Object.getOwnPropertyDescriptor(_class2.prototype, 'refreshControls'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'onFilterchange', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'onFilterchange'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'addTodo', [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, 'addTodo'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'toggle', [_dec4], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggle'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'remove', [_dec5], Object.getOwnPropertyDescriptor(_class2.prototype, 'remove'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'editItem', [_dec6], Object.getOwnPropertyDescriptor(_class2.prototype, 'editItem'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'clearCompleted', [_dec7], Object.getOwnPropertyDescriptor(_class2.prototype, 'clearCompleted'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'toggleAll', [_dec8], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggleAll'), _class2.prototype)), _class2)) || _class);
 
 
 module.exports = Todoapp;

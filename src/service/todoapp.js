@@ -1,7 +1,7 @@
 const TodoFactory = require('../domain/todo-factory')
 const TodoRepository = require('../domain/todo-repository')
 
-const { ACTION: { MODEL_UPDATE, NEW_ITEM } } = require('../const')
+const { ACTION: { MODEL_UPDATE, NEW_ITEM, TOGGLE_ALL, CLEAR_COMPLETED } } = require('../const')
 
 const { pub, make, on, component, wire } = require('capsid')
 
@@ -31,11 +31,6 @@ class Todoapp {
     this.elem
       .find('.main, .footer')
       .css('display', this.todoCollection.isEmpty() ? 'none' : 'block')
-
-    // updates toggle-all button state
-    this['toggle-all'].updateBtnState(
-      !this.todoCollection.uncompleted().isEmpty()
-    )
 
     return this
   }
@@ -127,7 +122,7 @@ class Todoapp {
   /**
    * Clears the completed todos.
    */
-  @on('todo-clear-completed')
+  @on(CLEAR_COMPLETED)
   clearCompleted () {
     this.todoCollection = this.todoCollection.uncompleted()
     this.save()
@@ -135,11 +130,19 @@ class Todoapp {
     this.refreshAll()
   }
 
+  @on(TOGGLE_ALL)
+  toggleAll ({ detail: toggle }) {
+    if (toggle) {
+      this.completeAll()
+    } else {
+      this.uncompleteAll()
+    }
+  }
+
   /**
    * Uncompletes all the todo items.
    * @private
    */
-  @on('toggle-all-uncheck')
   uncompleteAll () {
     if (this.filter.isAll()) {
       this['todo-list'].toggleAll(this.todoCollection.completed())
@@ -155,7 +158,6 @@ class Todoapp {
    * Completes all the todo items.
    * @private
    */
-  @on('toggle-all-check')
   completeAll () {
     if (this.filter.isAll()) {
       this['todo-list'].toggleAll(this.todoCollection.uncompleted())

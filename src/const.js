@@ -10,6 +10,9 @@ module.exports = {
 
   ACTION: {
     MODEL_UPDATE: 'model-update',
-    NEW_ITEM: 'todo-new-item'
+    NEW_ITEM: 'todo-new-item',
+    TOGGLE_ALL: 'todo-toggle-all',
+    CLEAR_COMPLETED: 'todo-clear-completed',
+    CHANGE_FILTER: 'change-filter'
   }
 }
