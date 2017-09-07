@@ -11662,7 +11662,7 @@ module.exports = Array.isArray || function (arr) {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _class, _desc, _value, _class2;
+var _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _class, _desc, _value, _class2;
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -11707,7 +11707,7 @@ var _require3 = require('capsid'),
     wire = _require3.wire,
     component = _require3.component;
 
-var BottomControl = (_dec = component('footer'), _dec2 = wire.el('.clear-completed'), _dec3 = wire.el('a[href="#/active"]'), _dec4 = wire.el('a[href="#/completed"]'), _dec5 = wire.el('a[href="#/"]'), _dec6 = on('click', { at: '.clear-completed' }), _dec7 = emit('todo-clear-completed'), _dec8 = on(MODEL_UPDATE), _dec(_class = (_class2 = function () {
+var BottomControl = (_dec = component('footer'), _dec2 = wire.el('.clear-completed'), _dec3 = wire.el('a[href="#/active"]'), _dec4 = wire.el('a[href="#/completed"]'), _dec5 = wire.el('a[href="#/"]'), _dec6 = wire.el('.todo-count'), _dec7 = on('click', { at: '.clear-completed' }), _dec8 = emit('todo-clear-completed'), _dec9 = on(MODEL_UPDATE), _dec(_class = (_class2 = function () {
   function BottomControl() {
     _classCallCheck(this, BottomControl);
   }
@@ -11722,12 +11722,15 @@ var BottomControl = (_dec = component('footer'), _dec2 = wire.el('.clear-complet
           todoCollection = _e$detail.todoCollection,
           filter = _e$detail.filter;
 
+      var countLeft = todoCollection.uncompleted().length;
 
       this.clearCompletedButton.style.display = todoCollection.completed().isEmpty() ? 'none' : 'inline';
 
       this.activeFilterButton.classList.toggle('selected', filter === Filter.ACTIVE);
       this.completedFilterButton.classList.toggle('selected', filter === Filter.COMPLETED);
       this.allFilterButton.classList.toggle('selected', filter === Filter.ALL);
+
+      this.todoCountLabel.innerHTML = '<strong>' + countLeft + ' item' + (countLeft === 1 ? '' : 's') + ' left</strong>';
     }
   }, {
     key: 'clearCompletedButton',
@@ -11741,15 +11744,18 @@ var BottomControl = (_dec = component('footer'), _dec2 = wire.el('.clear-complet
   }, {
     key: 'allFilterButton',
     get: function get() {}
+  }, {
+    key: 'todoCountLabel',
+    get: function get() {}
   }]);
 
   return BottomControl;
-}(), (_applyDecoratedDescriptor(_class2.prototype, 'clearCompletedButton', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'clearCompletedButton'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'activeFilterButton', [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, 'activeFilterButton'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'completedFilterButton', [_dec4], Object.getOwnPropertyDescriptor(_class2.prototype, 'completedFilterButton'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'allFilterButton', [_dec5], Object.getOwnPropertyDescriptor(_class2.prototype, 'allFilterButton'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'clearCompletedTodos', [_dec6, _dec7], Object.getOwnPropertyDescriptor(_class2.prototype, 'clearCompletedTodos'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'onUpdate', [_dec8], Object.getOwnPropertyDescriptor(_class2.prototype, 'onUpdate'), _class2.prototype)), _class2)) || _class);
+}(), (_applyDecoratedDescriptor(_class2.prototype, 'clearCompletedButton', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'clearCompletedButton'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'activeFilterButton', [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, 'activeFilterButton'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'completedFilterButton', [_dec4], Object.getOwnPropertyDescriptor(_class2.prototype, 'completedFilterButton'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'allFilterButton', [_dec5], Object.getOwnPropertyDescriptor(_class2.prototype, 'allFilterButton'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'todoCountLabel', [_dec6], Object.getOwnPropertyDescriptor(_class2.prototype, 'todoCountLabel'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'clearCompletedTodos', [_dec7, _dec8], Object.getOwnPropertyDescriptor(_class2.prototype, 'clearCompletedTodos'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'onUpdate', [_dec9], Object.getOwnPropertyDescriptor(_class2.prototype, 'onUpdate'), _class2.prototype)), _class2)) || _class);
 
 
 module.exports = BottomControl;
 
-},{"../const":19,"../domain":21,"capsid":1}],12:[function(require,module,exports){
+},{"../const":18,"../domain":20,"capsid":1}],12:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -11876,18 +11882,17 @@ var Edit = (_dec = on('keypress'), _dec2 = on('keydown'), _dec3 = on('blur'), co
 
 module.exports = Edit;
 
-},{"../const":19,"../util/trigger":30,"capsid":1}],13:[function(require,module,exports){
+},{"../const":18,"../util/trigger":29,"capsid":1}],13:[function(require,module,exports){
 'use strict';
 
 require('./todo-item');
 require('./new-todo');
 require('./todo-list');
 require('./edit');
-require('./todo-count');
 require('./toggle-all');
 require('./bottom-control');
 
-},{"./bottom-control":11,"./edit":12,"./new-todo":14,"./todo-count":15,"./todo-item":16,"./todo-list":17,"./toggle-all":18}],14:[function(require,module,exports){
+},{"./bottom-control":11,"./edit":12,"./new-todo":14,"./todo-item":15,"./todo-list":16,"./toggle-all":17}],14:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -11971,50 +11976,7 @@ var NewTodo = (_dec = on('keypress'), component(_class = (_class2 = function () 
 
 module.exports = NewTodo;
 
-},{"../const":19,"../util/trigger":30,"capsid":1}],15:[function(require,module,exports){
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _class;
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var _require = require('dom-gen'),
-    strong = _require.strong;
-
-var _require2 = require('capsid'),
-    component = _require2.component;
-
-/**
- * The todo counting element.
- */
-
-
-var TodoCount = component(_class = function () {
-  function TodoCount() {
-    _classCallCheck(this, TodoCount);
-  }
-
-  _createClass(TodoCount, [{
-    key: 'setCount',
-
-    /**
-     * @param {number} count The number of todos
-     */
-    value: function setCount(count) {
-      this.elem.empty();
-
-      this.elem.append(strong(count), ' item' + (count === 1 ? '' : 's') + ' left');
-    }
-  }]);
-
-  return TodoCount;
-}()) || _class;
-
-module.exports = TodoCount;
-
-},{"capsid":1,"dom-gen":4}],16:[function(require,module,exports){
+},{"../const":18,"../util/trigger":29,"capsid":1}],15:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -12220,7 +12182,7 @@ var TodoItem = (_dec = on('click', { at: '.toggle' }), _dec2 = on('click', { at:
 
 module.exports = TodoItem;
 
-},{"../util/trigger":30,"capsid":1,"dom-gen":4}],17:[function(require,module,exports){
+},{"../util/trigger":29,"capsid":1,"dom-gen":4}],16:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -12283,7 +12245,7 @@ var TodoList = component(_class = function () {
 
 module.exports = TodoList;
 
-},{"capsid":1,"dom-gen":4}],18:[function(require,module,exports){
+},{"capsid":1,"dom-gen":4}],17:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -12369,7 +12331,7 @@ var ToggleAll = (_dec = on('click'), component(_class = (_class2 = function () {
 
 module.exports = ToggleAll;
 
-},{"../util/trigger":30,"capsid":1}],19:[function(require,module,exports){
+},{"../util/trigger":29,"capsid":1}],18:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -12379,7 +12341,7 @@ module.exports = {
   },
 
   STORAGE_KEY: {
-    TODO_LIST: 'todos-class-component'
+    TODO_LIST: 'todos-capsid'
   },
 
   ACTION: {
@@ -12387,7 +12349,7 @@ module.exports = {
   }
 };
 
-},{}],20:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -12442,7 +12404,7 @@ Filter.COMPLETED = new Filter();
 
 module.exports = Filter;
 
-},{}],21:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 'use strict';
 
 exports.Filter = require('./filter');
@@ -12451,7 +12413,7 @@ exports.Todo.Collection = require('./todo-collection');
 exports.Todo.Repository = require('./todo-repository');
 exports.Todo.Factory = require('./todo-factory');
 
-},{"./filter":20,"./todo":25,"./todo-collection":22,"./todo-factory":23,"./todo-repository":24}],22:[function(require,module,exports){
+},{"./filter":19,"./todo":24,"./todo-collection":21,"./todo-factory":22,"./todo-repository":23}],21:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -12682,7 +12644,7 @@ var TodoCollection = function () {
 
 module.exports = TodoCollection;
 
-},{"./filter":20}],23:[function(require,module,exports){
+},{"./filter":19}],22:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -12746,7 +12708,7 @@ var TodoFactory = function () {
 
 module.exports = TodoFactory;
 
-},{"./todo":25}],24:[function(require,module,exports){
+},{"./todo":24}],23:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -12840,7 +12802,7 @@ var TodoRepository = function () {
 
 module.exports = TodoRepository;
 
-},{"../const":19,"./todo-collection":22}],25:[function(require,module,exports){
+},{"../const":18,"./todo-collection":21}],24:[function(require,module,exports){
 "use strict";
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -12864,7 +12826,7 @@ function Todo(id, title, completed) {
 
 module.exports = Todo;
 
-},{}],26:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -12877,13 +12839,13 @@ require('./component');
 require('./service');
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./component":13,"./service":27,"capsid":1,"capsid/jquery":3,"jquery":8}],27:[function(require,module,exports){
+},{"./component":13,"./service":26,"capsid":1,"capsid/jquery":3,"jquery":8}],26:[function(require,module,exports){
 'use strict';
 
 require('./router');
 require('./todoapp');
 
-},{"./router":28,"./todoapp":29}],28:[function(require,module,exports){
+},{"./router":27,"./todoapp":28}],27:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -12978,7 +12940,7 @@ var Router = component(_class = (_class2 = function () {
 
 module.exports = Router;
 
-},{"../domain/filter":20,"../util/trigger":30,"capsid":1,"hash-route":7}],29:[function(require,module,exports){
+},{"../domain/filter":19,"../util/trigger":29,"capsid":1,"hash-route":7}],28:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -13059,9 +13021,6 @@ var Todoapp = (_dec = pub(MODEL_UPDATE, '.is-model-observer'), _dec2 = on('filte
   }, {
     key: 'refreshControls',
     value: function refreshControls() {
-      // updates todo count
-      this['todo-count'].setCount(this.todoCollection.uncompleted().length);
-
       // updates visibility of main and footer area
       this.elem.find('.main, .footer').css('display', this.todoCollection.isEmpty() ? 'none' : 'block');
 
@@ -13222,20 +13181,17 @@ var Todoapp = (_dec = pub(MODEL_UPDATE, '.is-model-observer'), _dec2 = on('filte
     key: 'todo-list',
     get: function get() {}
   }, {
-    key: 'todo-count',
-    get: function get() {}
-  }, {
     key: 'toggle-all',
     get: function get() {}
   }]);
 
   return Todoapp;
-}(), (_applyDecoratedDescriptor(_class2.prototype, 'todo-list', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'todo-list'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'todo-count', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'todo-count'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'toggle-all', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggle-all'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'refreshControls', [_dec], Object.getOwnPropertyDescriptor(_class2.prototype, 'refreshControls'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'onFilterchange', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'onFilterchange'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'addTodo', [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, 'addTodo'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'toggle', [_dec4], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggle'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'remove', [_dec5], Object.getOwnPropertyDescriptor(_class2.prototype, 'remove'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'editItem', [_dec6], Object.getOwnPropertyDescriptor(_class2.prototype, 'editItem'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'clearCompleted', [_dec7], Object.getOwnPropertyDescriptor(_class2.prototype, 'clearCompleted'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'uncompleteAll', [_dec8], Object.getOwnPropertyDescriptor(_class2.prototype, 'uncompleteAll'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'completeAll', [_dec9], Object.getOwnPropertyDescriptor(_class2.prototype, 'completeAll'), _class2.prototype)), _class2)) || _class);
+}(), (_applyDecoratedDescriptor(_class2.prototype, 'todo-list', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'todo-list'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'toggle-all', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggle-all'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'refreshControls', [_dec], Object.getOwnPropertyDescriptor(_class2.prototype, 'refreshControls'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'onFilterchange', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'onFilterchange'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'addTodo', [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, 'addTodo'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'toggle', [_dec4], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggle'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'remove', [_dec5], Object.getOwnPropertyDescriptor(_class2.prototype, 'remove'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'editItem', [_dec6], Object.getOwnPropertyDescriptor(_class2.prototype, 'editItem'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'clearCompleted', [_dec7], Object.getOwnPropertyDescriptor(_class2.prototype, 'clearCompleted'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'uncompleteAll', [_dec8], Object.getOwnPropertyDescriptor(_class2.prototype, 'uncompleteAll'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'completeAll', [_dec9], Object.getOwnPropertyDescriptor(_class2.prototype, 'completeAll'), _class2.prototype)), _class2)) || _class);
 
 
 module.exports = Todoapp;
 
-},{"../const":19,"../domain/todo-factory":23,"../domain/todo-repository":24,"capsid":1}],30:[function(require,module,exports){
+},{"../const":18,"../domain/todo-factory":22,"../domain/todo-repository":23,"capsid":1}],29:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13246,4 +13202,4 @@ exports.default = function (el, type, detail) {
   $(el)[0].dispatchEvent(new CustomEvent(type, { detail: detail, bubbles: true }));
 };
 
-},{}]},{},[26]);
+},{}]},{},[25]);

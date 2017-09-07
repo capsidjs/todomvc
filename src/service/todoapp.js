@@ -23,14 +23,10 @@ class Todoapp {
   }
 
   @wire get 'todo-list' () {}
-  @wire get 'todo-count' () {}
   @wire get 'toggle-all' () {}
 
   @pub(MODEL_UPDATE, '.is-model-observer')
   refreshControls () {
-    // updates todo count
-    this['todo-count'].setCount(this.todoCollection.uncompleted().length)
-
     // updates visibility of main and footer area
     this.elem
       .find('.main, .footer')
