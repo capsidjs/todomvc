@@ -1,8 +1,5 @@
-import trigger from '../util/trigger'
-
-const {KEYCODE} = require('../const')
-
-const {on, component} = require('capsid')
+const { KEYCODE, ACTION: { EDIT_TODO } } = require('../const')
+const { emit, on, component } = require('capsid')
 
 /**
  * TodoEdit controls the edit area of each todo item.
@@ -10,15 +7,15 @@ const {on, component} = require('capsid')
 @component
 class Edit {
   onStart () {
-    this.$el.focus()
+    this.el.focus()
   }
 
   /**
    * Updates the view with the given value.
    */
   onUpdate (value) {
-    this.$el.val(value)
-    this.$el.data('prev-value', value)
+    this.el.value = value
+    this.el.dataset.prevValue = value
   }
 
   /**
@@ -40,21 +37,25 @@ class Edit {
    * Finishes editing with current value.
    */
   @on('blur')
+  @emit(EDIT_TODO)
   onFinish () {
-    const value = this.$el.val()
+    const value = this.el.value
 
     this.onUpdate(value)
-    trigger(this.el, 'todo-edited', value)
+
+    return value
   }
 
   /**
    * Cancels editing and revert the change of the value.
    */
+  @emit(EDIT_TODO)
   onCancel () {
-    const value = this.$el.data('prev-value')
+    const value = this.el.dataset.prevValue
 
     this.onUpdate(value)
-    trigger(this.el, 'todo-edited', value)
+
+    return value
   }
 }
 

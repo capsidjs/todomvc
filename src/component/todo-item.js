@@ -1,8 +1,9 @@
 import trigger from '../util/trigger'
 
-const {div, input, label, button} = require('dom-gen')
+const { ACTION: { EDIT_TODO } } = require('../const')
+const { div, input, label, button } = require('dom-gen')
 
-const {on, wire, component} = require('capsid')
+const { on, wire, component } = require('capsid')
 
 /**
  * TodoItem class controls todo item in a list.
@@ -57,7 +58,7 @@ class TodoItem {
    * Destroys the item.
    * @private
    */
-  @on('click', {at: '.destroy'})
+  @on('click', { at: '.destroy' })
   destroy () {
     trigger(this.el.parentElement, 'todo-item-destroy', this.$el.attr('id'))
 
@@ -98,7 +99,7 @@ class TodoItem {
    * Starts editing.
    * @private
    */
-  @on('dblclick', {at: 'label'})
+  @on('dblclick', { at: 'label' })
   startEditing () {
     this.elem.addClass('editing')
     this.edit.onStart()
@@ -108,7 +109,7 @@ class TodoItem {
    * Stops editing.
    * @private
    */
-  @on('todo-edited')
+  @on(EDIT_TODO)
   stopEditing (e) {
     const title = e.detail
 

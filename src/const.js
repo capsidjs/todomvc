@@ -9,10 +9,11 @@ module.exports = {
   },
 
   ACTION: {
+    CLEAR_COMPLETED: 'todo-clear-completed',
+    CHANGE_FILTER: 'change-filter',
+    EDIT_TODO: 'edit-todo',
     MODEL_UPDATE: 'model-update',
     NEW_ITEM: 'todo-new-item',
     TOGGLE_ALL: 'todo-toggle-all',
-    CLEAR_COMPLETED: 'todo-clear-completed',
-    CHANGE_FILTER: 'change-filter'
   }
 }

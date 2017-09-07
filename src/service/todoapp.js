@@ -1,7 +1,12 @@
 const TodoFactory = require('../domain/todo-factory')
 const TodoRepository = require('../domain/todo-repository')
 
-const { ACTION: { MODEL_UPDATE, NEW_ITEM, TOGGLE_ALL, CLEAR_COMPLETED } } = require('../const')
+const { ACTION: {
+  CLEAR_COMPLETED,
+  MODEL_UPDATE,
+  NEW_ITEM,
+  TOGGLE_ALL
+} } = require('../const')
 
 const { pub, make, on, component, wire } = require('capsid')
 

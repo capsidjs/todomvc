@@ -71,6 +71,7 @@ class TodoCollection {
     }
 
     this.items.splice(this.items.indexOf(todo), 1)
+    delete this.map[todo.id]
   }
 
   /**
@@ -78,7 +79,11 @@ class TodoCollection {
    * @param {String} id The todo id
    */
   removeById (id) {
-    this.remove(this.getById(id))
+    const todo = this.getById(id)
+
+    if (todo) {
+      this.remove(todo)
+    }
   }
 
   /**

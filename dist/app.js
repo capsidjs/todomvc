@@ -11760,7 +11760,7 @@ module.exports = BottomControl;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _dec, _dec2, _dec3, _class, _desc, _value, _class2;
+var _dec, _dec2, _dec3, _dec4, _dec5, _class, _desc, _value, _class2;
 
 var _trigger = require('../util/trigger');
 
@@ -11800,9 +11800,11 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
 }
 
 var _require = require('../const'),
-    KEYCODE = _require.KEYCODE;
+    KEYCODE = _require.KEYCODE,
+    EDIT_TODO = _require.ACTION.EDIT_TODO;
 
 var _require2 = require('capsid'),
+    emit = _require2.emit,
     on = _require2.on,
     component = _require2.component;
 
@@ -11811,7 +11813,7 @@ var _require2 = require('capsid'),
  */
 
 
-var Edit = (_dec = on('keypress'), _dec2 = on('keydown'), _dec3 = on('blur'), component(_class = (_class2 = function () {
+var Edit = (_dec = on('keypress'), _dec2 = on('keydown'), _dec3 = on('blur'), _dec4 = emit(EDIT_TODO), _dec5 = emit(EDIT_TODO), component(_class = (_class2 = function () {
   function Edit() {
     _classCallCheck(this, Edit);
   }
@@ -11819,7 +11821,7 @@ var Edit = (_dec = on('keypress'), _dec2 = on('keydown'), _dec3 = on('blur'), co
   _createClass(Edit, [{
     key: 'onStart',
     value: function onStart() {
-      this.$el.focus();
+      this.el.focus();
     }
 
     /**
@@ -11829,8 +11831,8 @@ var Edit = (_dec = on('keypress'), _dec2 = on('keydown'), _dec3 = on('blur'), co
   }, {
     key: 'onUpdate',
     value: function onUpdate(value) {
-      this.$el.val(value);
-      this.$el.data('prev-value', value);
+      this.el.value = value;
+      this.el.dataset.prevValue = value;
     }
 
     /**
@@ -11845,6 +11847,7 @@ var Edit = (_dec = on('keypress'), _dec2 = on('keydown'), _dec3 = on('blur'), co
       if (e.which === KEYCODE.ENTER) {
         this.onFinish();
       } else if (e.which === KEYCODE.ESCAPE) {
+        console.log('cancel');
         this.onCancel();
       }
     }
@@ -11856,10 +11859,11 @@ var Edit = (_dec = on('keypress'), _dec2 = on('keydown'), _dec3 = on('blur'), co
   }, {
     key: 'onFinish',
     value: function onFinish() {
-      var value = this.$el.val();
+      var value = this.el.value;
 
       this.onUpdate(value);
-      (0, _trigger2.default)(this.el, 'todo-edited', value);
+
+      return value;
     }
 
     /**
@@ -11869,15 +11873,16 @@ var Edit = (_dec = on('keypress'), _dec2 = on('keydown'), _dec3 = on('blur'), co
   }, {
     key: 'onCancel',
     value: function onCancel() {
-      var value = this.$el.data('prev-value');
+      var value = this.el.dataset.prevValue;
 
       this.onUpdate(value);
-      (0, _trigger2.default)(this.el, 'todo-edited', value);
+
+      return value;
     }
   }]);
 
   return Edit;
-}(), (_applyDecoratedDescriptor(_class2.prototype, 'onKeypress', [_dec, _dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'onKeypress'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'onFinish', [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, 'onFinish'), _class2.prototype)), _class2)) || _class);
+}(), (_applyDecoratedDescriptor(_class2.prototype, 'onKeypress', [_dec, _dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'onKeypress'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'onFinish', [_dec3, _dec4], Object.getOwnPropertyDescriptor(_class2.prototype, 'onFinish'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'onCancel', [_dec5], Object.getOwnPropertyDescriptor(_class2.prototype, 'onCancel'), _class2.prototype)), _class2)) || _class);
 
 
 module.exports = Edit;
@@ -12098,23 +12103,26 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
   return desc;
 }
 
-var _require = require('dom-gen'),
-    div = _require.div,
-    input = _require.input,
-    label = _require.label,
-    button = _require.button;
+var _require = require('../const'),
+    EDIT_TODO = _require.ACTION.EDIT_TODO;
 
-var _require2 = require('capsid'),
-    on = _require2.on,
-    wire = _require2.wire,
-    component = _require2.component;
+var _require2 = require('dom-gen'),
+    div = _require2.div,
+    input = _require2.input,
+    label = _require2.label,
+    button = _require2.button;
+
+var _require3 = require('capsid'),
+    on = _require3.on,
+    wire = _require3.wire,
+    component = _require3.component;
 
 /**
  * TodoItem class controls todo item in a list.
  */
 
 
-var TodoItem = (_dec = on('click', { at: '.toggle' }), _dec2 = on('click', { at: '.destroy' }), _dec3 = on('dblclick', { at: 'label' }), _dec4 = on('todo-edited'), component(_class = (_class2 = function () {
+var TodoItem = (_dec = on('click', { at: '.toggle' }), _dec2 = on('click', { at: '.destroy' }), _dec3 = on('dblclick', { at: 'label' }), _dec4 = on(EDIT_TODO), component(_class = (_class2 = function () {
   function TodoItem() {
     _classCallCheck(this, TodoItem);
   }
@@ -12260,7 +12268,7 @@ var TodoItem = (_dec = on('click', { at: '.toggle' }), _dec2 = on('click', { at:
 
 module.exports = TodoItem;
 
-},{"../util/trigger":29,"capsid":1,"dom-gen":4}],17:[function(require,module,exports){
+},{"../const":18,"../util/trigger":29,"capsid":1,"dom-gen":4}],17:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -12337,11 +12345,12 @@ module.exports = {
   },
 
   ACTION: {
+    CLEAR_COMPLETED: 'todo-clear-completed',
+    CHANGE_FILTER: 'change-filter',
+    EDIT_TODO: 'edit-todo',
     MODEL_UPDATE: 'model-update',
     NEW_ITEM: 'todo-new-item',
-    TOGGLE_ALL: 'todo-toggle-all',
-    CLEAR_COMPLETED: 'todo-clear-completed',
-    CHANGE_FILTER: 'change-filter'
+    TOGGLE_ALL: 'todo-toggle-all'
   }
 };
 
@@ -12508,6 +12517,7 @@ var TodoCollection = function () {
       }
 
       this.items.splice(this.items.indexOf(todo), 1);
+      delete this.map[todo.id];
     }
 
     /**
@@ -12518,7 +12528,11 @@ var TodoCollection = function () {
   }, {
     key: 'removeById',
     value: function removeById(id) {
-      this.remove(this.getById(id));
+      var todo = this.getById(id);
+
+      if (todo) {
+        this.remove(todo);
+      }
     }
 
     /**
@@ -12975,10 +12989,10 @@ var TodoRepository = require('../domain/todo-repository');
 
 var _require = require('../const'),
     _require$ACTION = _require.ACTION,
+    CLEAR_COMPLETED = _require$ACTION.CLEAR_COMPLETED,
     MODEL_UPDATE = _require$ACTION.MODEL_UPDATE,
     NEW_ITEM = _require$ACTION.NEW_ITEM,
-    TOGGLE_ALL = _require$ACTION.TOGGLE_ALL,
-    CLEAR_COMPLETED = _require$ACTION.CLEAR_COMPLETED;
+    TOGGLE_ALL = _require$ACTION.TOGGLE_ALL;
 
 var _require2 = require('capsid'),
     pub = _require2.pub,
