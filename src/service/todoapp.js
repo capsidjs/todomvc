@@ -1,7 +1,7 @@
-const TodoFactory = require('../domain/todo-factory')
-const TodoRepository = require('../domain/todo-repository')
+const { Todo } = require('../domain')
 
 const { ACTION: {
+  CHANGE_FILTER,
   CLEAR_COMPLETED,
   DESTROY_TODO,
   FINISH_EDIT_TODO,
@@ -19,8 +19,8 @@ const { pub, make, on, component, wire } = require('capsid')
 @component
 class Todoapp {
   __init__ () {
-    this.todoFactory = new TodoFactory()
-    this.todoRepository = new TodoRepository()
+    this.todoFactory = new Todo.Factory()
+    this.todoRepository = new Todo.Repository()
     this.todoCollection = this.todoRepository.getAll()
 
     const router = make('router', this.el)
@@ -34,7 +34,7 @@ class Todoapp {
   @wire get 'toggle-all' () {}
 
   @pub(MODEL_UPDATE, '.is-model-observer')
-  refreshControls () {
+  refresh () {
     // updates visibility of main and footer area
     this.elem
       .find('.main, .footer')
@@ -43,17 +43,11 @@ class Todoapp {
     return this
   }
 
-  refreshAll () {
-    this.refreshControls()
-
-    this['todo-list'].onRefresh(this.todoCollection, this.filter)
-  }
-
-  @on('filterchange')
+  @on(CHANGE_FILTER)
   onFilterchange (e) {
     this.filter = e.detail
 
-    this.refreshAll()
+    this.refresh()
   }
 
   /**
@@ -63,14 +57,13 @@ class Todoapp {
    * @param {String} title The todo title
    */
   @on(NEW_ITEM)
-  addTodo (e) {
-    const title = e.detail
+  addTodo ({ detail: title }) {
     const todo = this.todoFactory.createByTitle(title)
 
     this.todoCollection.push(todo)
     this.save()
 
-    this.refreshAll()
+    this.refresh()
   }
 
   /**
@@ -86,16 +79,11 @@ class Todoapp {
    * @param {String} id The todo id
    */
   @on(TOGGLE_TODO)
-  toggle (e) {
-    const id = e.detail
+  toggle ({ detail: id }) {
     this.todoCollection.toggleById(id)
     this.save()
 
-    if (this.filter.isAll()) {
-      this.refreshControls()
-    } else {
-      this.refreshAll()
-    }
+    this.refresh()
   }
 
   /**
@@ -108,7 +96,7 @@ class Todoapp {
     this.todoCollection.removeById(id)
     this.save()
 
-    this.refreshAll()
+    this.refresh()
   }
 
   /**
@@ -131,7 +119,7 @@ class Todoapp {
     this.todoCollection = this.todoCollection.uncompleted()
     this.save()
 
-    this.refreshAll()
+    this.refresh()
   }
 
   @on(TOGGLE_ALL)
@@ -154,7 +142,7 @@ class Todoapp {
       this.todoCollection.uncompleteAll()
       this.save()
 
-      this.refreshAll()
+      this.refresh()
     }
   }
 
@@ -169,7 +157,7 @@ class Todoapp {
       this.todoCollection.completeAll()
       this.save()
 
-      this.refreshAll()
+      this.refresh()
     }
   }
 }

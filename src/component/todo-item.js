@@ -6,7 +6,7 @@ const { ACTION: {
 } } = require('../const')
 
 const { div, input, label, button } = require('dom-gen')
-const { on, emit, wire, component } = require('capsid')
+const { on, emit, prep, wire, component } = require('capsid')
 
 /**
  * TodoItem class controls todo item in a list.
@@ -18,14 +18,16 @@ class TodoItem {
   @wire get edit () {}
 
   __init__ () {
-    this.$el.append(
-      div(
-        input({attr: {type: 'checkbox'}}).addClass('toggle'),
-        label(),
-        button().addClass('destroy')
-      ).addClass('view'),
-      input().cc('edit')
-    )
+    this.el.innerHTML = `
+      <div class="view">
+        <input type="checkbox" class="toggle"/>
+        <label></label>
+        <button class="destroy"></button>
+      </div>
+      <input class="edit" />
+    `
+
+    prep('edit', this.el)
   }
 
   /**

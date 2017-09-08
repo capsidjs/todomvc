@@ -1,6 +1,7 @@
 const { route, dispatch } = require('hash-route')
 
-const Filter = require('../domain/filter')
+const { ACTION: { CHANGE_FILTER } } = require('../const')
+const { Filter } = require('../domain')
 
 const { component, emit } = require('capsid')
 
@@ -14,25 +15,25 @@ class Router {
   }
 
   @route
-  @emit('filterchange')
+  @emit(CHANGE_FILTER)
   '#/all' () {
     return Filter.ALL
   }
 
   @route
-  @emit('filterchange')
+  @emit(CHANGE_FILTER)
   '#/active' () {
     return Filter.ACTIVE
   }
 
   @route
-  @emit('filterchange')
+  @emit(CHANGE_FILTER)
   '#/completed' () {
     return Filter.COMPLETED
   }
 
   @route
-  @emit('filterchange')
+  @emit(CHANGE_FILTER)
   '*' () {
     return Filter.ALL
   }

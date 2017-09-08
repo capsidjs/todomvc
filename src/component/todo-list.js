@@ -1,6 +1,5 @@
-const { li } = require('dom-gen')
-
-const { component, get, make } = require('capsid')
+const { ACTION: { MODEL_UPDATE } } = require('../const')
+const { component, get, make, on } = require('capsid')
 
 /**
  * The todo list component.
@@ -11,14 +10,21 @@ class TodoList {
    * Updates the todo items by the given todo model list.
    * @param {TodoCollection} todos The todo list
    */
-  onRefresh (todos, filter) {
-    this.el.innerHTML = ''
+  @on(MODEL_UPDATE)
+  onRefresh ({ detail: { todoCollection, filter } }) {
+    if (todoCollection.length === this.el.querySelectorAll('.todo-item').length) {
+      todoCollection.forEach(todo => {
+        get('todo-item', this.el.querySelector(`[id="${todo.id}"`)).update(todo)
+      })
+    } else {
+      this.el.innerHTML = ''
 
-    todos.filterBy(filter).forEach(todo => {
-      const li = document.createElement('li')
-      this.el.appendChild(li)
-      make('todo-item', li).update(todo)
-    })
+      todoCollection.filterBy(filter).forEach(todo => {
+        const li = document.createElement('li')
+        this.el.appendChild(li)
+        make('todo-item', li).update(todo)
+      })
+    }
   }
 
   /**

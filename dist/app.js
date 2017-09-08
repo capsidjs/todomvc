@@ -12059,12 +12059,6 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _class, _desc, _value, _class2;
 
-var _trigger = require('../util/trigger');
-
-var _trigger2 = _interopRequireDefault(_trigger);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
@@ -12112,6 +12106,7 @@ var _require2 = require('dom-gen'),
 var _require3 = require('capsid'),
     on = _require3.on,
     emit = _require3.emit,
+    prep = _require3.prep,
     wire = _require3.wire,
     component = _require3.component;
 
@@ -12128,16 +12123,10 @@ var TodoItem = (_dec = wire.el('label'), _dec2 = wire.el('.toggle'), _dec3 = on(
   _createClass(TodoItem, [{
     key: '__init__',
     value: function __init__() {
-      this.$el.append(div(input({ attr: { type: 'checkbox' } }).addClass('toggle'), label(), button().addClass('destroy')).addClass('view'), input().cc('edit'));
+      this.el.innerHTML = '\n      <div class="view">\n        <input type="checkbox" class="toggle"/>\n        <label></label>\n        <button class="destroy"></button>\n      </div>\n      <input class="edit" />\n    ';
+
+      prep('edit', this.el);'\n    this.$el.append(\n      div(\n        input({attr: {type: \'checkbox\'}}).addClass(\'toggle\'),\n        label(),\n        button().addClass(\'destroy\')\n      ).addClass(\'view\'),\n      input().cc(\'edit\')\n    )\n    ';
     }
-
-    /**
-     * @return {Edit}
-     */
-
-  }, {
-    key: 'update',
-
 
     /**
      * Updates the todo title by todo model.
@@ -12146,13 +12135,18 @@ var TodoItem = (_dec = wire.el('label'), _dec2 = wire.el('.toggle'), _dec3 = on(
      * @param {String} todo.title The title
      * @param {Boolean} todo.completed If completed or not
      */
+
+  }, {
+    key: 'update',
     value: function update(todo) {
       this.el.setAttribute('id', todo.id);
       this.label.textContent = todo.title;
       this.edit.onUpdate(todo.title);
 
-      this.completed = todo.completed;
-      this.updateView();
+      this.toggle.checked = todo.completed;
+      this.el.classList.toggle('completed', todo.completed);
+
+      console.log('todo-item update');
     }
 
     /**
@@ -12163,9 +12157,6 @@ var TodoItem = (_dec = wire.el('label'), _dec2 = wire.el('.toggle'), _dec3 = on(
   }, {
     key: 'toggleCompleted',
     value: function toggleCompleted() {
-      this.completed = !this.completed;
-      this.updateView();
-
       return this.el.getAttribute('id');
     }
 
@@ -12178,18 +12169,6 @@ var TodoItem = (_dec = wire.el('label'), _dec2 = wire.el('.toggle'), _dec3 = on(
     key: 'destroy',
     value: function destroy() {
       return this.el.getAttribute('id');
-    }
-
-    /**
-     * Updates the view state according to the current completed state.
-     * @private
-     */
-
-  }, {
-    key: 'updateView',
-    value: function updateView() {
-      this.toggle.checked = this.completed;
-      this.el.classList.toggle('completed', this.completed);
     }
 
     /**
@@ -12251,50 +12230,85 @@ var TodoItem = (_dec = wire.el('label'), _dec2 = wire.el('.toggle'), _dec3 = on(
 
 module.exports = TodoItem;
 
-},{"../const":18,"../util/trigger":29,"capsid":1,"dom-gen":4}],17:[function(require,module,exports){
+},{"../const":18,"capsid":1,"dom-gen":4}],17:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _class;
+var _dec, _class, _desc, _value, _class2;
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var _require = require('dom-gen'),
-    li = _require.li;
+function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
+  var desc = {};
+  Object['ke' + 'ys'](descriptor).forEach(function (key) {
+    desc[key] = descriptor[key];
+  });
+  desc.enumerable = !!desc.enumerable;
+  desc.configurable = !!desc.configurable;
+
+  if ('value' in desc || desc.initializer) {
+    desc.writable = true;
+  }
+
+  desc = decorators.slice().reverse().reduce(function (desc, decorator) {
+    return decorator(target, property, desc) || desc;
+  }, desc);
+
+  if (context && desc.initializer !== void 0) {
+    desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
+    desc.initializer = undefined;
+  }
+
+  if (desc.initializer === void 0) {
+    Object['define' + 'Property'](target, property, desc);
+    desc = null;
+  }
+
+  return desc;
+}
+
+var _require = require('../const'),
+    MODEL_UPDATE = _require.ACTION.MODEL_UPDATE;
 
 var _require2 = require('capsid'),
     component = _require2.component,
     get = _require2.get,
-    make = _require2.make;
+    make = _require2.make,
+    on = _require2.on;
 
 /**
  * The todo list component.
  */
 
 
-var TodoList = component(_class = function () {
+var TodoList = (_dec = on(MODEL_UPDATE), component(_class = (_class2 = function () {
   function TodoList() {
     _classCallCheck(this, TodoList);
   }
 
   _createClass(TodoList, [{
     key: 'onRefresh',
-
-    /**
-     * Updates the todo items by the given todo model list.
-     * @param {TodoCollection} todos The todo list
-     */
-    value: function onRefresh(todos, filter) {
+    value: function onRefresh(_ref) {
       var _this = this;
 
-      this.el.innerHTML = '';
+      var _ref$detail = _ref.detail,
+          todoCollection = _ref$detail.todoCollection,
+          filter = _ref$detail.filter;
 
-      todos.filterBy(filter).forEach(function (todo) {
-        var li = document.createElement('li');
-        _this.el.appendChild(li);
-        make('todo-item', li).update(todo);
-      });
+      if (todoCollection.length === this.el.querySelectorAll('.todo-item').length) {
+        todoCollection.forEach(function (todo) {
+          get('todo-item', _this.el.querySelector('[id="' + todo.id + '"')).update(todo);
+        });
+      } else {
+        this.el.innerHTML = '';
+
+        todoCollection.filterBy(filter).forEach(function (todo) {
+          var li = document.createElement('li');
+          _this.el.appendChild(li);
+          make('todo-item', li).update(todo);
+        });
+      }
     }
 
     /**
@@ -12314,11 +12328,12 @@ var TodoList = component(_class = function () {
   }]);
 
   return TodoList;
-}()) || _class;
+}(), (_applyDecoratedDescriptor(_class2.prototype, 'onRefresh', [_dec], Object.getOwnPropertyDescriptor(_class2.prototype, 'onRefresh'), _class2.prototype)), _class2)) || _class);
+
 
 module.exports = TodoList;
 
-},{"capsid":1,"dom-gen":4}],18:[function(require,module,exports){
+},{"../const":18,"capsid":1}],18:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -12887,18 +12902,22 @@ var _require = require('hash-route'),
     route = _require.route,
     dispatch = _require.dispatch;
 
-var Filter = require('../domain/filter');
+var _require2 = require('../const'),
+    CHANGE_FILTER = _require2.ACTION.CHANGE_FILTER;
 
-var _require2 = require('capsid'),
-    component = _require2.component,
-    emit = _require2.emit;
+var _require3 = require('../domain'),
+    Filter = _require3.Filter;
+
+var _require4 = require('capsid'),
+    component = _require4.component,
+    emit = _require4.emit;
 
 /**
  * The observer of the filter and invokes filterchange event when it's changed.
  */
 
 
-var Router = (_dec = emit('filterchange'), _dec2 = emit('filterchange'), _dec3 = emit('filterchange'), _dec4 = emit('filterchange'), component(_class = (_class2 = function () {
+var Router = (_dec = emit(CHANGE_FILTER), _dec2 = emit(CHANGE_FILTER), _dec3 = emit(CHANGE_FILTER), _dec4 = emit(CHANGE_FILTER), component(_class = (_class2 = function () {
   function Router() {
     _classCallCheck(this, Router);
   }
@@ -12936,7 +12955,7 @@ var Router = (_dec = emit('filterchange'), _dec2 = emit('filterchange'), _dec3 =
 
 module.exports = Router;
 
-},{"../domain/filter":19,"capsid":1,"hash-route":7}],28:[function(require,module,exports){
+},{"../const":18,"../domain":20,"capsid":1,"hash-route":7}],28:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -12974,32 +12993,33 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
   return desc;
 }
 
-var TodoFactory = require('../domain/todo-factory');
-var TodoRepository = require('../domain/todo-repository');
+var _require = require('../domain'),
+    Todo = _require.Todo;
 
-var _require = require('../const'),
-    _require$ACTION = _require.ACTION,
-    CLEAR_COMPLETED = _require$ACTION.CLEAR_COMPLETED,
-    DESTROY_TODO = _require$ACTION.DESTROY_TODO,
-    FINISH_EDIT_TODO = _require$ACTION.FINISH_EDIT_TODO,
-    MODEL_UPDATE = _require$ACTION.MODEL_UPDATE,
-    NEW_ITEM = _require$ACTION.NEW_ITEM,
-    TOGGLE_ALL = _require$ACTION.TOGGLE_ALL,
-    TOGGLE_TODO = _require$ACTION.TOGGLE_TODO;
+var _require2 = require('../const'),
+    _require2$ACTION = _require2.ACTION,
+    CHANGE_FILTER = _require2$ACTION.CHANGE_FILTER,
+    CLEAR_COMPLETED = _require2$ACTION.CLEAR_COMPLETED,
+    DESTROY_TODO = _require2$ACTION.DESTROY_TODO,
+    FINISH_EDIT_TODO = _require2$ACTION.FINISH_EDIT_TODO,
+    MODEL_UPDATE = _require2$ACTION.MODEL_UPDATE,
+    NEW_ITEM = _require2$ACTION.NEW_ITEM,
+    TOGGLE_ALL = _require2$ACTION.TOGGLE_ALL,
+    TOGGLE_TODO = _require2$ACTION.TOGGLE_TODO;
 
-var _require2 = require('capsid'),
-    pub = _require2.pub,
-    make = _require2.make,
-    on = _require2.on,
-    component = _require2.component,
-    wire = _require2.wire;
+var _require3 = require('capsid'),
+    pub = _require3.pub,
+    make = _require3.make,
+    on = _require3.on,
+    component = _require3.component,
+    wire = _require3.wire;
 
 /**
  * The todo application class.
  */
 
 
-var Todoapp = (_dec = pub(MODEL_UPDATE, '.is-model-observer'), _dec2 = on('filterchange'), _dec3 = on(NEW_ITEM), _dec4 = on(TOGGLE_TODO), _dec5 = on(DESTROY_TODO), _dec6 = on(FINISH_EDIT_TODO), _dec7 = on(CLEAR_COMPLETED), _dec8 = on(TOGGLE_ALL), component(_class = (_class2 = function () {
+var Todoapp = (_dec = pub(MODEL_UPDATE, '.is-model-observer'), _dec2 = on(CHANGE_FILTER), _dec3 = on(NEW_ITEM), _dec4 = on(TOGGLE_TODO), _dec5 = on(DESTROY_TODO), _dec6 = on(FINISH_EDIT_TODO), _dec7 = on(CLEAR_COMPLETED), _dec8 = on(TOGGLE_ALL), component(_class = (_class2 = function () {
   function Todoapp() {
     _classCallCheck(this, Todoapp);
   }
@@ -13007,8 +13027,8 @@ var Todoapp = (_dec = pub(MODEL_UPDATE, '.is-model-observer'), _dec2 = on('filte
   _createClass(Todoapp, [{
     key: '__init__',
     value: function __init__() {
-      this.todoFactory = new TodoFactory();
-      this.todoRepository = new TodoRepository();
+      this.todoFactory = new Todo.Factory();
+      this.todoRepository = new Todo.Repository();
       this.todoCollection = this.todoRepository.getAll();
 
       var router = make('router', this.el);
@@ -13022,26 +13042,19 @@ var Todoapp = (_dec = pub(MODEL_UPDATE, '.is-model-observer'), _dec2 = on('filte
       });
     }
   }, {
-    key: 'refreshControls',
-    value: function refreshControls() {
+    key: 'refresh',
+    value: function refresh() {
       // updates visibility of main and footer area
       this.elem.find('.main, .footer').css('display', this.todoCollection.isEmpty() ? 'none' : 'block');
 
       return this;
     }
   }, {
-    key: 'refreshAll',
-    value: function refreshAll() {
-      this.refreshControls();
-
-      this['todo-list'].onRefresh(this.todoCollection, this.filter);
-    }
-  }, {
     key: 'onFilterchange',
     value: function onFilterchange(e) {
       this.filter = e.detail;
 
-      this.refreshAll();
+      this.refresh();
     }
 
     /**
@@ -13060,7 +13073,7 @@ var Todoapp = (_dec = pub(MODEL_UPDATE, '.is-model-observer'), _dec2 = on('filte
       this.todoCollection.push(todo);
       this.save();
 
-      this.refreshAll();
+      this.refresh();
     }
 
     /**
@@ -13081,16 +13094,13 @@ var Todoapp = (_dec = pub(MODEL_UPDATE, '.is-model-observer'), _dec2 = on('filte
 
   }, {
     key: 'toggle',
-    value: function toggle(e) {
-      var id = e.detail;
+    value: function toggle(_ref) {
+      var id = _ref.detail;
+
       this.todoCollection.toggleById(id);
       this.save();
 
-      if (this.filter.isAll()) {
-        this.refreshControls();
-      } else {
-        this.refreshAll();
-      }
+      this.refresh();
     }
 
     /**
@@ -13101,13 +13111,13 @@ var Todoapp = (_dec = pub(MODEL_UPDATE, '.is-model-observer'), _dec2 = on('filte
 
   }, {
     key: 'remove',
-    value: function remove(_ref) {
-      var id = _ref.detail;
+    value: function remove(_ref2) {
+      var id = _ref2.detail;
 
       this.todoCollection.removeById(id);
       this.save();
 
-      this.refreshAll();
+      this.refresh();
     }
 
     /**
@@ -13119,10 +13129,10 @@ var Todoapp = (_dec = pub(MODEL_UPDATE, '.is-model-observer'), _dec2 = on('filte
 
   }, {
     key: 'editItem',
-    value: function editItem(_ref2) {
-      var _ref2$detail = _ref2.detail,
-          id = _ref2$detail.id,
-          title = _ref2$detail.title;
+    value: function editItem(_ref3) {
+      var _ref3$detail = _ref3.detail,
+          id = _ref3$detail.id,
+          title = _ref3$detail.title;
 
       this.todoCollection.getById(id).title = title;
       this.save();
@@ -13138,12 +13148,12 @@ var Todoapp = (_dec = pub(MODEL_UPDATE, '.is-model-observer'), _dec2 = on('filte
       this.todoCollection = this.todoCollection.uncompleted();
       this.save();
 
-      this.refreshAll();
+      this.refresh();
     }
   }, {
     key: 'toggleAll',
-    value: function toggleAll(_ref3) {
-      var toggle = _ref3.detail;
+    value: function toggleAll(_ref4) {
+      var toggle = _ref4.detail;
 
       if (toggle) {
         this.completeAll();
@@ -13166,7 +13176,7 @@ var Todoapp = (_dec = pub(MODEL_UPDATE, '.is-model-observer'), _dec2 = on('filte
         this.todoCollection.uncompleteAll();
         this.save();
 
-        this.refreshAll();
+        this.refresh();
       }
     }
 
@@ -13184,7 +13194,7 @@ var Todoapp = (_dec = pub(MODEL_UPDATE, '.is-model-observer'), _dec2 = on('filte
         this.todoCollection.completeAll();
         this.save();
 
-        this.refreshAll();
+        this.refresh();
       }
     }
   }, {
@@ -13196,20 +13206,9 @@ var Todoapp = (_dec = pub(MODEL_UPDATE, '.is-model-observer'), _dec2 = on('filte
   }]);
 
   return Todoapp;
-}(), (_applyDecoratedDescriptor(_class2.prototype, 'todo-list', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'todo-list'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'toggle-all', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggle-all'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'refreshControls', [_dec], Object.getOwnPropertyDescriptor(_class2.prototype, 'refreshControls'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'onFilterchange', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'onFilterchange'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'addTodo', [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, 'addTodo'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'toggle', [_dec4], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggle'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'remove', [_dec5], Object.getOwnPropertyDescriptor(_class2.prototype, 'remove'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'editItem', [_dec6], Object.getOwnPropertyDescriptor(_class2.prototype, 'editItem'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'clearCompleted', [_dec7], Object.getOwnPropertyDescriptor(_class2.prototype, 'clearCompleted'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'toggleAll', [_dec8], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggleAll'), _class2.prototype)), _class2)) || _class);
+}(), (_applyDecoratedDescriptor(_class2.prototype, 'todo-list', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'todo-list'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'toggle-all', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggle-all'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'refresh', [_dec], Object.getOwnPropertyDescriptor(_class2.prototype, 'refresh'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'onFilterchange', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'onFilterchange'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'addTodo', [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, 'addTodo'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'toggle', [_dec4], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggle'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'remove', [_dec5], Object.getOwnPropertyDescriptor(_class2.prototype, 'remove'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'editItem', [_dec6], Object.getOwnPropertyDescriptor(_class2.prototype, 'editItem'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'clearCompleted', [_dec7], Object.getOwnPropertyDescriptor(_class2.prototype, 'clearCompleted'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'toggleAll', [_dec8], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggleAll'), _class2.prototype)), _class2)) || _class);
 
 
 module.exports = Todoapp;
 
-},{"../const":18,"../domain/todo-factory":22,"../domain/todo-repository":23,"capsid":1}],29:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports.default = function (el, type, detail) {
-  $(el)[0].dispatchEvent(new CustomEvent(type, { detail: detail, bubbles: true }));
-};
-
-},{}]},{},[25]);
+},{"../const":18,"../domain":20,"capsid":1}]},{},[25]);
