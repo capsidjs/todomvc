@@ -95,8 +95,6 @@ class TodoItem {
 
   @emit(FINISH_EDIT_TODO)
   finishEditTodo (title) {
-    this.label.textContent = title
-
     return {
       title,
       id: this.el.getAttribute('id')

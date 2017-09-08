@@ -12,29 +12,29 @@ class TodoList {
    */
   @on(MODEL_UPDATE)
   onRefresh ({ detail: { todoCollection, filter } }) {
-    if (todoCollection.length === this.el.querySelectorAll('.todo-item').length) {
-      todoCollection.forEach(todo => {
+    const visibleTodos = todoCollection.filterBy(filter)
+
+    if (visibleTodos.length === this.el.querySelectorAll('.todo-item').length) {
+      visibleTodos.forEach(todo => {
         get('todo-item', this.el.querySelector(`[id="${todo.id}"`)).update(todo)
       })
     } else {
       this.el.innerHTML = ''
 
-      todoCollection.filterBy(filter).forEach(todo => {
-        const li = document.createElement('li')
-        this.el.appendChild(li)
-        make('todo-item', li).update(todo)
+      visibleTodos.forEach(todo => {
+        this.appendTodoItem(todo)
       })
     }
   }
 
   /**
-   * Toggles the given todos.
-   * @param {TodoCollecion} todos The todo list
+   * Appends todo item by the todo model.
+   * @param {Todo} todo The todo model
    */
-  toggleAll (todos) {
-    todos.forEach(todo => {
-      get('todo-item', this.el.querySelector(`[id="${todo.id}"]`)).toggleCompleted()
-    })
+  appendTodoItem (todo) {
+    const li = document.createElement('li')
+    this.el.appendChild(li)
+    make('todo-item', li).update(todo)
   }
 }
 

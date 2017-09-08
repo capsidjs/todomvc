@@ -14,5 +14,7 @@ class Main {
   @on(MODEL_UPDATE)
   onUpdate ({ detail: { todoCollection } }) {
     this.toggleAllButton.checked = todoCollection.uncompleted().isEmpty()
+
+    this.el.style.display = todoCollection.isEmpty() ? 'none' : 'block'
   }
 }

@@ -11,7 +11,7 @@ const { ACTION: {
   TOGGLE_TODO
 } } = require('../const')
 
-const { pub, make, on, component, wire } = require('capsid')
+const { pub, make, on, component } = require('capsid')
 
 /**
  * The todo application class.
@@ -30,15 +30,12 @@ class Todoapp {
     $(window).on('hashchange', () => router.onHashchange())
   }
 
-  @wire get 'todo-list' () {}
-  @wire get 'toggle-all' () {}
-
+  /**
+   * Saves the current todo collection state.
+   */
   @pub(MODEL_UPDATE, '.is-model-observer')
-  refresh () {
-    // updates visibility of main and footer area
-    this.elem
-      .find('.main, .footer')
-      .css('display', this.todoCollection.isEmpty() ? 'none' : 'block')
+  save () {
+    this.todoRepository.saveAll(this.todoCollection)
 
     return this
   }
@@ -46,8 +43,7 @@ class Todoapp {
   @on(CHANGE_FILTER)
   onFilterchange (e) {
     this.filter = e.detail
-
-    this.refresh()
+    this.save()
   }
 
   /**
@@ -58,19 +54,8 @@ class Todoapp {
    */
   @on(NEW_ITEM)
   addTodo ({ detail: title }) {
-    const todo = this.todoFactory.createByTitle(title)
-
-    this.todoCollection.push(todo)
+    this.todoCollection.push(this.todoFactory.createByTitle(title))
     this.save()
-
-    this.refresh()
-  }
-
-  /**
-   * Saves the current todo collection state.
-   */
-  save () {
-    this.todoRepository.saveAll(this.todoCollection)
   }
 
   /**
@@ -82,8 +67,6 @@ class Todoapp {
   toggle ({ detail: id }) {
     this.todoCollection.toggleById(id)
     this.save()
-
-    this.refresh()
   }
 
   /**
@@ -95,8 +78,6 @@ class Todoapp {
   remove ({ detail: id }) {
     this.todoCollection.removeById(id)
     this.save()
-
-    this.refresh()
   }
 
   /**
@@ -118,47 +99,17 @@ class Todoapp {
   clearCompleted () {
     this.todoCollection = this.todoCollection.uncompleted()
     this.save()
-
-    this.refresh()
   }
 
   @on(TOGGLE_ALL)
   toggleAll ({ detail: toggle }) {
     if (toggle) {
-      this.completeAll()
-    } else {
-      this.uncompleteAll()
-    }
-  }
-
-  /**
-   * Uncompletes all the todo items.
-   * @private
-   */
-  uncompleteAll () {
-    if (this.filter.isAll()) {
-      this['todo-list'].toggleAll(this.todoCollection.completed())
+      this.todoCollection.completeAll()
     } else {
       this.todoCollection.uncompleteAll()
-      this.save()
-
-      this.refresh()
     }
-  }
 
-  /**
-   * Completes all the todo items.
-   * @private
-   */
-  completeAll () {
-    if (this.filter.isAll()) {
-      this['todo-list'].toggleAll(this.todoCollection.uncompleted())
-    } else {
-      this.todoCollection.completeAll()
-      this.save()
-
-      this.refresh()
-    }
+    this.save()
   }
 }
 

@@ -2,8 +2,8 @@ const { Filter } = require('../domain')
 const { ACTION: { MODEL_UPDATE } } = require('../const')
 const { on, emit, wire, component } = require('capsid')
 
-@component('footer')
-class BottomControl {
+@component
+class Footer {
   @wire.el('.clear-completed') get clearCompletedButton () {}
 
   @wire.el('a[href="#/active"]') get activeFilterButton () {}
@@ -17,8 +17,7 @@ class BottomControl {
   clearCompletedTodos () {}
 
   @on(MODEL_UPDATE)
-  onUpdate (e) {
-    const { detail: { todoCollection, filter } } = e
+  onUpdate ({ detail: { todoCollection, filter } }) {
     const countLeft = todoCollection.uncompleted().length
 
     this.clearCompletedButton.style.display = todoCollection.completed().isEmpty() ? 'none' : 'inline'
@@ -28,7 +27,9 @@ class BottomControl {
     this.allFilterButton.classList.toggle('selected', filter === Filter.ALL)
 
     this.todoCountLabel.innerHTML = `<strong>${countLeft} item${countLeft === 1 ? '' : 's'} left</strong>`
+
+    this.el.style.display = todoCollection.isEmpty() ? 'none' : 'block'
   }
 }
 
-module.exports = BottomControl
+module.exports = Footer
