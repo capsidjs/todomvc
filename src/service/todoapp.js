@@ -41,8 +41,8 @@ class Todoapp {
   }
 
   @on(CHANGE_FILTER)
-  onFilterchange (e) {
-    this.filter = e.detail
+  onFilterchange ({ detail: filter }) {
+    this.filter = filter
     this.save()
   }
 
