@@ -12057,7 +12057,7 @@ module.exports = NewTodo;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _dec, _dec2, _dec3, _dec4, _class, _desc, _value, _class2;
+var _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _class, _desc, _value, _class2;
 
 var _trigger = require('../util/trigger');
 
@@ -12097,7 +12097,11 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
 }
 
 var _require = require('../const'),
-    EDIT_TODO = _require.ACTION.EDIT_TODO;
+    _require$ACTION = _require.ACTION,
+    EDIT_TODO = _require$ACTION.EDIT_TODO,
+    TOGGLE_TODO = _require$ACTION.TOGGLE_TODO,
+    DESTROY_TODO = _require$ACTION.DESTROY_TODO,
+    FINISH_EDIT_TODO = _require$ACTION.FINISH_EDIT_TODO;
 
 var _require2 = require('dom-gen'),
     div = _require2.div,
@@ -12107,6 +12111,7 @@ var _require2 = require('dom-gen'),
 
 var _require3 = require('capsid'),
     on = _require3.on,
+    emit = _require3.emit,
     wire = _require3.wire,
     component = _require3.component;
 
@@ -12115,7 +12120,7 @@ var _require3 = require('capsid'),
  */
 
 
-var TodoItem = (_dec = on('click', { at: '.toggle' }), _dec2 = on('click', { at: '.destroy' }), _dec3 = on('dblclick', { at: 'label' }), _dec4 = on(EDIT_TODO), component(_class = (_class2 = function () {
+var TodoItem = (_dec = wire.el('label'), _dec2 = wire.el('.toggle'), _dec3 = on('click', { at: '.toggle' }), _dec4 = emit(TOGGLE_TODO), _dec5 = on('click', { at: '.destroy' }), _dec6 = emit(DESTROY_TODO), _dec7 = on('dblclick', { at: 'label' }), _dec8 = on(EDIT_TODO), _dec9 = emit(FINISH_EDIT_TODO), component(_class = (_class2 = function () {
   function TodoItem() {
     _classCallCheck(this, TodoItem);
   }
@@ -12142,8 +12147,8 @@ var TodoItem = (_dec = on('click', { at: '.toggle' }), _dec2 = on('click', { at:
      * @param {Boolean} todo.completed If completed or not
      */
     value: function update(todo) {
-      this.elem.attr('id', todo.id);
-      this.elem.find('label').text(todo.title);
+      this.el.setAttribute('id', todo.id);
+      this.label.textContent = todo.title;
       this.edit.onUpdate(todo.title);
 
       this.completed = todo.completed;
@@ -12158,10 +12163,10 @@ var TodoItem = (_dec = on('click', { at: '.toggle' }), _dec2 = on('click', { at:
   }, {
     key: 'toggleCompleted',
     value: function toggleCompleted() {
-      (0, _trigger2.default)(this.el, 'todo-item-toggle', this.elem.attr('id'));
-
       this.completed = !this.completed;
       this.updateView();
+
+      return this.el.getAttribute('id');
     }
 
     /**
@@ -12172,9 +12177,7 @@ var TodoItem = (_dec = on('click', { at: '.toggle' }), _dec2 = on('click', { at:
   }, {
     key: 'destroy',
     value: function destroy() {
-      (0, _trigger2.default)(this.el.parentElement, 'todo-item-destroy', this.$el.attr('id'));
-
-      this.$el.remove();
+      return this.el.getAttribute('id');
     }
 
     /**
@@ -12185,35 +12188,8 @@ var TodoItem = (_dec = on('click', { at: '.toggle' }), _dec2 = on('click', { at:
   }, {
     key: 'updateView',
     value: function updateView() {
-      if (this.completed) {
-        this.complete();
-      } else {
-        this.uncomplete();
-      }
-    }
-
-    /**
-     * Completes the item state.
-     * @private
-     */
-
-  }, {
-    key: 'complete',
-    value: function complete() {
-      this.elem.find('.toggle').prop('checked', true);
-      this.elem.addClass('completed');
-    }
-
-    /**
-     * Uncompletes the item state.
-     * @private
-     */
-
-  }, {
-    key: 'uncomplete',
-    value: function uncomplete() {
-      this.elem.find('.toggle').prop('checked', false);
-      this.elem.removeClass('completed');
+      this.toggle.checked = this.completed;
+      this.el.classList.toggle('completed', this.completed);
     }
 
     /**
@@ -12224,7 +12200,7 @@ var TodoItem = (_dec = on('click', { at: '.toggle' }), _dec2 = on('click', { at:
   }, {
     key: 'startEditing',
     value: function startEditing() {
-      this.elem.addClass('editing');
+      this.el.classList.add('editing');
       this.edit.onStart();
     }
 
@@ -12235,10 +12211,10 @@ var TodoItem = (_dec = on('click', { at: '.toggle' }), _dec2 = on('click', { at:
 
   }, {
     key: 'stopEditing',
-    value: function stopEditing(e) {
-      var title = e.detail;
+    value: function stopEditing(_ref) {
+      var title = _ref.detail;
 
-      this.$el.removeClass('editing');
+      this.el.classList.remove('editing');
 
       if (!title) {
         this.destroy();
@@ -12246,17 +12222,31 @@ var TodoItem = (_dec = on('click', { at: '.toggle' }), _dec2 = on('click', { at:
         return;
       }
 
-      this.$el.find('label').text(title);
-
-      (0, _trigger2.default)(this.el, 'todo-item-edited', { id: this.$el.attr('id'), title: title });
+      this.finishEditTodo(title);
     }
+  }, {
+    key: 'finishEditTodo',
+    value: function finishEditTodo(title) {
+      this.label.textContent = title;
+
+      return {
+        title: title,
+        id: this.el.getAttribute('id')
+      };
+    }
+  }, {
+    key: 'label',
+    get: function get() {}
+  }, {
+    key: 'toggle',
+    get: function get() {}
   }, {
     key: 'edit',
     get: function get() {}
   }]);
 
   return TodoItem;
-}(), (_applyDecoratedDescriptor(_class2.prototype, 'edit', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'edit'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'toggleCompleted', [_dec], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggleCompleted'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'destroy', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'destroy'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'startEditing', [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, 'startEditing'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'stopEditing', [_dec4], Object.getOwnPropertyDescriptor(_class2.prototype, 'stopEditing'), _class2.prototype)), _class2)) || _class);
+}(), (_applyDecoratedDescriptor(_class2.prototype, 'label', [_dec], Object.getOwnPropertyDescriptor(_class2.prototype, 'label'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'toggle', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggle'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'edit', [wire], Object.getOwnPropertyDescriptor(_class2.prototype, 'edit'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'toggleCompleted', [_dec3, _dec4], Object.getOwnPropertyDescriptor(_class2.prototype, 'toggleCompleted'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'destroy', [_dec5, _dec6], Object.getOwnPropertyDescriptor(_class2.prototype, 'destroy'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'startEditing', [_dec7], Object.getOwnPropertyDescriptor(_class2.prototype, 'startEditing'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'stopEditing', [_dec8], Object.getOwnPropertyDescriptor(_class2.prototype, 'stopEditing'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'finishEditTodo', [_dec9], Object.getOwnPropertyDescriptor(_class2.prototype, 'finishEditTodo'), _class2.prototype)), _class2)) || _class);
 
 
 module.exports = TodoItem;
@@ -12344,10 +12334,13 @@ module.exports = {
   ACTION: {
     CLEAR_COMPLETED: 'todo-clear-completed',
     CHANGE_FILTER: 'change-filter',
+    DESTROY_TODO: 'destroy-todo',
     EDIT_TODO: 'edit-todo',
+    FINISH_EDIT_TODO: 'finish-edit-todo',
     MODEL_UPDATE: 'model-update',
     NEW_ITEM: 'todo-new-item',
-    TOGGLE_ALL: 'todo-toggle-all'
+    TOGGLE_ALL: 'todo-toggle-all',
+    TOGGLE_TODO: 'todo-toggle-item'
   }
 };
 
@@ -12987,9 +12980,12 @@ var TodoRepository = require('../domain/todo-repository');
 var _require = require('../const'),
     _require$ACTION = _require.ACTION,
     CLEAR_COMPLETED = _require$ACTION.CLEAR_COMPLETED,
+    DESTROY_TODO = _require$ACTION.DESTROY_TODO,
+    FINISH_EDIT_TODO = _require$ACTION.FINISH_EDIT_TODO,
     MODEL_UPDATE = _require$ACTION.MODEL_UPDATE,
     NEW_ITEM = _require$ACTION.NEW_ITEM,
-    TOGGLE_ALL = _require$ACTION.TOGGLE_ALL;
+    TOGGLE_ALL = _require$ACTION.TOGGLE_ALL,
+    TOGGLE_TODO = _require$ACTION.TOGGLE_TODO;
 
 var _require2 = require('capsid'),
     pub = _require2.pub,
@@ -13003,7 +12999,7 @@ var _require2 = require('capsid'),
  */
 
 
-var Todoapp = (_dec = pub(MODEL_UPDATE, '.is-model-observer'), _dec2 = on('filterchange'), _dec3 = on(NEW_ITEM), _dec4 = on('todo-item-toggle'), _dec5 = on('todo-item-destroy'), _dec6 = on('todo-item-edited'), _dec7 = on(CLEAR_COMPLETED), _dec8 = on(TOGGLE_ALL), component(_class = (_class2 = function () {
+var Todoapp = (_dec = pub(MODEL_UPDATE, '.is-model-observer'), _dec2 = on('filterchange'), _dec3 = on(NEW_ITEM), _dec4 = on(TOGGLE_TODO), _dec5 = on(DESTROY_TODO), _dec6 = on(FINISH_EDIT_TODO), _dec7 = on(CLEAR_COMPLETED), _dec8 = on(TOGGLE_ALL), component(_class = (_class2 = function () {
   function Todoapp() {
     _classCallCheck(this, Todoapp);
   }
@@ -13105,8 +13101,8 @@ var Todoapp = (_dec = pub(MODEL_UPDATE, '.is-model-observer'), _dec2 = on('filte
 
   }, {
     key: 'remove',
-    value: function remove(e) {
-      var id = e.detail;
+    value: function remove(_ref) {
+      var id = _ref.detail;
 
       this.todoCollection.removeById(id);
       this.save();
@@ -13123,11 +13119,10 @@ var Todoapp = (_dec = pub(MODEL_UPDATE, '.is-model-observer'), _dec2 = on('filte
 
   }, {
     key: 'editItem',
-    value: function editItem(e) {
-      var _e$detail = e.detail,
-          id = _e$detail.id,
-          title = _e$detail.title;
-
+    value: function editItem(_ref2) {
+      var _ref2$detail = _ref2.detail,
+          id = _ref2$detail.id,
+          title = _ref2$detail.title;
 
       this.todoCollection.getById(id).title = title;
       this.save();
@@ -13147,8 +13142,8 @@ var Todoapp = (_dec = pub(MODEL_UPDATE, '.is-model-observer'), _dec2 = on('filte
     }
   }, {
     key: 'toggleAll',
-    value: function toggleAll(_ref) {
-      var toggle = _ref.detail;
+    value: function toggleAll(_ref3) {
+      var toggle = _ref3.detail;
 
       if (toggle) {
         this.completeAll();

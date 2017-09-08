@@ -3,9 +3,12 @@ const TodoRepository = require('../domain/todo-repository')
 
 const { ACTION: {
   CLEAR_COMPLETED,
+  DESTROY_TODO,
+  FINISH_EDIT_TODO,
   MODEL_UPDATE,
   NEW_ITEM,
-  TOGGLE_ALL
+  TOGGLE_ALL,
+  TOGGLE_TODO
 } } = require('../const')
 
 const { pub, make, on, component, wire } = require('capsid')
@@ -82,7 +85,7 @@ class Todoapp {
    * @param {object} e The event object
    * @param {String} id The todo id
    */
-  @on('todo-item-toggle')
+  @on(TOGGLE_TODO)
   toggle (e) {
     const id = e.detail
     this.todoCollection.toggleById(id)
@@ -100,10 +103,8 @@ class Todoapp {
    * @param {object} e The event object
    * @param {String} id The todo id
    */
-  @on('todo-item-destroy')
-  remove (e) {
-    const id = e.detail
-
+  @on(DESTROY_TODO)
+  remove ({ detail: id }) {
     this.todoCollection.removeById(id)
     this.save()
 
@@ -116,10 +117,8 @@ class Todoapp {
    * @param {string} id The todo id
    * @param {string} title The todo title
    */
-  @on('todo-item-edited')
-  editItem (e) {
-    const { id, title } = e.detail
-
+  @on(FINISH_EDIT_TODO)
+  editItem ({ detail: { id, title } }) {
     this.todoCollection.getById(id).title = title
     this.save()
   }

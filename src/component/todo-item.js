@@ -1,15 +1,22 @@
-import trigger from '../util/trigger'
+const { ACTION: {
+  EDIT_TODO,
+  TOGGLE_TODO,
+  DESTROY_TODO,
+  FINISH_EDIT_TODO
+} } = require('../const')
 
-const { ACTION: { EDIT_TODO } } = require('../const')
 const { div, input, label, button } = require('dom-gen')
-
-const { on, wire, component } = require('capsid')
+const { on, emit, wire, component } = require('capsid')
 
 /**
  * TodoItem class controls todo item in a list.
  */
 @component
 class TodoItem {
+  @wire.el('label') get label () {}
+  @wire.el('.toggle') get toggle () {}
+  @wire get edit () {}
+
   __init__ () {
     this.$el.append(
       div(
@@ -22,11 +29,6 @@ class TodoItem {
   }
 
   /**
-   * @return {Edit}
-   */
-  @wire get edit () {}
-
-  /**
    * Updates the todo title by todo model.
    * @param {Todo} todo The todo
    * @param {String} todo.id The id
@@ -34,24 +36,22 @@ class TodoItem {
    * @param {Boolean} todo.completed If completed or not
    */
   update (todo) {
-    this.elem.attr('id', todo.id)
-    this.elem.find('label').text(todo.title)
+    this.el.setAttribute('id', todo.id)
+    this.label.textContent = todo.title
     this.edit.onUpdate(todo.title)
 
-    this.completed = todo.completed
-    this.updateView()
+    this.toggle.checked = todo.completed
+    this.el.classList.toggle('completed', todo.completed)
   }
 
   /**
    * Toggles the completed state of the item.
    * @private
    */
-  @on('click', {at: '.toggle'})
+  @on('click', { at: '.toggle' })
+  @emit(TOGGLE_TODO)
   toggleCompleted () {
-    trigger(this.el, 'todo-item-toggle', this.elem.attr('id'))
-
-    this.completed = !this.completed
-    this.updateView()
+    return this.el.getAttribute('id')
   }
 
   /**
@@ -59,40 +59,9 @@ class TodoItem {
    * @private
    */
   @on('click', { at: '.destroy' })
+  @emit(DESTROY_TODO)
   destroy () {
-    trigger(this.el.parentElement, 'todo-item-destroy', this.$el.attr('id'))
-
-    this.$el.remove()
-  }
-
-  /**
-   * Updates the view state according to the current completed state.
-   * @private
-   */
-  updateView () {
-    if (this.completed) {
-      this.complete()
-    } else {
-      this.uncomplete()
-    }
-  }
-
-  /**
-   * Completes the item state.
-   * @private
-   */
-  complete () {
-    this.elem.find('.toggle').prop('checked', true)
-    this.elem.addClass('completed')
-  }
-
-  /**
-   * Uncompletes the item state.
-   * @private
-   */
-  uncomplete () {
-    this.elem.find('.toggle').prop('checked', false)
-    this.elem.removeClass('completed')
+    return this.el.getAttribute('id')
   }
 
   /**
@@ -101,7 +70,7 @@ class TodoItem {
    */
   @on('dblclick', { at: 'label' })
   startEditing () {
-    this.elem.addClass('editing')
+    this.el.classList.add('editing')
     this.edit.onStart()
   }
 
@@ -110,10 +79,8 @@ class TodoItem {
    * @private
    */
   @on(EDIT_TODO)
-  stopEditing (e) {
-    const title = e.detail
-
-    this.$el.removeClass('editing')
+  stopEditing ({ detail: title }) {
+    this.el.classList.remove('editing')
 
     if (!title) {
       this.destroy()
@@ -121,9 +88,17 @@ class TodoItem {
       return
     }
 
-    this.$el.find('label').text(title)
+    this.finishEditTodo(title)
+  }
 
-    trigger(this.el, 'todo-item-edited', {id: this.$el.attr('id'), title})
+  @emit(FINISH_EDIT_TODO)
+  finishEditTodo (title) {
+    this.label.textContent = title
+
+    return {
+      title,
+      id: this.el.getAttribute('id')
+    }
   }
 }
 
