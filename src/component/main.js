@@ -18,3 +18,5 @@ class Main {
     this.el.style.display = todoCollection.isEmpty() ? 'none' : 'block'
   }
 }
+
+module.exports = Main

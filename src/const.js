@@ -17,6 +17,6 @@ module.exports = {
     MODEL_UPDATE: 'model-update',
     NEW_ITEM: 'todo-new-item',
     TOGGLE_ALL: 'todo-toggle-all',
-    TOGGLE_TODO: 'todo-toggle-item',
+    TOGGLE_TODO: 'todo-toggle-item'
   }
 }

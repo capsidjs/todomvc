@@ -5,7 +5,6 @@ const { ACTION: {
   FINISH_EDIT_TODO
 } } = require('../const')
 
-const { div, input, label, button } = require('dom-gen')
 const { on, emit, prep, wire, component } = require('capsid')
 
 /**
