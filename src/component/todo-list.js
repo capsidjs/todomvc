@@ -1,6 +1,6 @@
-const {li} = require('dom-gen')
+const { li } = require('dom-gen')
 
-const {component} = require('capsid')
+const { component, get, make } = require('capsid')
 
 /**
  * The todo list component.
@@ -12,10 +12,12 @@ class TodoList {
    * @param {TodoCollection} todos The todo list
    */
   onRefresh (todos, filter) {
-    this.elem.empty()
+    this.el.innerHTML = ''
 
     todos.filterBy(filter).forEach(todo => {
-      li().appendTo(this.elem).cc.init('todo-item').update(todo)
+      const li = document.createElement('li')
+      this.el.appendChild(li)
+      make('todo-item', li).update(todo)
     })
   }
 
@@ -25,7 +27,7 @@ class TodoList {
    */
   toggleAll (todos) {
     todos.forEach(todo => {
-      this.elem.find('#' + todo.id).cc.get('todo-item').toggleCompleted()
+      get('todo-item', this.el.querySelector(`[id="${todo.id}"]`)).toggleCompleted()
     })
   }
 }

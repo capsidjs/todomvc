@@ -11762,12 +11762,6 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _dec, _dec2, _dec3, _dec4, _dec5, _class, _desc, _value, _class2;
 
-var _trigger = require('../util/trigger');
-
-var _trigger2 = _interopRequireDefault(_trigger);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
@@ -11847,7 +11841,6 @@ var Edit = (_dec = on('keypress'), _dec2 = on('keydown'), _dec3 = on('blur'), _d
       if (e.which === KEYCODE.ENTER) {
         this.onFinish();
       } else if (e.which === KEYCODE.ESCAPE) {
-        console.log('cancel');
         this.onCancel();
       }
     }
@@ -11887,7 +11880,7 @@ var Edit = (_dec = on('keypress'), _dec2 = on('keydown'), _dec3 = on('blur'), _d
 
 module.exports = Edit;
 
-},{"../const":18,"../util/trigger":29,"capsid":1}],13:[function(require,module,exports){
+},{"../const":18,"capsid":1}],13:[function(require,module,exports){
 'use strict';
 
 require('./todo-item');
@@ -12281,7 +12274,9 @@ var _require = require('dom-gen'),
     li = _require.li;
 
 var _require2 = require('capsid'),
-    component = _require2.component;
+    component = _require2.component,
+    get = _require2.get,
+    make = _require2.make;
 
 /**
  * The todo list component.
@@ -12303,10 +12298,12 @@ var TodoList = component(_class = function () {
     value: function onRefresh(todos, filter) {
       var _this = this;
 
-      this.elem.empty();
+      this.el.innerHTML = '';
 
       todos.filterBy(filter).forEach(function (todo) {
-        li().appendTo(_this.elem).cc.init('todo-item').update(todo);
+        var li = document.createElement('li');
+        _this.el.appendChild(li);
+        make('todo-item', li).update(todo);
       });
     }
 
@@ -12321,7 +12318,7 @@ var TodoList = component(_class = function () {
       var _this2 = this;
 
       todos.forEach(function (todo) {
-        _this2.elem.find('#' + todo.id).cc.get('todo-item').toggleCompleted();
+        get('todo-item', _this2.el.querySelector('[id="' + todo.id + '"]')).toggleCompleted();
       });
     }
   }]);
