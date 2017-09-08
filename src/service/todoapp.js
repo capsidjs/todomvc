@@ -27,7 +27,7 @@ class Todoapp {
 
     setTimeout(() => router.onHashchange())
 
-    $(window).on('hashchange', () => router.onHashchange())
+    window.addEventListener('hashchange', () => router.onHashchange())
   }
 
   /**
