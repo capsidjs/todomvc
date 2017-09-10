@@ -1,5 +1,8 @@
 require('../src')
 
+global.$ = require('jquery')
+require('capsid/jquery')(require('capsid'), global.$)
+
 const chai = require('chai')
 const dirtyChai = require('dirty-chai')
 chai.use(dirtyChai)

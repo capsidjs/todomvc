@@ -1,12 +1,18 @@
-const {expect} = require('chai')
-const {ul, li} = require('dom-gen')
-const {trigger} = require('../helper')
+const { expect } = require('chai')
+const { ul, li } = require('dom-gen')
+const { trigger } = require('../helper')
+const { ACTION: {
+  DESTROY_TODO,
+  EDIT_TODO,
+  FINISH_EDIT_TODO,
+  TOGGLE_TODO
+} } = require('../../src/const')
 
 let todoItem
 let elem
 let parentElem
 
-describe('todo-edit', () => {
+describe('todo-item', () => {
   beforeEach(() => {
     parentElem = ul()
 
@@ -52,32 +58,31 @@ describe('todo-edit', () => {
   })
 
   describe('on .toggle click', () => {
-    it('toggles the state of the todo', () => {
+    it('emits TOGGLE_TODO event', done => {
+      elem.on(TOGGLE_TODO, ({ detail: id }) => {
+        expect(id).to.equal('foo')
+        done()
+      })
+
       elem.find('.toggle').trigger('click')
-
-      expect(elem.hasClass('completed')).to.be.true()
-      expect(elem.find('.toggle').prop('checked')).to.be.true()
-
-      elem.find('.toggle').trigger('click')
-
-      expect(elem.hasClass('completed')).to.be.false()
-      expect(elem.find('.toggle').prop('checked')).to.be.false()
     })
   })
 
   describe('on .destroy click', () => {
     it('removes the element', () => {
-      expect(elem.parent()).to.have.length(1)
-
       elem.find('.destroy').trigger('click')
 
-      expect(elem.parent()).to.have.length(0)
+      const parent = elem.parent()
+
+      expect(parent).to.have.length(1)
+
+      setTimeout(() => {
+        expect(parent).to.have.length(0)
+      })
     })
 
-    it('triggers the todo-item-destroy event on the parent element', done => {
-      parentElem.on('todo-item-destroy', e => {
-        const id = e.detail
-
+    it('triggers DESTROY_TODO event', done => {
+      elem.on(DESTROY_TODO, ({ detail: id }) => {
         expect(id).to.equal('foo')
 
         done()
@@ -95,40 +100,36 @@ describe('todo-edit', () => {
     })
   })
 
-  describe('on todo-edited event', () => {
+  describe('on EDIT_TODO event', () => {
     it('removes editing class', () => {
       trigger(elem.find('label'), 'dblclick')
 
       expect(elem.hasClass('editing')).to.be.true()
 
-      trigger(elem, 'todo-edited')
+      trigger(elem, EDIT_TODO)
 
       expect(elem.hasClass('editing')).to.be.false()
     })
 
-    it('removes the element when the todo title is empty', () => {
-      trigger(elem, 'todo-edited', '')
+    it('removes the element when the todo title is empty', done => {
+      elem.on(DESTROY_TODO, ({ detail: id }) => {
+        expect(id).to.equal('foo')
 
-      expect(elem.parent()).to.have.length(0)
+        done()
+      })
+
+      trigger(elem, EDIT_TODO, '')
     })
 
-    it('updates label when the todo title is not empty', () => {
-      trigger(elem, 'todo-edited', 'ham egg')
-
-      expect(elem.find('label').text()).to.equal('ham egg')
-    })
-
-    it('triggers todo-item-edited button when the todo title is not empty', done => {
-      elem.on('todo-item-edited', e => {
-        const {id, title} = e.detail
-
+    it('triggers FINISH_EDIT_TODO button when the todo title is not empty', done => {
+      elem.on(FINISH_EDIT_TODO, ({ detail: { id, title } }) => {
         expect(id).to.equal('foo')
         expect(title).to.equal('ham egg')
 
         done()
       })
 
-      trigger(elem, 'todo-edited', 'ham egg')
+      trigger(elem, EDIT_TODO, 'ham egg')
     })
   })
 })

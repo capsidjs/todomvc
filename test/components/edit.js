@@ -1,13 +1,15 @@
-const {expect} = require('chai')
-const {input} = require('dom-gen')
+const { expect } = require('chai')
+const { input } = require('dom-gen')
 
-const {trigger} = require('../helper')
+const { trigger } = require('../helper')
 const Const = require('../../src/const')
+
+const { ACTION: { EDIT_TODO } } = Const
 
 let elem
 let todoEdit
 
-describe('Edit', () => {
+describe('edit', () => {
   beforeEach(() => {
     elem = input()
     todoEdit = elem.cc.init('edit')
@@ -15,16 +17,16 @@ describe('Edit', () => {
   })
 
   describe('on blur', () => {
-    it('triggers todo-edited event when the elem is blurred', done => {
-      elem.on('todo-edited', () => done())
+    it('triggers EDIT_TODO event when the elem is blurred', done => {
+      elem.on(EDIT_TODO, () => done())
 
       trigger(elem, 'blur')
     })
   })
 
   describe('onKeypress', () => {
-    it('triggers todo-edited event with the edited value when ENTER is pressed', done => {
-      elem.on('todo-edited', e => {
+    it('triggers EDIT_TODO event with the edited value when ENTER is pressed', done => {
+      elem.on(EDIT_TODO, e => {
         const value = e.detail
 
         expect(value).to.equal('bar')
@@ -40,7 +42,7 @@ describe('Edit', () => {
     })
 
     it('does nothing when the pressed key is SPACE', done => {
-      elem.on('todo-edited', () => done(new Error('todo-edited should not be triggered')))
+      elem.on(EDIT_TODO, () => done(new Error('todo-edited should not be triggered')))
 
       const e = new CustomEvent('keypress')
       e.which = 32
@@ -50,8 +52,8 @@ describe('Edit', () => {
       done()
     })
 
-    it('triggers todo-edited event with the value before editing when ESCAPE is pressed', done => {
-      elem.on('todo-edited', e => {
+    it('triggers EDIT_TODO event with the value before editing when ESCAPE is pressed', done => {
+      elem.on(EDIT_TODO, e => {
         const value = e.detail
 
         expect(value).to.equal('foo')
@@ -68,8 +70,8 @@ describe('Edit', () => {
   })
 
   describe('onFinish', () => {
-    it('triggers todo-edited events with current value of the input', done => {
-      todoEdit.el.addEventListener('todo-edited', e => {
+    it('triggers EDIT_TODO events with current value of the input', done => {
+      todoEdit.el.addEventListener(EDIT_TODO, e => {
         const value = e.detail
 
         expect(value).to.equal('foo')
