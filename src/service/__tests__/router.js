@@ -1,8 +1,8 @@
 const { div } = require('dom-gen')
 const { expect } = require('chai')
 
-const { Filter } = require('../../src/domain')
-const { ACTION: { CHANGE_FILTER } } = require('../../src/const')
+const { Filter } = require('../../domain')
+const { ACTION: { CHANGE_FILTER } } = require('../../const')
 
 let target
 let router

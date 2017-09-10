@@ -658,7 +658,7 @@ var HashRoute = function () {
 }();
 
 module.exports = HashRoute;
-},{"path-to-regexp":5}],4:[function(require,module,exports){
+},{"path-to-regexp":6}],4:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -715,6 +715,11 @@ exports.dispatch = function (obj, path) {
   routes.dispatch(obj, path);
 };
 },{"./hash-route":3,"./hash-route-collection":2}],5:[function(require,module,exports){
+module.exports = Array.isArray || function (arr) {
+  return Object.prototype.toString.call(arr) == '[object Array]';
+};
+
+},{}],6:[function(require,module,exports){
 var isarray = require('isarray')
 
 /**
@@ -1142,12 +1147,7 @@ function pathToRegexp (path, keys, options) {
   return stringToRegexp(/** @type {string} */ (path), /** @type {!Array} */ (keys), options)
 }
 
-},{"isarray":6}],6:[function(require,module,exports){
-module.exports = Array.isArray || function (arr) {
-  return Object.prototype.toString.call(arr) == '[object Array]';
-};
-
-},{}],7:[function(require,module,exports){
+},{"isarray":5}],7:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -1314,7 +1314,9 @@ var _require = require('../domain'),
     Filter = _require.Filter;
 
 var _require2 = require('../const'),
-    MODEL_UPDATE = _require2.ACTION.MODEL_UPDATE;
+    _require2$ACTION = _require2.ACTION,
+    MODEL_UPDATE = _require2$ACTION.MODEL_UPDATE,
+    CLEAR_COMPLETED = _require2$ACTION.CLEAR_COMPLETED;
 
 var _require3 = require('capsid'),
     on = _require3.on,
@@ -1322,7 +1324,7 @@ var _require3 = require('capsid'),
     wire = _require3.wire,
     component = _require3.component;
 
-var Footer = (_dec = wire.el('.clear-completed'), _dec2 = wire.el('a[href="#/active"]'), _dec3 = wire.el('a[href="#/completed"]'), _dec4 = wire.el('a[href="#/"]'), _dec5 = wire.el('.todo-count'), _dec6 = on('click', { at: '.clear-completed' }), _dec7 = emit('todo-clear-completed'), _dec8 = on(MODEL_UPDATE), component(_class = (_class2 = function () {
+var Footer = (_dec = wire.el('.clear-completed'), _dec2 = wire.el('a[href="#/active"]'), _dec3 = wire.el('a[href="#/completed"]'), _dec4 = wire.el('a[href="#/"]'), _dec5 = wire.el('.todo-count'), _dec6 = on('click', { at: '.clear-completed' }), _dec7 = emit(CLEAR_COMPLETED), _dec8 = on(MODEL_UPDATE), component(_class = (_class2 = function () {
   function Footer() {
     _classCallCheck(this, Footer);
   }
@@ -2532,8 +2534,10 @@ var Todoapp = (_dec = pub(MODEL_UPDATE, '.is-model-observer'), _dec2 = on(CHANGE
     }
   }, {
     key: 'onFilterchange',
-    value: function onFilterchange(e) {
-      this.filter = e.detail;
+    value: function onFilterchange(_ref) {
+      var filter = _ref.detail;
+
+      this.filter = filter;
       this.save();
     }
 
@@ -2546,8 +2550,8 @@ var Todoapp = (_dec = pub(MODEL_UPDATE, '.is-model-observer'), _dec2 = on(CHANGE
 
   }, {
     key: 'addTodo',
-    value: function addTodo(_ref) {
-      var title = _ref.detail;
+    value: function addTodo(_ref2) {
+      var title = _ref2.detail;
 
       this.todoCollection.push(this.todoFactory.createByTitle(title));
       this.save();
@@ -2561,8 +2565,8 @@ var Todoapp = (_dec = pub(MODEL_UPDATE, '.is-model-observer'), _dec2 = on(CHANGE
 
   }, {
     key: 'toggle',
-    value: function toggle(_ref2) {
-      var id = _ref2.detail;
+    value: function toggle(_ref3) {
+      var id = _ref3.detail;
 
       this.todoCollection.toggleById(id);
       this.save();
@@ -2576,8 +2580,8 @@ var Todoapp = (_dec = pub(MODEL_UPDATE, '.is-model-observer'), _dec2 = on(CHANGE
 
   }, {
     key: 'remove',
-    value: function remove(_ref3) {
-      var id = _ref3.detail;
+    value: function remove(_ref4) {
+      var id = _ref4.detail;
 
       this.todoCollection.removeById(id);
       this.save();
@@ -2592,10 +2596,10 @@ var Todoapp = (_dec = pub(MODEL_UPDATE, '.is-model-observer'), _dec2 = on(CHANGE
 
   }, {
     key: 'editItem',
-    value: function editItem(_ref4) {
-      var _ref4$detail = _ref4.detail,
-          id = _ref4$detail.id,
-          title = _ref4$detail.title;
+    value: function editItem(_ref5) {
+      var _ref5$detail = _ref5.detail,
+          id = _ref5$detail.id,
+          title = _ref5$detail.title;
 
       this.todoCollection.getById(id).title = title;
       this.save();
@@ -2613,8 +2617,8 @@ var Todoapp = (_dec = pub(MODEL_UPDATE, '.is-model-observer'), _dec2 = on(CHANGE
     }
   }, {
     key: 'toggleAll',
-    value: function toggleAll(_ref5) {
-      var toggle = _ref5.detail;
+    value: function toggleAll(_ref6) {
+      var toggle = _ref6.detail;
 
       if (toggle) {
         this.todoCollection.completeAll();

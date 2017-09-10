@@ -1,8 +1,8 @@
 const { expect } = require('chai')
 const { input } = require('dom-gen')
 
-const { trigger } = require('../helper')
-const Const = require('../../src/const')
+const { trigger } = require('../../__tests__/helper')
+const Const = require('../../const')
 
 const { ACTION: { EDIT_TODO } } = Const
 

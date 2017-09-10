@@ -1,12 +1,12 @@
 const { expect } = require('chai')
 const { ul, li } = require('dom-gen')
-const { trigger } = require('../helper')
+const { trigger } = require('../../__tests__/helper')
 const { ACTION: {
   DESTROY_TODO,
   EDIT_TODO,
   FINISH_EDIT_TODO,
   TOGGLE_TODO
-} } = require('../../src/const')
+} } = require('../../const')
 
 let todoItem
 let elem

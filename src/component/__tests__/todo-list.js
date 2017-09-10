@@ -1,11 +1,9 @@
-const {expect} = require('chai')
-const {div} = require('dom-gen')
+const { expect } = require('chai')
+const { div } = require('dom-gen')
 
-const TodoCollection = require('../../src/domain/todo-collection')
-const TodoFactory = require('../../src/domain/todo-factory')
-const Filter = require('../../src/domain/filter')
+const { Todo, Filter } = require('../../domain')
 
-const todoFactory = new TodoFactory()
+const todoFactory = new Todo.Factory()
 
 let todoList
 
@@ -16,7 +14,7 @@ describe('todo-list', () => {
 
   describe('onRefresh', () => {
     it('updates the todo list view by the given todo collection and filter', () => {
-      todoList.onRefresh({ detail: { todoCollection: new TodoCollection([
+      todoList.onRefresh({ detail: { todoCollection: new Todo.Collection([
         todoFactory.createByTitle('foo0'),
         todoFactory.createByTitle('foo1'),
         todoFactory.createByTitle('foo2')

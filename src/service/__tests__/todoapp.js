@@ -1,9 +1,9 @@
-import { trigger } from '../helper'
+import { trigger } from '../../__tests__/helper'
 
 const { expect } = require('chai')
 const { div, ul, button, footer, section } = require('dom-gen')
 
-const { Filter } = require('../../src/domain')
+const { Filter } = require('../../domain')
 const { ACTION: {
   CHANGE_FILTER,
   CLEAR_COMPLETED,
@@ -12,7 +12,7 @@ const { ACTION: {
   NEW_ITEM,
   TOGGLE_ALL,
   TOGGLE_TODO
-} } = require('../../src/const')
+} } = require('../../const')
 
 let elem
 let todoApp

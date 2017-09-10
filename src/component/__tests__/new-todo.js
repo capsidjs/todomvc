@@ -1,7 +1,7 @@
-const {expect} = require('chai')
-const {input} = require('dom-gen')
+const { expect } = require('chai')
+const { input } = require('dom-gen')
 
-const Const = require('../../src/const')
+const Const = require('../../const')
 
 let elem
 

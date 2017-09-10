@@ -1,8 +1,6 @@
-const {expect} = require('chai')
+const { expect } = require('chai')
 
-const Todo = require('../../src/domain/todo')
-const TodoCollection = require('../../src/domain/todo-collection')
-const Filter = require('../../src/domain/filter')
+const { Todo, Filter } = require('..')
 
 let collection
 let todo0
@@ -15,12 +13,12 @@ describe('TodoCollection', () => {
     todo1 = new Todo('a1', 'ham', false)
     todo2 = new Todo('a2', 'egg', true)
 
-    collection = new TodoCollection([todo0, todo1, todo2])
+    collection = new Todo.Collection([todo0, todo1, todo2])
   })
 
   describe('constructor', () => {
     it('craete an empty contructor if the give array is null', () => {
-      collection = new TodoCollection()
+      collection = new Todo.Collection()
 
       expect(collection.isEmpty()).to.be.true()
     })
@@ -94,7 +92,7 @@ describe('TodoCollection', () => {
     it('returns the collection of the completed todos', () => {
       var completed = collection.completed()
 
-      expect(completed).to.be.instanceof(TodoCollection)
+      expect(completed).to.be.instanceof(Todo.Collection)
       expect(completed.toArray()).to.have.length(2)
       expect(completed.toArray()[0].id).to.equal('a0')
       expect(completed.toArray()[1].id).to.equal('a2')
@@ -105,7 +103,7 @@ describe('TodoCollection', () => {
     it('returns the collection of the uncompleted todos', () => {
       var uncompleted = collection.uncompleted()
 
-      expect(uncompleted).to.be.instanceof(TodoCollection)
+      expect(uncompleted).to.be.instanceof(Todo.Collection)
       expect(uncompleted.toArray()).to.have.length(1)
       expect(uncompleted.toArray()[0].id).to.equal('a1')
     })

@@ -1,13 +1,12 @@
-const {expect} = require('chai')
+const { expect } = require('chai')
 
-const Todo = require('../../src/domain/todo')
-const TodoFactory = require('../../src/domain/todo-factory')
+const { Todo } = require('..')
 
 describe('TodoFactory', () => {
   let factory
 
   beforeEach(() => {
-    factory = new TodoFactory()
+    factory = new Todo.Factory()
   })
 
   describe('createFromObject', () => {
