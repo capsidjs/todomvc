@@ -32,7 +32,7 @@ class TodoFactory {
    * @private
    */
   generateId () {
-    return Math.floor(Math.random() * 1000000000).toString()
+    return 'todo-' + Math.floor(Math.random() * 1000000000).toString()
   }
 }
 
