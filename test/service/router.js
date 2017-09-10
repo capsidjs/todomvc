@@ -11,55 +11,45 @@ describe('router', () => {
   before(() => {
     target = div().cc('router')
     router = target.cc.get('router')
-
-    $(window).on('hashchange', () => router.onHashchange())
   })
 
-  it('triggers the filterchange event to the target with ACTIVE filter when the url hash is #/active', done => {
-    target.on(CHANGE_FILTER, e => {
-      const filter = e.detail
-
+  it('triggers the filterchange event to the target with ACTIVE filter when the route is #/active', done => {
+    target.on(CHANGE_FILTER, ({ detail: filter }) => {
       target.off(CHANGE_FILTER)
       expect(filter).to.equal(Filter.ACTIVE)
       done()
     })
 
-    window.location.href = '#/active'
+    router['#/active']()
   })
 
-  it('triggers the filterchange event to the target with COMPLETED filter when the url hash is #/completed', done => {
-    target.on(CHANGE_FILTER, e => {
-      const filter = e.detail
-
+  it('triggers the filterchange event to the target with COMPLETED filter when the route is #/completed', done => {
+    target.on(CHANGE_FILTER, ({ detail: filter }) => {
       target.off(CHANGE_FILTER)
       expect(filter).to.equal(Filter.COMPLETED)
       done()
     })
 
-    window.location.href = '#/completed'
+    router['#/completed']()
   })
 
-  it('triggers the filterchange event to the target with ALL filter when the url hash is #/all', done => {
-    target.on(CHANGE_FILTER, e => {
-      const filter = e.detail
-
+  it('triggers the filterchange event to the target with ALL filter when the route is #/all', done => {
+    target.on(CHANGE_FILTER, ({ detail: filter }) => {
       target.off(CHANGE_FILTER)
       expect(filter).to.equal(Filter.ALL)
       done()
     })
 
-    window.location.href = '#/all'
+    router['#/all']()
   })
 
-  it('triggers the filterchange event to the target with ALL filter when the url hash is otherwise', done => {
-    target.on(CHANGE_FILTER, e => {
-      const filter = e.detail
-
+  it('triggers the filterchange event to the target with ALL filter when the route is otherwise', done => {
+    target.on(CHANGE_FILTER, ({ detail: filter }) => {
       target.off(CHANGE_FILTER)
       expect(filter).to.equal(Filter.ALL)
       done()
     })
 
-    window.location.href = '#'
+    router['*']()
   })
 })

@@ -7,6 +7,8 @@ const chai = require('chai')
 const dirtyChai = require('dirty-chai')
 chai.use(dirtyChai)
 
+localStorage.clear()
+
 /**
  * Triggers the event of the type at the given element with the given detail.
  * @param {any} el The element

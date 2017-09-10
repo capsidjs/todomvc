@@ -69,18 +69,6 @@ describe('todo-item', () => {
   })
 
   describe('on .destroy click', () => {
-    it('removes the element', () => {
-      elem.find('.destroy').trigger('click')
-
-      const parent = elem.parent()
-
-      expect(parent).to.have.length(1)
-
-      setTimeout(() => {
-        expect(parent).to.have.length(0)
-      })
-    })
-
     it('triggers DESTROY_TODO event', done => {
       elem.on(DESTROY_TODO, ({ detail: id }) => {
         expect(id).to.equal('foo')
