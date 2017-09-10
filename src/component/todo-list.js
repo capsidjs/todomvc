@@ -16,7 +16,7 @@ class TodoList {
 
     if (visibleTodos.length === this.el.querySelectorAll('.todo-item').length) {
       visibleTodos.forEach(todo => {
-        get('todo-item', this.el.querySelector(`[id="${todo.id}"`)).update(todo)
+        get('todo-item', this.el.querySelector(`[id="${todo.id}"]`)).update(todo)
       })
     } else {
       this.el.innerHTML = ''
