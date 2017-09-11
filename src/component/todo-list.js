@@ -14,17 +14,25 @@ class TodoList {
   onRefresh ({ detail: { todoCollection, filter } }) {
     const visibleTodos = todoCollection.filterBy(filter)
 
-    if (filter.isAll() && visibleTodos.length === this.el.querySelectorAll('.todo-item').length) {
-      visibleTodos.forEach(todo => {
-        get('todo-item', this.el.querySelector(`[id="${todo.id}"]`)).update(todo)
-      })
-    } else {
+    if (this.shouldResetContents(filter, visibleTodos)) {
       this.el.innerHTML = ''
 
       visibleTodos.forEach(todo => {
         this.appendTodoItem(todo)
       })
+    } else {
+      visibleTodos.forEach(todo => {
+        get('todo-item', this.el.querySelector(`[id="${todo.id}"]`)).update(todo)
+      })
     }
+  }
+
+  /**
+   * @param {Filter} filter
+   * @param {TodoCollection} todos
+   */
+  shouldResetContents (filter, todos) {
+    return !filter.isAll() || todos.length !== this.el.querySelectorAll('.todo-item').length
   }
 
   /**

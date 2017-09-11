@@ -1794,17 +1794,28 @@ var TodoList = (_dec = on(MODEL_UPDATE), component(_class = (_class2 = function 
 
       var visibleTodos = todoCollection.filterBy(filter);
 
-      if (filter.isAll() && visibleTodos.length === this.el.querySelectorAll('.todo-item').length) {
-        visibleTodos.forEach(function (todo) {
-          get('todo-item', _this.el.querySelector('[id="' + todo.id + '"]')).update(todo);
-        });
-      } else {
+      if (this.shouldResetContents(filter, visibleTodos)) {
         this.el.innerHTML = '';
 
         visibleTodos.forEach(function (todo) {
           _this.appendTodoItem(todo);
         });
+      } else {
+        visibleTodos.forEach(function (todo) {
+          get('todo-item', _this.el.querySelector('[id="' + todo.id + '"]')).update(todo);
+        });
       }
+    }
+
+    /**
+     * @param {Filter} filter
+     * @param {TodoCollection} todos
+     */
+
+  }, {
+    key: 'shouldResetContents',
+    value: function shouldResetContents(filter, todos) {
+      return !filter.isAll() || todos.length !== this.el.querySelectorAll('.todo-item').length;
     }
 
     /**
