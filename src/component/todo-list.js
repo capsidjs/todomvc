@@ -14,7 +14,7 @@ class TodoList {
   onRefresh ({ detail: { todoCollection, filter } }) {
     const visibleTodos = todoCollection.filterBy(filter)
 
-    if (visibleTodos.length === this.el.querySelectorAll('.todo-item').length) {
+    if (filter.isAll() && visibleTodos.length === this.el.querySelectorAll('.todo-item').length) {
       visibleTodos.forEach(todo => {
         get('todo-item', this.el.querySelector(`[id="${todo.id}"]`)).update(todo)
       })

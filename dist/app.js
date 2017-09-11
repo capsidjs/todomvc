@@ -1794,7 +1794,7 @@ var TodoList = (_dec = on(MODEL_UPDATE), component(_class = (_class2 = function 
 
       var visibleTodos = todoCollection.filterBy(filter);
 
-      if (visibleTodos.length === this.el.querySelectorAll('.todo-item').length) {
+      if (filter.isAll() && visibleTodos.length === this.el.querySelectorAll('.todo-item').length) {
         visibleTodos.forEach(function (todo) {
           get('todo-item', _this.el.querySelector('[id="' + todo.id + '"]')).update(todo);
         });
