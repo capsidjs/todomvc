@@ -1,5 +1,5 @@
-const { div } = require('dom-gen')
 const { expect } = require('chai')
+const { make } = require('capsid')
 
 const { Filter } = require('../../domain')
 const { ACTION: { CHANGE_FILTER } } = require('../../const')
@@ -8,14 +8,13 @@ let target
 let router
 
 describe('router', () => {
-  before(() => {
-    target = div().cc('router')
-    router = target.cc.get('router')
+  beforeEach(() => {
+    target = document.createElement('div')
+    router = make('router', target)
   })
 
   it('triggers the filterchange event to the target with ACTIVE filter when the route is #/active', done => {
-    target.on(CHANGE_FILTER, ({ detail: filter }) => {
-      target.off(CHANGE_FILTER)
+    target.addEventListener(CHANGE_FILTER, ({ detail: filter }) => {
       expect(filter).to.equal(Filter.ACTIVE)
       done()
     })
@@ -24,8 +23,7 @@ describe('router', () => {
   })
 
   it('triggers the filterchange event to the target with COMPLETED filter when the route is #/completed', done => {
-    target.on(CHANGE_FILTER, ({ detail: filter }) => {
-      target.off(CHANGE_FILTER)
+    target.addEventListener(CHANGE_FILTER, ({ detail: filter }) => {
       expect(filter).to.equal(Filter.COMPLETED)
       done()
     })
@@ -34,8 +32,7 @@ describe('router', () => {
   })
 
   it('triggers the filterchange event to the target with ALL filter when the route is #/all', done => {
-    target.on(CHANGE_FILTER, ({ detail: filter }) => {
-      target.off(CHANGE_FILTER)
+    target.addEventListener(CHANGE_FILTER, ({ detail: filter }) => {
       expect(filter).to.equal(Filter.ALL)
       done()
     })
@@ -44,8 +41,7 @@ describe('router', () => {
   })
 
   it('triggers the filterchange event to the target with ALL filter when the route is otherwise', done => {
-    target.on(CHANGE_FILTER, ({ detail: filter }) => {
-      target.off(CHANGE_FILTER)
+    target.addEventListener(CHANGE_FILTER, ({ detail: filter }) => {
       expect(filter).to.equal(Filter.ALL)
       done()
     })

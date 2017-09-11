@@ -1,7 +1,7 @@
-import { trigger } from '../../__tests__/helper'
+const { trigger } = require('../../__tests__/helper')
 
 const { expect } = require('chai')
-const { div, ul, button, footer, section } = require('dom-gen')
+const { make, prep } = require('capsid')
 
 const { Filter } = require('../../domain')
 const { ACTION: {
@@ -14,89 +14,91 @@ const { ACTION: {
   TOGGLE_TODO
 } } = require('../../const')
 
-let elem
+let el
 let todoApp
 
 describe('todoapp', () => {
   beforeEach(() => {
     window.localStorage.clear()
 
-    elem = div(
-      section(
-        ul().cc('todo-list').addClass('is-model-observer'),
-        button().cc('toggle-all')
-      ).cc('main is-model-observer'),
-      footer(
-        { attr: { id: 'footer' } },
-        div().cc('todo-count'),
-        ul().cc('filters'),
-        button().cc('clear-completed')
-      ).cc('footer is-model-observer')
-    )
+    el = document.createElement('div')
 
-    todoApp = elem.cc.init('todoapp')
+    el.innerHTML = `
+      <section class="main">
+        <ul class="todo-list is-model-observer"></ul>
+        <button class="toggle-all"></button>
+      </section>
+      <footer class="footer" id="footer">
+        <div class="todo-count"></div>
+        <ul class="filters"></ul>
+        <button class="clear-completed"></button>
+      </footer>
+    `
+    prep(null, el)
 
-    trigger(elem, CHANGE_FILTER, Filter.ALL)
+    todoApp = make('todoapp', el)
+
+    trigger(el, CHANGE_FILTER, Filter.ALL)
   })
 
   describe('on filterchange', () => {
     it('updates view', done => {
       todoApp.save = () => done()
 
-      trigger(elem, CHANGE_FILTER, Filter.ALL)
+      trigger(el, CHANGE_FILTER, Filter.ALL)
     })
   })
 
   describe('on NEW_ITEM', () => {
     it('adds the item of the given title', () => {
-      trigger(elem, NEW_ITEM, 'foo')
+      trigger(el, NEW_ITEM, 'foo')
 
-      expect(todoApp.todoCollection.toArray()).to.have.length(1)
+      expect(todoApp.todoCollection.length).to.equal(1)
     })
   })
 
   describe('on TOGGLE_TODO', () => {
     it('toggles the item', () => {
-      trigger(elem, NEW_ITEM, 'foo')
+      trigger(el, NEW_ITEM, 'foo')
 
-      const id = elem.find('.todo-item').attr('id')
+      const id = el.querySelector('.todo-item').getAttribute('id')
 
-      trigger(elem, TOGGLE_TODO, id)
+      trigger(el, TOGGLE_TODO, id)
 
       const todo = todoApp.todoCollection.getById(id)
 
-      expect(todo.completed).to.be.true()
+      expect(todo.completed).to.equal(true)
     })
   })
 
   describe('on DESTROY_TODO', () => {
     it('removes the item', () => {
-      trigger(elem, NEW_ITEM, 'foo')
-      trigger(elem, NEW_ITEM, 'bar')
+      trigger(el, NEW_ITEM, 'foo')
+      trigger(el, NEW_ITEM, 'bar')
 
-      expect(todoApp.todoCollection.toArray().length).to.equal(2)
+      expect(todoApp.todoCollection.length).to.equal(2)
 
-      let id = elem.find('.todo-item').attr('id')
+      let id = el.querySelector('.todo-item').getAttribute('id')
 
-      trigger(elem, DESTROY_TODO, id)
+      trigger(el, DESTROY_TODO, id)
 
-      expect(todoApp.todoCollection.toArray().length).to.equal(1)
+      expect(todoApp.todoCollection.length).to.equal(1)
 
-      id = elem.find('.todo-item').attr('id')
+      id = el.querySelector('.todo-item').getAttribute('id')
 
-      trigger(elem, DESTROY_TODO, id)
+      trigger(el, DESTROY_TODO, id)
 
-      expect(todoApp.todoCollection.toArray().length).to.equal(0)
+      expect(todoApp.todoCollection.length).to.equal(0)
     })
   })
 
   describe('on FINISH_EDIT_TODO', () => {
     it('saves the edited title', () => {
-      trigger(elem, NEW_ITEM, 'foo')
+      trigger(el, NEW_ITEM, 'foo')
 
-      const id = elem.find('.todo-item').attr('id')
+      const id = el.querySelector('.todo-item').getAttribute('id')
 
-      trigger(elem, FINISH_EDIT_TODO, { id, title: 'foobar' })
+      trigger(el, FINISH_EDIT_TODO, { id, title: 'foobar' })
 
       expect(todoApp.todoCollection.getById(id).title).to.equal('foobar')
     })
@@ -104,18 +106,18 @@ describe('todoapp', () => {
 
   describe('on CLEAR_COMPLETED', () => {
     it('clears the completed todos', () => {
-      trigger(elem, NEW_ITEM, 'foo')
-      trigger(elem, NEW_ITEM, 'bar')
+      trigger(el, NEW_ITEM, 'foo')
+      trigger(el, NEW_ITEM, 'bar')
 
-      let id = elem.find('.todo-item').attr('id')
+      let id = el.querySelector('.todo-item').getAttribute('id')
 
-      trigger(elem, TOGGLE_TODO, id)
+      trigger(el, TOGGLE_TODO, id)
 
-      trigger(elem, CLEAR_COMPLETED)
+      trigger(el, CLEAR_COMPLETED)
 
-      expect(todoApp.todoCollection.toArray().length).to.equal(1)
+      expect(todoApp.todoCollection.length).to.equal(1)
 
-      id = elem.find('.todo-item').attr('id')
+      id = el.querySelector('.todo-item').getAttribute('id')
 
       const todo = todoApp.todoCollection.getById(id)
 
@@ -125,28 +127,28 @@ describe('todoapp', () => {
 
   describe('on TOGGLE_ALL', () => {
     it('completes all the todos when there is an active todo', () => {
-      trigger(elem, NEW_ITEM, 'foo')
-      trigger(elem, NEW_ITEM, 'bar')
+      trigger(el, NEW_ITEM, 'foo')
+      trigger(el, NEW_ITEM, 'bar')
 
-      trigger(elem, TOGGLE_ALL, true)
+      trigger(el, TOGGLE_ALL, true)
 
-      todoApp.todoCollection.toArray().forEach(todo => {
-        expect(todo.completed).to.be.true()
+      todoApp.todoCollection.forEach(todo => {
+        expect(todo.completed).to.equal(true)
       })
     })
 
     it('uncompletes all the todos when there is no active todo', () => {
-      trigger(elem, NEW_ITEM, 'foo')
-      trigger(elem, NEW_ITEM, 'bar')
+      trigger(el, NEW_ITEM, 'foo')
+      trigger(el, NEW_ITEM, 'bar')
 
-      todoApp.todoCollection.toArray().forEach(todo => {
-        trigger(elem, TOGGLE_TODO, todo.id)
+      todoApp.todoCollection.forEach(todo => {
+        trigger(el, TOGGLE_TODO, todo.id)
       })
 
-      trigger(elem, TOGGLE_ALL)
+      trigger(el, TOGGLE_ALL)
 
-      todoApp.todoCollection.toArray().forEach(todo => {
-        expect(todo.completed).to.be.false()
+      todoApp.todoCollection.forEach(todo => {
+        expect(todo.completed).to.equal(false)
       })
     })
   })

@@ -5,15 +5,15 @@ const { Todo } = require('../../domain')
 const { ACTION: { TOGGLE_ALL, MODEL_UPDATE } } = require('../../const')
 
 describe('main', () => {
-  let main
   let el
+
   beforeEach(() => {
     el = document.createElement('main')
     el.innerHTML = `
       <input class="toggle-all" type="checkbox" />
       <ul class="todo-list"></ul>
     `
-    main = make('main', el)
+    make('main', el)
   })
 
   describe('on .toggle-all button click', () => {

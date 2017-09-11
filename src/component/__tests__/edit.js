@@ -1,85 +1,77 @@
 const { expect } = require('chai')
-const { input } = require('dom-gen')
-
+const { make } = require('capsid')
 const { trigger } = require('../../__tests__/helper')
 const Const = require('../../const')
 
 const { ACTION: { EDIT_TODO } } = Const
 
-let elem
+let el
 let todoEdit
 
 describe('edit', () => {
   beforeEach(() => {
-    elem = input()
-    todoEdit = elem.cc.init('edit')
+    el = document.createElement('input')
+    todoEdit = make('edit', el)
     todoEdit.onUpdate('foo')
   })
 
   describe('on blur', () => {
     it('triggers EDIT_TODO event when the elem is blurred', done => {
-      elem.on(EDIT_TODO, () => done())
+      el.addEventListener(EDIT_TODO, () => done())
 
-      trigger(elem, 'blur')
+      trigger(el, 'blur')
     })
   })
 
   describe('onKeypress', () => {
     it('triggers EDIT_TODO event with the edited value when ENTER is pressed', done => {
-      elem.on(EDIT_TODO, e => {
-        const value = e.detail
-
+      el.addEventListener(EDIT_TODO, ({ detail: value }) => {
         expect(value).to.equal('bar')
         done()
       })
 
-      elem.val('bar')
+      el.value = 'bar'
 
       const e = new CustomEvent('keypress')
       e.which = Const.KEYCODE.ENTER
 
-      elem[0].dispatchEvent(e)
+      el.dispatchEvent(e)
     })
 
     it('does nothing when the pressed key is SPACE', done => {
-      elem.on(EDIT_TODO, () => done(new Error('todo-edited should not be triggered')))
+      el.addEventListener(EDIT_TODO, () => done(new Error('todo-edited should not be triggered')))
 
       const e = new CustomEvent('keypress')
       e.which = 32
 
-      todoEdit.el.dispatchEvent(e)
+      el.dispatchEvent(e)
 
       done()
     })
 
     it('triggers EDIT_TODO event with the value before editing when ESCAPE is pressed', done => {
-      elem.on(EDIT_TODO, e => {
-        const value = e.detail
-
+      el.addEventListener(EDIT_TODO, ({ detail: value }) => {
         expect(value).to.equal('foo')
         done()
       })
 
-      elem.val('bar')
+      el.value = 'bar'
 
       const e = new CustomEvent('keypress')
       e.which = Const.KEYCODE.ESCAPE
 
-      elem[0].dispatchEvent(e)
+      el.dispatchEvent(e)
     })
   })
 
   describe('onFinish', () => {
     it('triggers EDIT_TODO events with current value of the input', done => {
-      todoEdit.el.addEventListener(EDIT_TODO, e => {
-        const value = e.detail
-
+      el.addEventListener(EDIT_TODO, ({ detail: value }) => {
         expect(value).to.equal('foo')
-
         done()
       })
 
-      todoEdit.elem.val('foo')
+      el.value = 'foo'
 
       todoEdit.onFinish()
     })

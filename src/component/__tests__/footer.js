@@ -59,7 +59,7 @@ describe('footer', () => {
       footer.onUpdate({
         detail: {
           todoCollection: new Todo.Collection([
-            new Todo('a0', 'foo', false),
+            new Todo('a0', 'foo', false)
           ]),
           filter: Filter.ALL
         }
@@ -70,7 +70,7 @@ describe('footer', () => {
       footer.onUpdate({
         detail: {
           todoCollection: new Todo.Collection([
-            new Todo('a0', 'foo', false),
+            new Todo('a0', 'foo', false)
           ]),
           filter: Filter.ACTIVE
         }
@@ -81,7 +81,7 @@ describe('footer', () => {
       footer.onUpdate({
         detail: {
           todoCollection: new Todo.Collection([
-            new Todo('a0', 'foo', false),
+            new Todo('a0', 'foo', false)
           ]),
           filter: Filter.COMPLETED
         }

@@ -1,26 +1,33 @@
 const { expect } = require('chai')
-const { div } = require('dom-gen')
+const { make } = require('capsid')
 
 const { Todo, Filter } = require('../../domain')
 
 const todoFactory = new Todo.Factory()
 
+let el
 let todoList
 
 describe('todo-list', () => {
   beforeEach(() => {
-    todoList = div().cc.init('todo-list')
+    el = document.createElement('div')
+    todoList = make('todo-list', el)
   })
 
   describe('onRefresh', () => {
     it('updates the todo list view by the given todo collection and filter', () => {
-      todoList.onRefresh({ detail: { todoCollection: new Todo.Collection([
-        todoFactory.createByTitle('foo0'),
-        todoFactory.createByTitle('foo1'),
-        todoFactory.createByTitle('foo2')
-      ]), filter: Filter.ALL } })
+      todoList.onRefresh({
+        detail: {
+          todoCollection: new Todo.Collection([
+            todoFactory.createByTitle('foo0'),
+            todoFactory.createByTitle('foo1'),
+            todoFactory.createByTitle('foo2')
+          ]),
+          filter: Filter.ALL
+        }
+      })
 
-      expect(todoList.elem.find('li')).to.have.length(3)
+      expect(el.querySelectorAll('li').length).to.equal(3)
     })
   })
 })

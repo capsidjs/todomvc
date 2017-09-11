@@ -1,48 +1,44 @@
 const { expect } = require('chai')
-const { input } = require('dom-gen')
-
+const { make } = require('capsid')
 const Const = require('../../const')
 
-let elem
+let el
 
 describe('TodoInput', () => {
   beforeEach(() => {
-    elem = input().val('abc')
-
-    elem.cc.init('new-todo')
+    el = document.createElement('input')
+    el.value = 'abc'
+    make('new-todo', el)
   })
 
   describe('on keypress', () => {
     it('does nothing when the keycode is not ENTER', () => {
-      elem[0].dispatchEvent(new KeyboardEvent('keypress', {which: 32}))
+      el.dispatchEvent(new KeyboardEvent('keypress', { which: 32 }))
 
-      expect(elem.val()).to.equal('abc')
+      expect(el.value).to.equal('abc')
     })
 
     it('does nothing when the keycode is ENTER and the value is whitespace', () => {
-      elem.val('   ')
+      el.value = '   '
 
       const e = new CustomEvent('keypress')
       e.which = Const.KEYCODE.ENTER
 
-      elem[0].dispatchEvent(e)
+      el.dispatchEvent(e)
 
-      expect(elem.val()).to.equal('   ')
+      expect(el.value).to.equal('   ')
     })
 
     it('empties the value and triggers todo-new-item event', done => {
-      elem.on('todo-new-item', e => {
-        const title = e.detail
-
+      el.addEventListener('todo-new-item', ({ detail: title }) => {
         expect(title).to.equal('abc')
-
         done()
       })
 
       const e = new CustomEvent('keypress')
       e.which = Const.KEYCODE.ENTER
 
-      elem[0].dispatchEvent(e)
+      el.dispatchEvent(e)
     })
   })
 })
