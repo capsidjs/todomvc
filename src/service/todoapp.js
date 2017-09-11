@@ -11,7 +11,7 @@ const { ACTION: {
   TOGGLE_TODO
 } } = require('../const')
 
-const { pub, make, on, component } = require('capsid')
+const { notifies, make, on, component } = require('capsid')
 
 /**
  * The todo application class.
@@ -33,7 +33,7 @@ class Todoapp {
   /**
    * Saves the current todo collection state.
    */
-  @pub(MODEL_UPDATE, '.is-model-observer')
+  @notifies(MODEL_UPDATE, '.is-model-observer')
   save () {
     this.todoRepository.saveAll(this.todoCollection)
 

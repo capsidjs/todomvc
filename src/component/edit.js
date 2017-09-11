@@ -1,5 +1,5 @@
 const { KEYCODE, ACTION: { EDIT_TODO } } = require('../const')
-const { emit, on, component } = require('capsid')
+const { emits, on, component } = require('capsid')
 
 /**
  * TodoEdit controls the edit area of each todo item.
@@ -37,7 +37,7 @@ class Edit {
    * Finishes editing with current value.
    */
   @on('blur')
-  @emit(EDIT_TODO)
+  @emits(EDIT_TODO)
   onFinish () {
     const value = this.el.value
 
@@ -49,7 +49,7 @@ class Edit {
   /**
    * Cancels editing and revert the change of the value.
    */
-  @emit(EDIT_TODO)
+  @emits(EDIT_TODO)
   onCancel () {
     const value = this.el.dataset.prevValue
 

@@ -5,7 +5,7 @@ const { ACTION: {
   FINISH_EDIT_TODO
 } } = require('../const')
 
-const { on, emit, prep, wire, component } = require('capsid')
+const { on, emits, prep, wire, component } = require('capsid')
 
 /**
  * TodoItem class controls todo item in a list.
@@ -50,7 +50,7 @@ class TodoItem {
    * @private
    */
   @on('click', { at: '.toggle' })
-  @emit(TOGGLE_TODO)
+  @emits(TOGGLE_TODO)
   toggleCompleted () {
     return this.el.getAttribute('id')
   }
@@ -60,7 +60,7 @@ class TodoItem {
    * @private
    */
   @on('click', { at: '.destroy' })
-  @emit(DESTROY_TODO)
+  @emits(DESTROY_TODO)
   destroy () {
     return this.el.getAttribute('id')
   }
@@ -92,7 +92,7 @@ class TodoItem {
     this.finishEditTodo(title)
   }
 
-  @emit(FINISH_EDIT_TODO)
+  @emits(FINISH_EDIT_TODO)
   finishEditTodo (title) {
     return {
       title,

@@ -2,7 +2,7 @@ const Const = require('../const')
 
 const { KEYCODE, ACTION: { NEW_ITEM } } = Const
 
-const { emit, on, component } = require('capsid')
+const { emits, on, component } = require('capsid')
 
 /**
  * TodoInput class controls the input for adding todos.
@@ -28,7 +28,7 @@ class NewTodo {
     this.emitNewItem(title)
   }
 
-  @emit(NEW_ITEM)
+  @emits(NEW_ITEM)
   emitNewItem (title) {
     this.el.value = ''
 

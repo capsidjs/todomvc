@@ -1,6 +1,6 @@
 const { Filter } = require('../domain')
 const { ACTION: { MODEL_UPDATE, CLEAR_COMPLETED } } = require('../const')
-const { on, emit, wire, component } = require('capsid')
+const { on, emits, wire, component } = require('capsid')
 
 @component
 class Footer {
@@ -13,7 +13,7 @@ class Footer {
   @wire.el('.todo-count') get todoCountLabel () {}
 
   @on('click', { at: '.clear-completed' })
-  @emit(CLEAR_COMPLETED)
+  @emits(CLEAR_COMPLETED)
   clearCompletedTodos () {}
 
   @on(MODEL_UPDATE)

@@ -1,12 +1,12 @@
 const { ACTION: { TOGGLE_ALL, MODEL_UPDATE } } = require('../const')
-const { component, wire, emit, on } = require('capsid')
+const { component, wire, emits, on } = require('capsid')
 
 @component
 class Main {
   @wire.el('.toggle-all') get toggleAllButton () {}
 
   @on('click', { at: '.toggle-all' })
-  @emit(TOGGLE_ALL)
+  @emits(TOGGLE_ALL)
   toggleAll () {
     return this.toggleAllButton.checked
   }

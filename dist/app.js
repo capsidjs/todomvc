@@ -276,13 +276,13 @@ var trigger = function trigger(el, type, bubbles, detail) {
 //      
 
 /**
- * `@emit(event)` decorator
+ * `@emits(event)` decorator
  *
  * This decorator adds the event emission at the end of the method.
  * If the method returns the promise, then the event is emitted when it is resolved.
  * @param event The event name
  */
-var emit = function emit(event) {
+var emits = function emits(event) {
   return function (target, key, descriptor) {
     var method = descriptor.value;
 
@@ -311,7 +311,7 @@ var emit = function emit(event) {
  * This decorator adds the event emission at the beginning of the method.
  * @param event The event name
  */
-emit.first = function (event) {
+emits.first = function (event) {
   return function (target, key, descriptor) {
     var method = descriptor.value;
 
@@ -424,7 +424,7 @@ var component = function component(name) {
 /**
  * Adds the function to publish the given event to the descendent elements of the given selector to the decorated method.
  */
-var pub = function pub(event, selector) {
+var notifies = function notifies(event, selector) {
   return function (target, key, descriptor) {
     var method = descriptor.value;
 
@@ -455,6 +455,9 @@ on.click = onClick;
 
 //      
 
+var emit = emits; // alias
+var pub = notifies; // alias
+
 
 var capsid = Object.freeze({
   def: def,
@@ -464,9 +467,11 @@ var capsid = Object.freeze({
   get: get,
   on: on,
   emit: emit,
+  emits: emits,
   wire: wireComponent,
   component: component,
   pub: pub,
+  notifies: notifies,
   __ccc__: ccc,
   pluginHooks: pluginHooks
 });
@@ -478,9 +483,11 @@ exports.mount = mount;
 exports.get = get;
 exports.on = on;
 exports.emit = emit;
+exports.emits = emits;
 exports.wire = wireComponent;
 exports.component = component;
 exports.pub = pub;
+exports.notifies = notifies;
 exports.__ccc__ = ccc;
 exports.pluginHooks = pluginHooks;
 },{}],2:[function(require,module,exports){
@@ -1190,7 +1197,7 @@ var _require = require('../const'),
     EDIT_TODO = _require.ACTION.EDIT_TODO;
 
 var _require2 = require('capsid'),
-    emit = _require2.emit,
+    emits = _require2.emits,
     on = _require2.on,
     component = _require2.component;
 
@@ -1199,7 +1206,7 @@ var _require2 = require('capsid'),
  */
 
 
-var Edit = (_dec = on('keypress'), _dec2 = on('keydown'), _dec3 = on('blur'), _dec4 = emit(EDIT_TODO), _dec5 = emit(EDIT_TODO), component(_class = (_class2 = function () {
+var Edit = (_dec = on('keypress'), _dec2 = on('keydown'), _dec3 = on('blur'), _dec4 = emits(EDIT_TODO), _dec5 = emits(EDIT_TODO), component(_class = (_class2 = function () {
   function Edit() {
     _classCallCheck(this, Edit);
   }
@@ -1320,11 +1327,11 @@ var _require2 = require('../const'),
 
 var _require3 = require('capsid'),
     on = _require3.on,
-    emit = _require3.emit,
+    emits = _require3.emits,
     wire = _require3.wire,
     component = _require3.component;
 
-var Footer = (_dec = wire.el('.clear-completed'), _dec2 = wire.el('a[href="#/active"]'), _dec3 = wire.el('a[href="#/completed"]'), _dec4 = wire.el('a[href="#/"]'), _dec5 = wire.el('.todo-count'), _dec6 = on('click', { at: '.clear-completed' }), _dec7 = emit(CLEAR_COMPLETED), _dec8 = on(MODEL_UPDATE), component(_class = (_class2 = function () {
+var Footer = (_dec = wire.el('.clear-completed'), _dec2 = wire.el('a[href="#/active"]'), _dec3 = wire.el('a[href="#/completed"]'), _dec4 = wire.el('a[href="#/"]'), _dec5 = wire.el('.todo-count'), _dec6 = on('click', { at: '.clear-completed' }), _dec7 = emits(CLEAR_COMPLETED), _dec8 = on(MODEL_UPDATE), component(_class = (_class2 = function () {
   function Footer() {
     _classCallCheck(this, Footer);
   }
@@ -1430,10 +1437,10 @@ var _require = require('../const'),
 var _require2 = require('capsid'),
     component = _require2.component,
     wire = _require2.wire,
-    emit = _require2.emit,
+    emits = _require2.emits,
     on = _require2.on;
 
-var Main = (_dec = wire.el('.toggle-all'), _dec2 = on('click', { at: '.toggle-all' }), _dec3 = emit(TOGGLE_ALL), _dec4 = on(MODEL_UPDATE), component(_class = (_class2 = function () {
+var Main = (_dec = wire.el('.toggle-all'), _dec2 = on('click', { at: '.toggle-all' }), _dec3 = emits(TOGGLE_ALL), _dec4 = on(MODEL_UPDATE), component(_class = (_class2 = function () {
   function Main() {
     _classCallCheck(this, Main);
   }
@@ -1507,7 +1514,7 @@ var KEYCODE = Const.KEYCODE,
     NEW_ITEM = Const.ACTION.NEW_ITEM;
 
 var _require = require('capsid'),
-    emit = _require.emit,
+    emits = _require.emits,
     on = _require.on,
     component = _require.component;
 
@@ -1516,7 +1523,7 @@ var _require = require('capsid'),
  */
 
 
-var NewTodo = (_dec = on('keypress'), _dec2 = emit(NEW_ITEM), component(_class = (_class2 = function () {
+var NewTodo = (_dec = on('keypress'), _dec2 = emits(NEW_ITEM), component(_class = (_class2 = function () {
   function NewTodo() {
     _classCallCheck(this, NewTodo);
   }
@@ -1598,7 +1605,7 @@ var _require = require('../const'),
 
 var _require2 = require('capsid'),
     on = _require2.on,
-    emit = _require2.emit,
+    emits = _require2.emits,
     prep = _require2.prep,
     wire = _require2.wire,
     component = _require2.component;
@@ -1608,7 +1615,7 @@ var _require2 = require('capsid'),
  */
 
 
-var TodoItem = (_dec = wire.el('label'), _dec2 = wire.el('.toggle'), _dec3 = on('click', { at: '.toggle' }), _dec4 = emit(TOGGLE_TODO), _dec5 = on('click', { at: '.destroy' }), _dec6 = emit(DESTROY_TODO), _dec7 = on('dblclick', { at: 'label' }), _dec8 = on(EDIT_TODO), _dec9 = emit(FINISH_EDIT_TODO), component(_class = (_class2 = function () {
+var TodoItem = (_dec = wire.el('label'), _dec2 = wire.el('.toggle'), _dec3 = on('click', { at: '.toggle' }), _dec4 = emits(TOGGLE_TODO), _dec5 = on('click', { at: '.destroy' }), _dec6 = emits(DESTROY_TODO), _dec7 = on('dblclick', { at: 'label' }), _dec8 = on(EDIT_TODO), _dec9 = emits(FINISH_EDIT_TODO), component(_class = (_class2 = function () {
   function TodoItem() {
     _classCallCheck(this, TodoItem);
   }
@@ -1789,7 +1796,7 @@ var TodoList = (_dec = on(MODEL_UPDATE), component(_class = (_class2 = function 
 
       if (visibleTodos.length === this.el.querySelectorAll('.todo-item').length) {
         visibleTodos.forEach(function (todo) {
-          get('todo-item', _this.el.querySelector('[id="' + todo.id + '"')).update(todo);
+          get('todo-item', _this.el.querySelector('[id="' + todo.id + '"]')).update(todo);
         });
       } else {
         this.el.innerHTML = '';
@@ -2201,7 +2208,7 @@ var TodoFactory = function () {
   }, {
     key: 'generateId',
     value: function generateId() {
-      return Math.floor(Math.random() * 1000000000).toString();
+      return 'todo-' + Math.floor(Math.random() * 1000000000).toString();
     }
   }]);
 
@@ -2390,14 +2397,14 @@ var _require3 = require('../domain'),
 
 var _require4 = require('capsid'),
     component = _require4.component,
-    emit = _require4.emit;
+    emits = _require4.emits;
 
 /**
  * The observer of the filter and invokes filterchange event when it's changed.
  */
 
 
-var Router = (_dec = emit(CHANGE_FILTER), _dec2 = emit(CHANGE_FILTER), _dec3 = emit(CHANGE_FILTER), _dec4 = emit(CHANGE_FILTER), component(_class = (_class2 = function () {
+var Router = (_dec = emits(CHANGE_FILTER), _dec2 = emits(CHANGE_FILTER), _dec3 = emits(CHANGE_FILTER), _dec4 = emits(CHANGE_FILTER), component(_class = (_class2 = function () {
   function Router() {
     _classCallCheck(this, Router);
   }
@@ -2488,7 +2495,7 @@ var _require2 = require('../const'),
     TOGGLE_TODO = _require2$ACTION.TOGGLE_TODO;
 
 var _require3 = require('capsid'),
-    pub = _require3.pub,
+    notifies = _require3.notifies,
     make = _require3.make,
     on = _require3.on,
     component = _require3.component;
@@ -2498,7 +2505,7 @@ var _require3 = require('capsid'),
  */
 
 
-var Todoapp = (_dec = pub(MODEL_UPDATE, '.is-model-observer'), _dec2 = on(CHANGE_FILTER), _dec3 = on(NEW_ITEM), _dec4 = on(TOGGLE_TODO), _dec5 = on(DESTROY_TODO), _dec6 = on(FINISH_EDIT_TODO), _dec7 = on(CLEAR_COMPLETED), _dec8 = on(TOGGLE_ALL), component(_class = (_class2 = function () {
+var Todoapp = (_dec = notifies(MODEL_UPDATE, '.is-model-observer'), _dec2 = on(CHANGE_FILTER), _dec3 = on(NEW_ITEM), _dec4 = on(TOGGLE_TODO), _dec5 = on(DESTROY_TODO), _dec6 = on(FINISH_EDIT_TODO), _dec7 = on(CLEAR_COMPLETED), _dec8 = on(TOGGLE_ALL), component(_class = (_class2 = function () {
   function Todoapp() {
     _classCallCheck(this, Todoapp);
   }
