@@ -20,7 +20,7 @@ describe('TodoCollection', () => {
     it('craete an empty contructor if the give array is null', () => {
       collection = new Todo.Collection()
 
-      expect(collection.isEmpty()).to.be.true()
+      expect(collection.isEmpty()).to.equal(true)
     })
   })
 
@@ -36,7 +36,7 @@ describe('TodoCollection', () => {
     it('toggles the completed state of the todo of the given id', () => {
       collection.toggleById('a0')
 
-      expect(collection.getById('a0').completed).to.be.false()
+      expect(collection.getById('a0').completed).to.equal(false)
     })
   })
 

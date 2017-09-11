@@ -41,8 +41,8 @@ describe('todo-item', () => {
       expect(el.getAttribute('id')).to.equal('foo')
       expect(el.querySelector('label').textContent).to.equal('bar')
       expect(el.querySelector('.edit').value).to.equal('bar')
-      expect(el.classList.contains('completed')).to.be.false()
-      expect(el.querySelector('.toggle').checked).to.be.false()
+      expect(el.classList.contains('completed')).to.equal(false)
+      expect(el.querySelector('.toggle').checked).to.equal(false)
 
       todoItem.update({
         id: 'foo1',
@@ -53,8 +53,8 @@ describe('todo-item', () => {
       expect(el.getAttribute('id')).to.equal('foo1')
       expect(el.querySelector('label').textContent).to.equal('bar1')
       expect(el.querySelector('.edit').value).to.equal('bar1')
-      expect(el.classList.contains('completed')).to.be.true()
-      expect(el.querySelector('.toggle').checked).to.be.true()
+      expect(el.classList.contains('completed')).to.equal(true)
+      expect(el.querySelector('.toggle').checked).to.equal(true)
     })
   })
 
@@ -85,7 +85,7 @@ describe('todo-item', () => {
     it('adds editing class to the element', () => {
       trigger(el.querySelector('label'), 'dblclick')
 
-      expect(el.classList.contains('editing')).to.be.true()
+      expect(el.classList.contains('editing')).to.equal(true)
     })
   })
 
@@ -93,11 +93,11 @@ describe('todo-item', () => {
     it('removes editing class', () => {
       trigger(el.querySelector('label'), 'dblclick')
 
-      expect(el.classList.contains('editing')).to.be.true()
+      expect(el.classList.contains('editing')).to.equal(true)
 
       trigger(el, EDIT_TODO)
 
-      expect(el.classList.contains('editing')).to.be.false()
+      expect(el.classList.contains('editing')).to.equal(false)
     })
 
     it('removes the element when the todo title is empty', done => {

@@ -29,7 +29,6 @@
     "capsid": "^0.16.0",
     "chai": "^4.1.0",
     "codecov": "^2.2.0",
-    "dirty-chai": "^2.0.1",
     "hash-route": "^1.1.1",
     "karma": "^1.2.0",
     "karma-browserify": "^5.0.5",

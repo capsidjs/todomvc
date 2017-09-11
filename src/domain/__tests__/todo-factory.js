@@ -20,7 +20,7 @@ describe('TodoFactory', () => {
       expect(todo).to.be.instanceof(Todo)
       expect(todo.id).to.equal('foo')
       expect(todo.title).to.equal('bar')
-      expect(todo.completed).to.be.true()
+      expect(todo.completed).to.equal(true)
     })
   })
 
@@ -29,9 +29,9 @@ describe('TodoFactory', () => {
       const todo = factory.createByTitle('spam')
 
       expect(todo).to.be.instanceof(Todo)
-      expect(todo.id).to.exist()
+      expect(todo.id).to.not.equal(null)
       expect(todo.title).to.equal('spam')
-      expect(todo.completed).to.be.false()
+      expect(todo.completed).to.equal(false)
     })
   })
 })
