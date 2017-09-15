@@ -4,7 +4,11 @@
   "description": "todomvc by capsid",
   "main": "index.html",
   "scripts": {
-    "test": "karma start",
+    "start": "static .",
+    "test": "run-s unit-test e2e",
+    "unit-test": "karma start",
+    "e2e": "run-p -r start todomvc-test",
+    "todomvc-test": "todomvc-test http://localhost:8080",
     "lint": "standard",
     "fix": "standard --fix",
     "dist": "browserify -t babelify src/index.js > dist/app.js",
@@ -38,9 +42,12 @@
     "karma-firefox-launcher": "^1.0.0",
     "karma-mocha": "^1.0.1",
     "mocha": "^3.0.2",
+    "node-static": "^0.7.10",
+    "npm-run-all": "^4.1.1",
     "standard": "^10.0.2",
     "todomvc-app-css": "^2.0.6",
     "todomvc-common": "^1.0.2",
+    "todomvc-test": "^1.0.1",
     "watchify": "^3.7.0"
   },
   "babel": {
