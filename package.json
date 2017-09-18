@@ -47,7 +47,7 @@
     "standard": "^10.0.2",
     "todomvc-app-css": "^2.0.6",
     "todomvc-common": "^1.0.2",
-    "todomvc-test": "^1.0.1",
+    "todomvc-test": "^1.0.2",
     "watchify": "^3.7.0"
   },
   "babel": {
