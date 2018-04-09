@@ -1,9 +1,11 @@
-const { ACTION: {
-  EDIT_TODO,
-  TOGGLE_TODO,
-  DESTROY_TODO,
-  FINISH_EDIT_TODO
-} } = require('../const')
+const {
+  ACTION: {
+    EDIT_TODO,
+    TOGGLE_TODO,
+    DESTROY_TODO,
+    FINISH_EDIT_TODO
+  }
+} = require('../const')
 
 const { on, emits, prep, wired, component } = require('capsid')
 
@@ -12,11 +14,16 @@ const { on, emits, prep, wired, component } = require('capsid')
  */
 @component
 class TodoItem {
-  @wired('label') get label () {}
-  @wired('.toggle') get toggle () {}
-  @wired.component get edit () {}
+  @wired('label')
+  get label () {}
 
-  __init__ () {
+  @wired('.toggle')
+  get toggle () {}
+
+  @wired.component
+  get edit () {}
+
+  __mount__ () {
     this.el.innerHTML = `
       <div class="view">
         <input type="checkbox" class="toggle"/>

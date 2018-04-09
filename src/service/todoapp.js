@@ -18,7 +18,7 @@ const { notifies, make, on, component } = require('capsid')
  */
 @component
 class Todoapp {
-  __init__ () {
+  __mount__ () {
     this.todoFactory = new Todo.Factory()
     this.todoRepository = new Todo.Repository()
     this.todoCollection = this.todoRepository.getAll()

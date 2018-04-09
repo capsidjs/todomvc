@@ -4,13 +4,20 @@ const { on, emits, wired, component } = require('capsid')
 
 @component
 class Footer {
-  @wired('.clear-completed') get clearCompletedButton () {}
+  @wired('.clear-completed')
+  get clearCompletedButton () {}
 
-  @wired('a[href="#/active"]') get activeFilterButton () {}
-  @wired('a[href="#/completed"]') get completedFilterButton () {}
-  @wired('a[href="#/"]') get allFilterButton () {}
+  @wired('a[href="#/active"]')
+  get activeFilterButton () {}
 
-  @wired('.todo-count') get todoCountLabel () {}
+  @wired('a[href="#/completed"]')
+  get completedFilterButton () {}
+
+  @wired('a[href="#/"]')
+  get allFilterButton () {}
+
+  @wired('.todo-count')
+  get todoCountLabel () {}
 
   @on('click', { at: '.clear-completed' })
   @emits(CLEAR_COMPLETED)
