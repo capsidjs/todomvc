@@ -5,16 +5,16 @@ const { ACTION: {
   FINISH_EDIT_TODO
 } } = require('../const')
 
-const { on, emits, prep, wire, component } = require('capsid')
+const { on, emits, prep, wired, component } = require('capsid')
 
 /**
  * TodoItem class controls todo item in a list.
  */
 @component
 class TodoItem {
-  @wire.el('label') get label () {}
-  @wire.el('.toggle') get toggle () {}
-  @wire get edit () {}
+  @wired('label') get label () {}
+  @wired('.toggle') get toggle () {}
+  @wired.component get edit () {}
 
   __init__ () {
     this.el.innerHTML = `

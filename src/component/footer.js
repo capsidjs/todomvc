@@ -1,16 +1,16 @@
 const { Filter } = require('../domain')
 const { ACTION: { MODEL_UPDATE, CLEAR_COMPLETED } } = require('../const')
-const { on, emits, wire, component } = require('capsid')
+const { on, emits, wired, component } = require('capsid')
 
 @component
 class Footer {
-  @wire.el('.clear-completed') get clearCompletedButton () {}
+  @wired('.clear-completed') get clearCompletedButton () {}
 
-  @wire.el('a[href="#/active"]') get activeFilterButton () {}
-  @wire.el('a[href="#/completed"]') get completedFilterButton () {}
-  @wire.el('a[href="#/"]') get allFilterButton () {}
+  @wired('a[href="#/active"]') get activeFilterButton () {}
+  @wired('a[href="#/completed"]') get completedFilterButton () {}
+  @wired('a[href="#/"]') get allFilterButton () {}
 
-  @wire.el('.todo-count') get todoCountLabel () {}
+  @wired('.todo-count') get todoCountLabel () {}
 
   @on('click', { at: '.clear-completed' })
   @emits(CLEAR_COMPLETED)
