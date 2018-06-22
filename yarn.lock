@@ -1240,9 +1240,9 @@ camelcase@^2.0.0:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-2.1.1.tgz#7c1d16d679a1bbe59ca02cacecfb011e201f5a1f"
 
-capsid@^0.22.0:
-  version "0.22.0"
-  resolved "https://registry.yarnpkg.com/capsid/-/capsid-0.22.0.tgz#c46e223d7685b8c5d285fcb2144b768b2352e068"
+capsid@^0.23.0:
+  version "0.23.5"
+  resolved "https://registry.yarnpkg.com/capsid/-/capsid-0.23.5.tgz#d259633d23678ee6add39884dbc4ce63ceb66357"
 
 caseless@~0.11.0:
   version "0.11.0"

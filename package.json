@@ -5,10 +5,8 @@
   "main": "index.html",
   "scripts": {
     "start": "static .",
-    "test": "run-s unit-test e2e",
+    "test": "run-s unit-test",
     "unit-test": "karma start",
-    "e2e": "run-p -r start todomvc-test",
-    "todomvc-test": "todomvc-test http://localhost:8080",
     "lint": "standard",
     "fix": "standard --fix",
     "dist": "browserify -t babelify src/index.js > dist/app.js",
@@ -48,7 +46,6 @@
     "standard": "^11.0.0",
     "todomvc-app-css": "^2.0.6",
     "todomvc-common": "^1.0.2",
-    "todomvc-test": "^1.0.2",
     "watchify": "^3.7.0"
   },
   "babel": {
