@@ -2,7 +2,9 @@ const { expect } = require('chai')
 const { make } = require('capsid')
 
 const { Filter } = require('../../domain')
-const { ACTION: { CHANGE_FILTER } } = require('../../const')
+const {
+  ACTION: { CHANGE_FILTER }
+} = require('../../const')
 
 let target
 let router

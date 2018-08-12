@@ -40,7 +40,9 @@ describe('footer', () => {
         }
       })
 
-      expect(el.querySelector('.clear-completed').style.display).to.not.equal('none')
+      expect(el.querySelector('.clear-completed').style.display).to.not.equal(
+        'none'
+      )
 
       footer.onUpdate({
         detail: {
@@ -52,42 +54,44 @@ describe('footer', () => {
         }
       })
 
-      expect(el.querySelector('.clear-completed').style.display).to.equal('none')
+      expect(el.querySelector('.clear-completed').style.display).to.equal(
+        'none'
+      )
     })
 
     it('gives selected class to the filter buttons according to the current filter', () => {
       footer.onUpdate({
         detail: {
-          todoCollection: new Todo.Collection([
-            new Todo('a0', 'foo', false)
-          ]),
+          todoCollection: new Todo.Collection([new Todo('a0', 'foo', false)]),
           filter: Filter.ALL
         }
       })
 
-      expect(el.querySelector('a.todo-filter.selected').getAttribute('href')).to.equal('#/')
+      expect(
+        el.querySelector('a.todo-filter.selected').getAttribute('href')
+      ).to.equal('#/')
 
       footer.onUpdate({
         detail: {
-          todoCollection: new Todo.Collection([
-            new Todo('a0', 'foo', false)
-          ]),
+          todoCollection: new Todo.Collection([new Todo('a0', 'foo', false)]),
           filter: Filter.ACTIVE
         }
       })
 
-      expect(el.querySelector('a.todo-filter.selected').getAttribute('href')).to.equal('#/active')
+      expect(
+        el.querySelector('a.todo-filter.selected').getAttribute('href')
+      ).to.equal('#/active')
 
       footer.onUpdate({
         detail: {
-          todoCollection: new Todo.Collection([
-            new Todo('a0', 'foo', false)
-          ]),
+          todoCollection: new Todo.Collection([new Todo('a0', 'foo', false)]),
           filter: Filter.COMPLETED
         }
       })
 
-      expect(el.querySelector('a.todo-filter.selected').getAttribute('href')).to.equal('#/completed')
+      expect(
+        el.querySelector('a.todo-filter.selected').getAttribute('href')
+      ).to.equal('#/completed')
     })
 
     it('shows the number of active todos in .todo-count element', () => {
@@ -101,7 +105,9 @@ describe('footer', () => {
         }
       })
 
-      expect(el.querySelector('.todo-count').textContent).to.equal('2 items left')
+      expect(el.querySelector('.todo-count').textContent).to.equal(
+        '2 items left'
+      )
 
       footer.onUpdate({
         detail: {
@@ -113,7 +119,9 @@ describe('footer', () => {
         }
       })
 
-      expect(el.querySelector('.todo-count').textContent).to.equal('1 item left')
+      expect(el.querySelector('.todo-count').textContent).to.equal(
+        '1 item left'
+      )
 
       footer.onUpdate({
         detail: {
@@ -125,15 +133,15 @@ describe('footer', () => {
         }
       })
 
-      expect(el.querySelector('.todo-count').textContent).to.equal('0 items left')
+      expect(el.querySelector('.todo-count').textContent).to.equal(
+        '0 items left'
+      )
     })
 
     it('shows itself if and only if there exists any todo', () => {
       footer.onUpdate({
         detail: {
-          todoCollection: new Todo.Collection([
-            new Todo('a0', 'foo', true)
-          ])
+          todoCollection: new Todo.Collection([new Todo('a0', 'foo', true)])
         }
       })
 
@@ -141,8 +149,7 @@ describe('footer', () => {
 
       footer.onUpdate({
         detail: {
-          todoCollection: new Todo.Collection([
-          ])
+          todoCollection: new Todo.Collection([])
         }
       })
 

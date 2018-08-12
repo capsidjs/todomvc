@@ -1,4 +1,6 @@
-const { ACTION: { MODEL_UPDATE } } = require('../const')
+const {
+  ACTION: { MODEL_UPDATE }
+} = require('../const')
 const { component, get, make, on } = require('capsid')
 
 /**
@@ -22,7 +24,9 @@ class TodoList {
       })
     } else {
       visibleTodos.forEach(todo => {
-        get('todo-item', this.el.querySelector(`[id="${todo.id}"]`)).update(todo)
+        get('todo-item', this.el.querySelector(`[id="${todo.id}"]`)).update(
+          todo
+        )
       })
     }
   }
@@ -32,7 +36,10 @@ class TodoList {
    * @param {TodoCollection} todos
    */
   shouldResetContents (filter, todos) {
-    return !filter.isAll() || todos.length !== this.el.querySelectorAll('.todo-item').length
+    return (
+      !filter.isAll() ||
+      todos.length !== this.el.querySelectorAll('.todo-item').length
+    )
   }
 
   /**

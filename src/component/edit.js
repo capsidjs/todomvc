@@ -1,4 +1,7 @@
-const { KEYCODE, ACTION: { EDIT_TODO } } = require('../const')
+const {
+  KEYCODE,
+  ACTION: { EDIT_TODO }
+} = require('../const')
 const { emits, on, component } = require('capsid')
 
 /**

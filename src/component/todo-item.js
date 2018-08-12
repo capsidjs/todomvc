@@ -1,10 +1,5 @@
 const {
-  ACTION: {
-    EDIT_TODO,
-    TOGGLE_TODO,
-    DESTROY_TODO,
-    FINISH_EDIT_TODO
-  }
+  ACTION: { EDIT_TODO, TOGGLE_TODO, DESTROY_TODO, FINISH_EDIT_TODO }
 } = require('../const')
 
 const { on, emits, prep, wired, component } = require('capsid')

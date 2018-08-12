@@ -1,15 +1,17 @@
 const { Todo } = require('../domain')
 
-const { ACTION: {
-  CHANGE_FILTER,
-  CLEAR_COMPLETED,
-  DESTROY_TODO,
-  FINISH_EDIT_TODO,
-  MODEL_UPDATE,
-  NEW_ITEM,
-  TOGGLE_ALL,
-  TOGGLE_TODO
-} } = require('../const')
+const {
+  ACTION: {
+    CHANGE_FILTER,
+    CLEAR_COMPLETED,
+    DESTROY_TODO,
+    FINISH_EDIT_TODO,
+    MODEL_UPDATE,
+    NEW_ITEM,
+    TOGGLE_ALL,
+    TOGGLE_TODO
+  }
+} = require('../const')
 
 const { notifies, make, on, component } = require('capsid')
 

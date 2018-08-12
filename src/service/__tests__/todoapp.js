@@ -4,15 +4,17 @@ const { expect } = require('chai')
 const { make, prep } = require('capsid')
 
 const { Filter } = require('../../domain')
-const { ACTION: {
-  CHANGE_FILTER,
-  CLEAR_COMPLETED,
-  DESTROY_TODO,
-  FINISH_EDIT_TODO,
-  NEW_ITEM,
-  TOGGLE_ALL,
-  TOGGLE_TODO
-} } = require('../../const')
+const {
+  ACTION: {
+    CHANGE_FILTER,
+    CLEAR_COMPLETED,
+    DESTROY_TODO,
+    FINISH_EDIT_TODO,
+    NEW_ITEM,
+    TOGGLE_ALL,
+    TOGGLE_TODO
+  }
+} = require('../../const')
 
 let el
 let todoApp

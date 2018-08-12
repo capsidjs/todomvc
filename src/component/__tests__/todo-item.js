@@ -1,12 +1,9 @@
 const { expect } = require('chai')
 const { make } = require('capsid')
 const { trigger } = require('../../__tests__/helper')
-const { ACTION: {
-  DESTROY_TODO,
-  EDIT_TODO,
-  FINISH_EDIT_TODO,
-  TOGGLE_TODO
-} } = require('../../const')
+const {
+  ACTION: { DESTROY_TODO, EDIT_TODO, FINISH_EDIT_TODO, TOGGLE_TODO }
+} = require('../../const')
 
 let todoItem
 let el
@@ -30,7 +27,9 @@ describe('todo-item', () => {
 
   it('initializes its content html', () => {
     expect(el.querySelector('.view')).to.not.equal(null)
-    expect(el.querySelector('.view input.toggle[type="checkbox"]')).to.not.equal(null)
+    expect(
+      el.querySelector('.view input.toggle[type="checkbox"]')
+    ).to.not.equal(null)
     expect(el.querySelector('.view label')).to.not.equal(null)
     expect(el.querySelector('.view button.destroy')).to.not.equal(null)
     expect(el.querySelector('input.edit')).to.not.equal(null)

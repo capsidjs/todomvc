@@ -1,6 +1,8 @@
 const { route, dispatch } = require('hash-route')
 
-const { ACTION: { CHANGE_FILTER } } = require('../const')
+const {
+  ACTION: { CHANGE_FILTER }
+} = require('../const')
 const { Filter } = require('../domain')
 
 const { component, emits } = require('capsid')

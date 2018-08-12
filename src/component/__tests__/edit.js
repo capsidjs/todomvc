@@ -3,7 +3,9 @@ const { make } = require('capsid')
 const { trigger } = require('../../__tests__/helper')
 const Const = require('../../const')
 
-const { ACTION: { EDIT_TODO } } = Const
+const {
+  ACTION: { EDIT_TODO }
+} = Const
 
 let el
 let todoEdit
@@ -39,7 +41,9 @@ describe('edit', () => {
     })
 
     it('does nothing when the pressed key is SPACE', done => {
-      el.addEventListener(EDIT_TODO, () => done(new Error('todo-edited should not be triggered')))
+      el.addEventListener(EDIT_TODO, () =>
+        done(new Error('todo-edited should not be triggered'))
+      )
 
       const e = new CustomEvent('keypress')
       e.which = 32

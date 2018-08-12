@@ -1,6 +1,9 @@
 const Const = require('../const')
 
-const { KEYCODE, ACTION: { NEW_ITEM } } = Const
+const {
+  KEYCODE,
+  ACTION: { NEW_ITEM }
+} = Const
 
 const { emits, on, component } = require('capsid')
 

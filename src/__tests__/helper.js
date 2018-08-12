@@ -6,4 +6,5 @@ require('..')
  * @param {string} type The type
  * @param {any} detail The detail of the event
  */
-exports.trigger = (el, type, detail) => el.dispatchEvent(new CustomEvent(type, { detail, bubbles: true }))
+exports.trigger = (el, type, detail) =>
+  el.dispatchEvent(new CustomEvent(type, { detail, bubbles: true }))

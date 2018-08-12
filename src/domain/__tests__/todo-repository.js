@@ -9,19 +9,23 @@ describe('TodoRepository', () => {
   beforeEach(() => {
     todoRepository = new Todo.Repository()
 
-    todoRepository.saveAll(new Todo.Collection([
-      new Todo('a0', 'foo', true),
-      new Todo('a1', 'bar', false),
-      new Todo('a2', 'baz', true)
-    ]))
+    todoRepository.saveAll(
+      new Todo.Collection([
+        new Todo('a0', 'foo', true),
+        new Todo('a1', 'bar', false),
+        new Todo('a2', 'baz', true)
+      ])
+    )
   })
 
   describe('saveAll', () => {
     it('saves the all of todos in the collection', () => {
-      todoRepository.saveAll(new Todo.Collection([
-        new Todo('b0', 'foo', true),
-        new Todo('b1', 'bar', false)
-      ]))
+      todoRepository.saveAll(
+        new Todo.Collection([
+          new Todo('b0', 'foo', true),
+          new Todo('b1', 'bar', false)
+        ])
+      )
 
       const collection = todoRepository.getAll()
 

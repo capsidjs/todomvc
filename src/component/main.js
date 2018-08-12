@@ -1,4 +1,6 @@
-const { ACTION: { TOGGLE_ALL, MODEL_UPDATE } } = require('../const')
+const {
+  ACTION: { TOGGLE_ALL, MODEL_UPDATE }
+} = require('../const')
 const { component, wired, emits, on } = require('capsid')
 
 @component
