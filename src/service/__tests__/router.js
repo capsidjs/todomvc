@@ -48,6 +48,6 @@ describe('router', () => {
       done()
     })
 
-    router['*']()
+    router['(.*)']()
   })
 })

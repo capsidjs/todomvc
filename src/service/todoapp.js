@@ -39,14 +39,11 @@ class Todoapp {
   save () {
     this.todoRepository.saveAll(this.todoCollection)
 
-    console.log(this)
-
     return this
   }
 
   @on(CHANGE_FILTER)
   onFilterchange ({ detail: filter }) {
-    console.log('onFilterChange')
     this.filter = filter
     this.save()
   }

@@ -13,7 +13,10 @@ module.exports = config =>
           {
             presets: ['@babel/preset-env'],
             plugins: [
-              ['@babel/plugin-proposal-decorators', { legacy: true }],
+              [
+                '@babel/plugin-proposal-decorators',
+                { decoratorsBeforeExport: false }
+              ],
               '@babel/plugin-proposal-class-properties',
               'istanbul'
             ]

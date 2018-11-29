@@ -14,7 +14,6 @@ class TodoList {
    */
   @on(MODEL_UPDATE)
   onRefresh ({ detail: { todoCollection, filter } }) {
-    console.log('onRefresh')
     const visibleTodos = todoCollection.filterBy(filter)
 
     if (this.shouldResetContents(filter, visibleTodos)) {

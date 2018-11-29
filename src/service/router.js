@@ -13,7 +13,6 @@ const { component, emits } = require('capsid')
 @component('router')
 class Router {
   onHashchange () {
-    console.log('onHashChange')
     dispatch(this)
   }
 
