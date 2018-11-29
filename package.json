@@ -10,7 +10,7 @@
     "lint": "standard",
     "fix": "standard --fix",
     "dist": "browserify -t babelify src/index.js > dist/app.js",
-    "min": "terser dist/app.js > dist/app.min.js",
+    "min": "terser dist/app.js -c -m > dist/app.min.js",
     "size": "gzip-size dist/app.min.js",
     "check": "npm run dist && open index.html",
     "codecov": "npm run test && codecov",
