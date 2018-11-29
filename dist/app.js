@@ -1394,8 +1394,6 @@
                   ) {
                     var keys = []
                     var re = pathToRegexp(pattern, keys)
-                    console.log(re)
-                    console.log(re.test(''))
                     return new HashRoute({
                       pattern: pattern,
                       re: re,
@@ -5480,7 +5478,6 @@
                   var _ref$detail = _ref.detail,
                     todoCollection = _ref$detail.todoCollection,
                     filter = _ref$detail.filter
-                  console.log('onRefresh')
                   var visibleTodos = todoCollection.filterBy(filter)
 
                   if (this.shouldResetContents(filter, visibleTodos)) {
@@ -6747,7 +6744,6 @@
                 kind: 'method',
                 key: 'onHashchange',
                 value: function value() {
-                  console.log('onHashChange')
                   dispatch(this)
                 }
               },
@@ -7330,7 +7326,6 @@
                 key: 'save',
                 value: function value() {
                   this.todoRepository.saveAll(this.todoCollection)
-                  console.log(this)
                   return this
                 }
               },
@@ -7340,7 +7335,6 @@
                 key: 'onFilterchange',
                 value: function value(_ref) {
                   var filter = _ref.detail
-                  console.log('onFilterChange')
                   this.filter = filter
                   this.save()
                 }

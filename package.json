@@ -53,20 +53,6 @@
     "todomvc-common": "^1.0.2",
     "watchify": "^3.7.0"
   },
-  "babel": {
-    "presets": [
-      "@babel/preset-env"
-    ],
-    "plugins": [
-      [
-        "@babel/plugin-proposal-decorators",
-        {
-          "decoratorsBeforeExport": false
-        }
-      ],
-      "@babel/plugin-proposal-class-properties"
-    ]
-  },
   "lint-staged": {
     "*.js": [
       "prettier --write --no-semi --single-quote",
