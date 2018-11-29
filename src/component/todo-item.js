@@ -7,16 +7,16 @@ const { on, emits, prep, wired, component } = require('capsid')
 /**
  * TodoItem class controls todo item in a list.
  */
-@component
+@component('todo-item')
 class TodoItem {
   @wired('label')
-  get label () {}
+  label
 
   @wired('.toggle')
-  get toggle () {}
+  toggle
 
-  @wired.component
-  get edit () {}
+  @wired.component('edit')
+  edit
 
   __mount__ () {
     this.el.innerHTML = `

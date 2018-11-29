@@ -10,7 +10,7 @@ const { emits, on, component } = require('capsid')
 /**
  * TodoInput class controls the input for adding todos.
  */
-@component
+@component('new-todo')
 class NewTodo {
   /**
    * Handler for key presses.

@@ -6,7 +6,7 @@ const { component, get, make, on } = require('capsid')
 /**
  * The todo list component.
  */
-@component
+@component('todo-list')
 class TodoList {
   /**
    * Updates the todo items by the given todo model list.
@@ -14,6 +14,7 @@ class TodoList {
    */
   @on(MODEL_UPDATE)
   onRefresh ({ detail: { todoCollection, filter } }) {
+    console.log('onRefresh')
     const visibleTodos = todoCollection.filterBy(filter)
 
     if (this.shouldResetContents(filter, visibleTodos)) {

@@ -18,7 +18,7 @@ const { notifies, make, on, component } = require('capsid')
 /**
  * The todo application class.
  */
-@component
+@component('todoapp')
 class Todoapp {
   __mount__ () {
     this.todoFactory = new Todo.Factory()
@@ -39,11 +39,14 @@ class Todoapp {
   save () {
     this.todoRepository.saveAll(this.todoCollection)
 
+    console.log(this)
+
     return this
   }
 
   @on(CHANGE_FILTER)
   onFilterchange ({ detail: filter }) {
+    console.log('onFilterChange')
     this.filter = filter
     this.save()
   }

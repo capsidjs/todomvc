@@ -10,9 +10,10 @@ const { component, emits } = require('capsid')
 /**
  * The observer of the filter and invokes filterchange event when it's changed.
  */
-@component
+@component('router')
 class Router {
   onHashchange () {
+    console.log('onHashChange')
     dispatch(this)
   }
 
@@ -36,7 +37,7 @@ class Router {
 
   @route
   @emits(CHANGE_FILTER)
-  '*' () {
+  '(.*)' () {
     return Filter.ALL
   }
 }

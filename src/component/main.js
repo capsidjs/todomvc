@@ -3,10 +3,10 @@ const {
 } = require('../const')
 const { component, wired, emits, on } = require('capsid')
 
-@component
+@component('main')
 class Main {
   @wired('.toggle-all')
-  get toggleAllButton () {}
+  toggleAllButton
 
   @on('click', { at: '.toggle-all' })
   @emits(TOGGLE_ALL)

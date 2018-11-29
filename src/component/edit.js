@@ -7,7 +7,7 @@ const { emits, on, component } = require('capsid')
 /**
  * TodoEdit controls the edit area of each todo item.
  */
-@component
+@component('edit')
 class Edit {
   onStart () {
     this.el.focus()
