@@ -33,7 +33,7 @@
     "babel-plugin-istanbul": "^5.0.1",
     "babelify": "^10.0.0",
     "browserify": "^16.0.0",
-    "capsid": "^0.28.1",
+    "capsid": "^0.29.0",
     "chai": "^4.1.0",
     "codecov": "^3.0.0",
     "gzip-size-cli": "^3.0.0",
