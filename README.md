@@ -2,7 +2,7 @@
 
 [![CircleCI](https://circleci.com/gh/capsidjs/todomvc.svg?style=svg)](https://circleci.com/gh/capsidjs/todomvc)
 [![codecov](https://codecov.io/gh/capsidjs/todomvc/branch/master/graph/badge.svg)](https://codecov.io/gh/capsidjs/todomvc)
-[![Greenkeeper badge](https://badges.greenkeeper.io/capsidjs/todomvc.svg)](https://greenkeeper.io/)
+
 ![size](https://img.badgesize.io/capsidjs/todomvc/master/dist/app.min.js.svg?compression=gzip)
 
 This example uses:
