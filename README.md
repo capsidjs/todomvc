@@ -1,3 +1,5 @@
+Archived. See https://github.com/capsidjs/todomvc2 instead.
+
 # [capsid][] • [TodoMVC](http://todomvc.com/)
 
 [![CircleCI](https://circleci.com/gh/capsidjs/todomvc.svg?style=svg)](https://circleci.com/gh/capsidjs/todomvc)
